@@ -315,6 +315,7 @@ async function deleteRoom() {
   showToast("Salle supprimée","success");
   closeModal(); selectedRoom = null; await drawRooms();
 }
+// ============ MODIFIER (CORRIGÉ) ============
 async function editRoomById(id) {
   console.log("editRoomById appelé avec id:", id);
   const rooms = await getAllRooms();
@@ -329,21 +330,28 @@ async function editRoomById(id) {
 
 function openEditModal() {
   deactivatePickMode();
-  fillForm(selectedRoom);  // تعبئة الحقول أولاً
+  // تعبئة الحقول أولاً
+  fillForm(selectedRoom);
+  // ثم فتح المودال
   document.getElementById("modal").style.display = "flex";
   document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
   document.getElementById("actions").innerHTML = `<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
-  // تأكيد أن pickedX/Y تم تعيينهما في fillForm
+  // التأكد من أن pickedX, pickedY تأخذ إحداثيات الغرفة
+  pickedX = selectedRoom.x;
+  pickedY = selectedRoom.y;
 }
 
 async function updateRoom() {
   if (!selectedRoom) return;
   if (!validateFormFields()) return;
+  
   const newMat = document.getElementById("mat").value.trim();
   if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) {
     showToast("Matricule déjà utilisé", "error");
     return;
   }
+  
+  // تحديث الكائن
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
@@ -352,11 +360,13 @@ async function updateRoom() {
     selectedRoom.y = pickedY;
   }
   selectedRoom.last_activity = new Date().toLocaleString();
+  
   try {
-    await updateRoom(selectedRoom);  // استدعاء دالة Supabase للتحديث
+    await updateRoom(selectedRoom);
     showToast("Mise à jour réussie", "success");
     closeModal();
     await drawRooms();
+    // إعادة تعيين المتغيرات
     pickedX = null;
     pickedY = null;
     selectedRoom = null;
@@ -372,6 +382,7 @@ function fillForm(room) {
   document.getElementById("mat").value = room.matricule || "";
   document.getElementById("coord").value = (room.x && room.y) ? room.x + "," + room.y : "";
   document.getElementById("last_activity").value = room.last_activity || "";
+  // مهم: تعيين pickedX/Y من الغرفة الحالية
   pickedX = room.x;
   pickedY = room.y;
 }
