@@ -79,7 +79,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ==================== APPLICATION COMPLÈTE (CORRIGÉE) ====================
+// ============ DÉFINITIONS GLOBALES (en premier) ============
 let map = null;
 let picking = false;
 let pickedX = null, pickedY = null;
@@ -97,11 +97,19 @@ const CATEGORIES = [
   { value: 'accessoire', label: 'accessoire', icon: '🔧', color: '#9e9e9e' }
 ];
 
-// ============ CONFIGURATION SUPABASE (sans re-déclaration) ============
+// === Fonction Toast (définie immédiatement) ===
+function showToast(msg, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${msg}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ============ CONFIGURATION SUPABASE ============
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
 
-// Utiliser une variable différente pour éviter tout conflit
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const TABLE_NAME = 'rooms';
 
@@ -153,6 +161,7 @@ async function initSampleData() {
   }
 }
 
+// ============ FONCTIONS DE LA CARTE ============
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
   let bounds = [[0, 0], [3000, 2669]];
@@ -252,6 +261,7 @@ async function selectAndFocusRoom(id) {
   focusOnRoom(id);
 }
 
+// ============ FONCTIONS MODALES ============
 function openModal(type) {
   deactivatePickMode();
   document.getElementById("modal").style.display = "flex";
@@ -342,6 +352,7 @@ function deactivatePickMode() { picking=false; document.getElementById('map').cl
 function togglePanel() { const panel=document.getElementById('sidePanel'); const showBtn=document.getElementById('showPanelBtn'); panel.classList.toggle('collapsed'); const icon=panel.querySelector('.toggle-panel i'); if(panel.classList.contains('collapsed')) { icon.classList.remove('fa-chevron-left'); icon.classList.add('fa-chevron-right'); showBtn.style.display='flex'; } else { icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); showBtn.style.display='none'; } }
 function showPanel() { const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
 
+// ============ ÉVÉNEMENTS ============
 document.getElementById("loginBtn").addEventListener("click", () => { showToast("🔐 Connexion en mode invité (démo)", "success"); });
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
@@ -351,6 +362,7 @@ document.getElementById("search").addEventListener("input", async (e) => {
   if(found) { map.setView([found.y, found.x], 2); const marker = currentMarkers.find(m => { const ll=m.getLatLng(); return Math.abs(ll.lat-found.y)<1 && Math.abs(ll.lng-found.x)<1; }); if(marker) marker.openPopup(); showToast(`Trouvé: ${found.name}`,"success"); } else { showToast("Aucune salle","error"); }
 });
 
+// ============ INITIALISATION ============
 (async function init() {
   try {
     await initSampleData();
