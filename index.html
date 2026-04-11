@@ -6,422 +6,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body { 
-  margin:0; 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-#map { 
-  height:100vh; 
-  width:100%; 
-  cursor:default; 
-}
-
-/* شريط الأدوات العلوي: Login | Recherche | Statistiques */
-.top-toolbar {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-
-.left-area {
-  display: flex;
-  align-items: center;
-  background: rgba(255,255,255,0.95);
-  padding: 5px 15px;
-  border-radius: 40px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-.btn-login {
-  background: linear-gradient(135deg, #2c3e50 0%, #1a2632 100%);
-  border: none;
-  color: white;
-  padding: 8px 18px;
-  border-radius: 30px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
-.btn-login:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #1e2a36 0%, #0f1720 100%);
-}
-
-.search-box {
-  background: white;
-  padding: 8px 20px;
-  border-radius: 40px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  max-width: 450px;
-  min-width: 200px;
-  background: rgba(255,255,255,0.95);
-}
-
-.search-box i {
-  color: #667eea;
-  font-size: 16px;
-}
-
-.search-box input {
-  border: none;
-  outline: none;
-  flex: 1;
-  font-size: 14px;
-  background: transparent;
-}
-
-.stats-bar {
-  background: rgba(255,255,255,0.95);
-  padding: 8px 20px;
-  border-radius: 40px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  display: flex;
-  gap: 25px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.stats-bar span {
-  color: #667eea;
-  font-weight: bold;
-  margin-left: 5px;
-}
-
-.action-group-right {
-  position: absolute;
-  top: 100px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.action-card {
-  background: white;
-  border-radius: 50px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-  overflow: hidden;
-  transition: transform 0.2s;
-}
-
-.action-card:hover {
-  transform: translateX(-3px);
-}
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 15px;
-  width: 100%;
-}
-
-.action-btn.add-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.action-btn.delete-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
-}
-
-.side-panel {
-  position: absolute;
-  left: 20px;
-  top: 95px;
-  bottom: 20px;
-  width: 320px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.2);
-  z-index: 900;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: transform 0.3s ease;
-  background: rgba(255,255,255,0.98);
-}
-
-.side-panel.collapsed {
-  transform: translateX(-360px);
-}
-
-.panel-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 15px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.panel-header h4 {
-  margin: 0;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.toggle-panel {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 18px;
-}
-
-.categories-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-}
-
-.category-group {
-  margin-bottom: 16px;
-  border-radius: 14px;
-  background: #f8f9ff;
-  overflow: hidden;
-}
-
-.category-header {
-  background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
-  padding: 12px 16px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  border-left: 5px solid #667eea;
-}
-
-.category-name {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-}
-
-.category-count {
-  background: #667eea;
-  color: white;
-  padding: 2px 10px;
-  border-radius: 30px;
-  font-size: 11px;
-}
-
-.toggle-icon {
-  transition: transform 0.2s;
-}
-
-.toggle-icon.rotated {
-  transform: rotate(90deg);
-}
-
-.category-rooms {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease;
-}
-
-.category-rooms.expanded {
-  max-height: 550px;
-  overflow-y: auto;
-}
-
-.room-item {
-  padding: 12px 16px;
-  margin: 6px 12px;
-  background: white;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-left: 3px solid #667eea;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.room-item:hover {
-  background: #eef2ff;
-  transform: translateX(6px);
-}
-
-.room-name {
-  font-weight: bold;
-  color: #1e293b;
-  font-size: 14px;
-}
-
-.room-mat {
-  font-size: 11px;
-  color: #475569;
-  margin-top: 5px;
-}
-
-.show-panel-btn {
-  position: absolute;
-  left: 20px;
-  top: 120px;
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  border-radius: 0 20px 20px 0;
-  cursor: pointer;
-  z-index: 901;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-#modal {
-  display: none;
-  position: fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background: rgba(0,0,0,0.75);
-  z-index: 10000;
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(8px);
-}
-
-.modal-box {
-  background: white;
-  padding: 28px;
-  border-radius: 28px;
-  width: 480px;
-  max-width: 92%;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  box-shadow: 0 30px 50px rgba(0,0,0,0.4);
-  animation: slideIn 0.25s ease;
-}
-
-@keyframes slideIn {
-  from { transform: translateY(-30px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-box h3 {
-  color: #1e293b;
-  border-left: 5px solid #667eea;
-  padding-left: 15px;
-}
-
-.modal-box input, .modal-box select {
-  padding: 12px 15px;
-  border: 2px solid #e2e8f0;
-  border-radius: 16px;
-  font-size: 14px;
-}
-
-.coord-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.coord-row button {
-  width: 48px;
-  background: #f1f5f9;
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  padding: 10px;
-}
-
-#actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 8px;
-}
-
-#actions button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 40px;
-  font-weight: bold;
-  cursor: pointer;
-  border: none;
-}
-
-#actions button:first-child {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-}
-
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1e293b;
-  color: white;
-  padding: 12px 28px;
-  border-radius: 60px;
-  z-index: 10001;
-  animation: fadeInOut 3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.toast.success { background: linear-gradient(135deg, #11998e, #38ef7d); }
-.toast.error { background: linear-gradient(135deg, #eb3349, #f45c43); }
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateX(-50%) translateY(20px);}
-  15% { opacity: 1; transform: translateX(-50%) translateY(0);}
-  85% { opacity: 1; transform: translateX(-50%) translateY(0);}
-  100% { opacity: 0; transform: translateX(-50%) translateY(-20px);}
-}
-
-.picking-mode {
-  cursor: crosshair !important;
-}
-.leaflet-container.picking-mode {
-  cursor: crosshair !important;
-}
-
-@media (max-width: 780px) {
-  .side-panel { width: 280px; top: 85px; }
-  .stats-bar { display: none; }
-  .action-group-right { top: 90px; }
-}
+*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#2c3e50 0%,#1a2632 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#1e2a36 0%,#0f1720 100%)}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#667eea;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#667eea;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white}.action-btn.delete-btn{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#667eea10 0%,#764ba210 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #667eea}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#667eea;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #667eea;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#eef2ff;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:480px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #667eea;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}#actions{display:flex;gap:12px;margin-top:8px}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none}#actions button:first-child{background:linear-gradient(135deg,#667eea,#764ba2);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
 </style>
 </head>
 <body>
@@ -490,17 +75,11 @@ body {
 <div id="actions"></div>
 </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ==================== APPLICATION COMPLÈTE ====================
-// Ce code fonctionne avec Supabase (base de données distante)
-// Pour déployer sur Netlify ou GitHub Pages:
-// 1. Placez ce fichier (index.html) et l'image floor1.jpg dans le même dossier
-// 2. Poussez sur GitHub
-// 3. Déployez sur Netlify (drag & drop du dossier) ou activez GitHub Pages
-
-// ============ DÉFINITIONS DES VARIABLES GLOBALES ============
+// ==================== APPLICATION COMPLÈTE (CORRIGÉE) ====================
 let map = null;
 let picking = false;
 let pickedX = null, pickedY = null;
@@ -518,77 +97,47 @@ const CATEGORIES = [
   { value: 'accessoire', label: 'accessoire', icon: '🔧', color: '#9e9e9e' }
 ];
 
-// ============ CONFIGURATION SUPABASE ============
+// ============ CONFIGURATION SUPABASE (sans re-déclaration) ============
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
 
-// تجنب إعادة تعريف supabase
-let supabaseClient;
-if (typeof window.supabaseClient === 'undefined') {
-  window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-const supabase = window.supabaseClient;
+// Utiliser une variable différente pour éviter tout conflit
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const TABLE_NAME = 'rooms';
 
 // --- Fonctions CRUD avec Supabase ---
 async function getAllRooms() {
-  const { data, error } = await supabase
-    .from(TABLE_NAME)
-    .select('*')
-    .order('id', { ascending: true });
+  const { data, error } = await supabaseClient.from(TABLE_NAME).select('*').order('id', { ascending: true });
   if (error) throw error;
   return data || [];
 }
-
 async function addRoom(room) {
-  const { data, error } = await supabase
-    .from(TABLE_NAME)
-    .insert([room])
-    .select();
+  const { data, error } = await supabaseClient.from(TABLE_NAME).insert([room]).select();
   if (error) throw error;
   return data[0].id;
 }
-
 async function updateRoom(room) {
-  const { error } = await supabase
-    .from(TABLE_NAME)
-    .update({
-      categorie: room.categorie,
-      name: room.name,
-      matricule: room.matricule,
-      x: room.x,
-      y: room.y,
-      last_activity: room.last_activity
-    })
-    .eq('id', room.id);
+  const { error } = await supabaseClient.from(TABLE_NAME).update({
+    categorie: room.categorie, name: room.name, matricule: room.matricule,
+    x: room.x, y: room.y, last_activity: room.last_activity
+  }).eq('id', room.id);
   if (error) throw error;
 }
-
 async function deleteRoomById(id) {
-  const { error } = await supabase
-    .from(TABLE_NAME)
-    .delete()
-    .eq('id', id);
+  const { error } = await supabaseClient.from(TABLE_NAME).delete().eq('id', id);
   if (error) throw error;
 }
-
 async function isMatriculeUnique(matricule, excludeId = null) {
-  let query = supabase.from(TABLE_NAME).select('id').eq('matricule', matricule);
-  if (excludeId) {
-    query = query.neq('id', excludeId);
-  }
+  let query = supabaseClient.from(TABLE_NAME).select('id').eq('matricule', matricule);
+  if (excludeId) query = query.neq('id', excludeId);
   const { data, error } = await query;
   if (error) throw error;
   return data.length === 0;
 }
 
-// --- Données initiales (si table vide) ---
 async function initSampleData() {
-  const { count, error: countError } = await supabase
-    .from(TABLE_NAME)
-    .select('*', { count: 'exact', head: true });
+  const { count, error: countError } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', head: true });
   if (countError) throw countError;
-  
   if (count === 0) {
     const sampleRooms = [
       { categorie: 'salon et séjour', name: 'Salon Principal', matricule: 'SAL-001', x: 1334, y: 1500, last_activity: new Date().toLocaleString() },
@@ -598,17 +147,15 @@ async function initSampleData() {
       { categorie: 'rangement', name: 'Débarras', matricule: 'RAN-001', x: 800, y: 2200, last_activity: new Date().toLocaleString() },
       { categorie: 'chambre enfant', name: 'Chambre Enfant', matricule: 'ENF-001', x: 2200, y: 500, last_activity: new Date().toLocaleString() }
     ];
-    const { error: insertError } = await supabase.from(TABLE_NAME).insert(sampleRooms);
+    const { error: insertError } = await supabaseClient.from(TABLE_NAME).insert(sampleRooms);
     if (insertError) throw insertError;
     showToast("Données de démonstration ajoutées", "success");
   }
 }
 
-// ============ FONCTIONS DE LA CARTE ============
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
   let bounds = [[0, 0], [3000, 2669]];
-  // Image floor1.jpg doit être dans le même dossier que index.html
   L.imageOverlay('floor1.jpg', bounds).addTo(map);
   map.fitBounds(bounds);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -625,18 +172,7 @@ function initMap() {
 }
 
 function createPopupContent(room, catInfo) {
-  return `
-    <div style="min-width: 200px;">
-      <div style="border-bottom:2px solid ${catInfo.color}; color:${catInfo.color}; display:flex; gap:8px; align-items:center; padding-bottom:6px;">
-        <span>${catInfo.icon}</span> <strong>${escapeHtml(room.categorie || 'Sans catégorie')}</strong>
-      </div>
-      <div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div>
-      <div><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div>
-      <div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity || '')}</div>
-      <hr style="margin:10px 0">
-      <button onclick="editRoomById(${room.id})" style="background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:40px; padding:8px; width:100%; cursor:pointer;">✏️ Modifier</button>
-    </div>
-  `;
+  return `<div style="min-width:200px;"><div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color};display:flex;gap:8px;align-items:center;padding-bottom:6px;"><span>${catInfo.icon}</span><strong>${escapeHtml(room.categorie || 'Sans catégorie')}</strong></div><div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div><div><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div><div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity || '')}</div><hr style="margin:10px 0"><button onclick="editRoomById(${room.id})" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">✏️ Modifier</button></div>`;
 }
 
 async function drawRooms() {
@@ -673,26 +209,14 @@ async function updateCategoriesList() {
   byCat[''] = [];
   rooms.forEach(r => { const cat = r.categorie || ''; if(!byCat[cat]) byCat[cat]=[]; byCat[cat].push(r); });
   let html = '';
-  for (let cat of CATEGORIES) {
-    if (byCat[cat.value]?.length) html += generateCatHTML(cat.value, cat.icon, cat.label, byCat[cat.value]);
-  }
+  for (let cat of CATEGORIES) if (byCat[cat.value]?.length) html += generateCatHTML(cat.value, cat.icon, cat.label, byCat[cat.value]);
   if (byCat[''].length) html += generateCatHTML('', '📋', 'Sans catégorie', byCat[''], true);
   container.innerHTML = html;
   attachCategoryEvents();
 }
 
 function generateCatHTML(catValue, icon, label, roomsList, isUncategorized = false) {
-  return `
-    <div class="category-group" data-cat="${catValue}">
-      <div class="category-header">
-        <div class="category-name"><i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i> <span>${icon} ${label}</span><span class="category-count">${roomsList.length}</span></div>
-        <i class="fas fa-chevron-right toggle-icon"></i>
-      </div>
-      <div class="category-rooms">
-        ${roomsList.map(room => `<div class="room-item" onclick="selectAndFocusRoom(${room.id})"><div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div><div class="room-mat">${escapeHtml(room.matricule)}</div><div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div></div>`).join('')}
-      </div>
-    </div>
-  `;
+  return `<div class="category-group" data-cat="${catValue}"><div class="category-header"><div class="category-name"><i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i> <span>${icon} ${label}</span><span class="category-count">${roomsList.length}</span></div><i class="fas fa-chevron-right toggle-icon"></i></div><div class="category-rooms">${roomsList.map(room => `<div class="room-item" onclick="selectAndFocusRoom(${room.id})"><div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div><div class="room-mat">${escapeHtml(room.matricule)}</div><div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div></div>`).join('')}</div></div>`;
 }
 
 function attachCategoryEvents() {
@@ -728,7 +252,6 @@ async function selectAndFocusRoom(id) {
   focusOnRoom(id);
 }
 
-// ============ FONCTIONS MODALES ============
 function openModal(type) {
   deactivatePickMode();
   document.getElementById("modal").style.display = "flex";
@@ -819,9 +342,7 @@ function deactivatePickMode() { picking=false; document.getElementById('map').cl
 function togglePanel() { const panel=document.getElementById('sidePanel'); const showBtn=document.getElementById('showPanelBtn'); panel.classList.toggle('collapsed'); const icon=panel.querySelector('.toggle-panel i'); if(panel.classList.contains('collapsed')) { icon.classList.remove('fa-chevron-left'); icon.classList.add('fa-chevron-right'); showBtn.style.display='flex'; } else { icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); showBtn.style.display='none'; } }
 function showPanel() { const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
 
-// ============ ÉVÉNEMENTS ============
 document.getElementById("loginBtn").addEventListener("click", () => { showToast("🔐 Connexion en mode invité (démo)", "success"); });
-
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
   if(val === "") return;
@@ -830,11 +351,9 @@ document.getElementById("search").addEventListener("input", async (e) => {
   if(found) { map.setView([found.y, found.x], 2); const marker = currentMarkers.find(m => { const ll=m.getLatLng(); return Math.abs(ll.lat-found.y)<1 && Math.abs(ll.lng-found.x)<1; }); if(marker) marker.openPopup(); showToast(`Trouvé: ${found.name}`,"success"); } else { showToast("Aucune salle","error"); }
 });
 
-// ============ INITIALISATION ============
 (async function init() {
   try {
-    // لا حاجة لـ initDatabase()
-    await initSampleData();   // يقوم بتهيئة Supabase وإضافة بيانات تجريبية إذا كانت فارغة
+    await initSampleData();
     initMap();
     await drawRooms();
     showToast("Système prêt - Supabase connecté", "success");
