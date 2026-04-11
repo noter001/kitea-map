@@ -330,13 +330,10 @@ async function editRoomById(id) {
 
 function openEditModal() {
   deactivatePickMode();
-  // تعبئة الحقول أولاً
   fillForm(selectedRoom);
-  // ثم فتح المودال
   document.getElementById("modal").style.display = "flex";
   document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
   document.getElementById("actions").innerHTML = `<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
-  // التأكد من أن pickedX, pickedY تأخذ إحداثيات الغرفة
   pickedX = selectedRoom.x;
   pickedY = selectedRoom.y;
 }
@@ -351,7 +348,6 @@ async function updateRoom() {
     return;
   }
   
-  // تحديث الكائن
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
@@ -366,7 +362,6 @@ async function updateRoom() {
     showToast("Mise à jour réussie", "success");
     closeModal();
     await drawRooms();
-    // إعادة تعيين المتغيرات
     pickedX = null;
     pickedY = null;
     selectedRoom = null;
@@ -382,12 +377,17 @@ function fillForm(room) {
   document.getElementById("mat").value = room.matricule || "";
   document.getElementById("coord").value = (room.x && room.y) ? room.x + "," + room.y : "";
   document.getElementById("last_activity").value = room.last_activity || "";
-  // مهم: تعيين pickedX/Y من الغرفة الحالية
   pickedX = room.x;
   pickedY = room.y;
 }
-function clearForm() { document.getElementById("categorie").value=""; document.getElementById("name").value=""; document.getElementById("mat").value=""; document.getElementById("coord").value=""; }
-function fillForm(room) { document.getElementById("categorie").value = room.categorie||""; document.getElementById("name").value=room.name||""; document.getElementById("mat").value=room.matricule||""; document.getElementById("coord").value=(room.x&&room.y)?room.x+","+room.y:""; document.getElementById("last_activity").value=room.last_activity||""; pickedX=room.x; pickedY=room.y; }
+
+function clearForm() {
+  document.getElementById("categorie").value = "";
+  document.getElementById("name").value = "";
+  document.getElementById("mat").value = "";
+  document.getElementById("coord").value = "";
+}
+
 function closeModal() { document.getElementById("modal").style.display="none"; deactivatePickMode(); pickedX=null; pickedY=null; }
 function startPick() { closeModal(); activatePickMode(); showToast("Cliquez sur la carte", "success"); }
 function activatePickMode() { picking=true; document.getElementById('map').classList.add('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor='crosshair'; }
