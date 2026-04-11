@@ -315,34 +315,66 @@ async function deleteRoom() {
   showToast("Salle supprimée","success");
   closeModal(); selectedRoom = null; await drawRooms();
 }
-
 async function editRoomById(id) {
+  console.log("editRoomById appelé avec id:", id);
   const rooms = await getAllRooms();
   const room = rooms.find(r => r.id === id);
-  if(room) { selectedRoom = room; openEditModal(); }
+  if (room) {
+    selectedRoom = room;
+    openEditModal();
+  } else {
+    showToast("Erreur: salle non trouvée", "error");
+  }
 }
+
 function openEditModal() {
   deactivatePickMode();
+  fillForm(selectedRoom);  // تعبئة الحقول أولاً
   document.getElementById("modal").style.display = "flex";
   document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
-  fillForm(selectedRoom);
   document.getElementById("actions").innerHTML = `<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
+  // تأكيد أن pickedX/Y تم تعيينهما في fillForm
 }
+
 async function updateRoom() {
-  if(!selectedRoom) return;
-  if(!validateFormFields()) return;
+  if (!selectedRoom) return;
+  if (!validateFormFields()) return;
   const newMat = document.getElementById("mat").value.trim();
-  if(selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) { showToast("Matricule déjà utilisé","error"); return; }
+  if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) {
+    showToast("Matricule déjà utilisé", "error");
+    return;
+  }
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
-  if(pickedX !== null && pickedY !== null) { selectedRoom.x = pickedX; selectedRoom.y = pickedY; }
+  if (pickedX !== null && pickedY !== null) {
+    selectedRoom.x = pickedX;
+    selectedRoom.y = pickedY;
+  }
   selectedRoom.last_activity = new Date().toLocaleString();
-  await updateRoom(selectedRoom);
-  showToast("Mise à jour réussie","success");
-  closeModal(); await drawRooms(); pickedX=null; pickedY=null; selectedRoom=null;
+  try {
+    await updateRoom(selectedRoom);  // استدعاء دالة Supabase للتحديث
+    showToast("Mise à jour réussie", "success");
+    closeModal();
+    await drawRooms();
+    pickedX = null;
+    pickedY = null;
+    selectedRoom = null;
+  } catch (e) {
+    showToast("Erreur: " + e.message, "error");
+  }
 }
 
+function fillForm(room) {
+  if (!room) return;
+  document.getElementById("categorie").value = room.categorie || "";
+  document.getElementById("name").value = room.name || "";
+  document.getElementById("mat").value = room.matricule || "";
+  document.getElementById("coord").value = (room.x && room.y) ? room.x + "," + room.y : "";
+  document.getElementById("last_activity").value = room.last_activity || "";
+  pickedX = room.x;
+  pickedY = room.y;
+}
 function clearForm() { document.getElementById("categorie").value=""; document.getElementById("name").value=""; document.getElementById("mat").value=""; document.getElementById("coord").value=""; }
 function fillForm(room) { document.getElementById("categorie").value = room.categorie||""; document.getElementById("name").value=room.name||""; document.getElementById("mat").value=room.matricule||""; document.getElementById("coord").value=(room.x&&room.y)?room.x+","+room.y:""; document.getElementById("last_activity").value=room.last_activity||""; pickedX=room.x; pickedY=room.y; }
 function closeModal() { document.getElementById("modal").style.display="none"; deactivatePickMode(); pickedX=null; pickedY=null; }
