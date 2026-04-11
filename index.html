@@ -124,7 +124,7 @@ async function addRoom(room) {
   if (error) throw error;
   return data[0].id;
 }
-async function updateRoom(room) {
+async function updateRoomInDB(room) {
   const { error } = await supabaseClient.from(TABLE_NAME).update({
     categorie: room.categorie, name: room.name, matricule: room.matricule,
     x: room.x, y: room.y, last_activity: room.last_activity
@@ -337,7 +337,6 @@ function openEditModal() {
   pickedX = selectedRoom.x;
   pickedY = selectedRoom.y;
 }
-
 async function updateRoom() {
   if (!selectedRoom) return;
   if (!validateFormFields()) return;
