@@ -329,6 +329,10 @@ async function editRoomById(id) {
 }
 
 function openEditModal() {
+  if (!selectedRoom) {
+    showToast("Aucune salle sélectionnée", "error");
+    return;
+  }
   deactivatePickMode();
   fillForm(selectedRoom);
   document.getElementById("modal").style.display = "flex";
@@ -357,6 +361,7 @@ async function updateRoom() {
   selectedRoom.last_activity = new Date().toLocaleString();
   
   try {
+    // التصحيح هنا: استدعاء الدالة الصحيحة
     await updateRoomInDB(selectedRoom);
     showToast("Mise à jour réussie", "success");
     closeModal();
