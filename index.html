@@ -357,7 +357,7 @@ async function updateRoom() {
   selectedRoom.last_activity = new Date().toLocaleString();
   
   try {
-    await updateRoom(selectedRoom);
+    await updateRoomInDB(selectedRoom);
     showToast("Mise à jour réussie", "success");
     closeModal();
     await drawRooms();
