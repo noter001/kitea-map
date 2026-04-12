@@ -181,11 +181,7 @@ function initMap() {
 }
 
 function createPopupContent(room, catInfo) {
-  const safeId = JSON.stringify(room.id);
-  return `<div style="min-width:200px;">
-    ...
-    <button onclick="editRoomById(${safeId})" style="...">✏️ Modifier</button>
-  </div>`;
+  return `<div style="min-width:200px;"><div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color};display:flex;gap:8px;align-items:center;padding-bottom:6px;"><span>${catInfo.icon}</span><strong>${escapeHtml(room.categorie || 'Sans catégorie')}</strong></div><div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div><div><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div><div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity || '')}</div><hr style="margin:10px 0"><button onclick="editRoomById(${room.id})" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">✏️ Modifier</button></div>`;
 }
 
 async function drawRooms() {
@@ -260,11 +256,9 @@ async function focusOnRoom(id) {
   }
 }
 async function selectAndFocusRoom(id) {
-  const roomId = Number(id);
-  if (isNaN(roomId)) return;
   const rooms = await getAllRooms();
-  selectedRoom = rooms.find(r => r.id === roomId);
-  if (selectedRoom) focusOnRoom(roomId);
+  selectedRoom = rooms.find(r => r.id === id);
+  focusOnRoom(id);
 }
 
 // ============ FONCTIONS MODALES ============
@@ -335,10 +329,6 @@ async function editRoomById(id) {
 }
 
 function openEditModal() {
-  if (!selectedRoom) {
-    showToast("Aucune salle sélectionnée", "error");
-    return;
-  }
   deactivatePickMode();
   fillForm(selectedRoom);
   document.getElementById("modal").style.display = "flex";
@@ -367,8 +357,7 @@ async function updateRoom() {
   selectedRoom.last_activity = new Date().toLocaleString();
   
   try {
-    // التصحيح هنا: استدعاء الدالة الصحيحة
-    await updateRoomInDB(selectedRoom);
+    await updateRoom(selectedRoom);
     showToast("Mise à jour réussie", "success");
     closeModal();
     await drawRooms();
@@ -415,14 +404,6 @@ document.getElementById("search").addEventListener("input", async (e) => {
   if(found) { map.setView([found.y, found.x], 2); const marker = currentMarkers.find(m => { const ll=m.getLatLng(); return Math.abs(ll.lat-found.y)<1 && Math.abs(ll.lng-found.x)<1; }); if(marker) marker.openPopup(); showToast(`Trouvé: ${found.name}`,"success"); } else { showToast("Aucune salle","error"); }
 });
 
-// ربط الدوال بالنطاق العام لتعمل في onclick الديناميكي
-window.editRoomById = editRoomById;
-window.selectAndFocusRoom = selectAndFocusRoom;
-window.updateRoom = updateRoom;
-window.saveRoom = saveRoom;
-window.deleteRoom = deleteRoom;
-window.closeModal = closeModal;
-  
 // ============ INITIALISATION ============
 (async function init() {
   try {
