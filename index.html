@@ -85,7 +85,6 @@ let picking = false;
 let pickedX = null, pickedY = null;
 let selectedRoom = null;
 let currentMarkers = [];
-let cachedRooms = [];
 
 const CATEGORIES = [
   { value: 'salon et séjour', label: 'salon et séjour', icon: '🏠', color: '#667eea' },
@@ -115,22 +114,16 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 const TABLE_NAME = 'rooms';
 
 // --- Fonctions CRUD avec Supabase ---
-async function getAllRooms(forceRefresh = false) {
-
-  if (!forceRefresh && cachedRooms.length > 0) {
-    return cachedRooms;
-  }
-
+async function getAllRooms() {
   const { data, error } = await supabaseClient
     .from(TABLE_NAME)
     .select('*')
     .order('id', { ascending: true });
 
   if (error) throw error;
-
-  cachedRooms = data || [];
-  return cachedRooms;
+  return data || [];
 }
+
 
 async function addRoom(room) {
   const { data, error } = await supabaseClient.from(TABLE_NAME).insert([room]).select();
@@ -331,7 +324,6 @@ async function saveRoom() {
   try {
     await addRoom(newRoom);
 
-    cachedRooms = []; // ✅ هنا فقط
 
     showToast("Salle ajoutée","success");
 
@@ -349,21 +341,21 @@ async function saveRoom() {
 
 
 async function deleteRoom() {
-
   if(!selectedRoom) return;
-
   if(!confirm("واش متأكد؟")) return;
 
-  await deleteRoomById(selectedRoom.id);
+  try {
+    await deleteRoomById(selectedRoom.id);
 
-  cachedRooms = [];
+    showToast("Salle supprimée","success");
+    closeModal();
+    selectedRoom = null;
 
-  showToast("Salle supprimée","success");
+    await drawRooms();
 
-  closeModal();
-  selectedRoom = null;
-
-  await drawRooms();
+  } catch(e) {
+    showToast("Erreur: " + e.message,"error");
+  }
 }
 
 // ============ MODIFIER (CORRIGÉ) ============
@@ -415,7 +407,7 @@ async function updateRoom() {
   try {
     await updateRoomInDB(selectedRoom); // ✅ FIX
 
-    cachedRooms = [];
+    cachedRooms = 
 
     showToast("Mise à jour réussie","success");
 
@@ -469,16 +461,16 @@ document.getElementById("search").addEventListener("input", async (e) => {
 (async function init() {
 
   supabaseClient
-    .channel('rooms-channel')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'rooms' },
-      () => {
-        cachedRooms = [];
-        drawRooms();
-      }
-    )
-    .subscribe();
+  .channel('rooms-channel')
+  .on(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'rooms' },
+    async () => {
+      await drawRooms();
+    }
+  )
+  .subscribe();
+
 
   try {
     await initSampleData();
