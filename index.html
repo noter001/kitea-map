@@ -192,21 +192,47 @@ function createPopupContent(room, catInfo) {
 
 async function drawRooms() {
   if (!map) return;
+
   currentMarkers.forEach(m => map.removeLayer(m));
   currentMarkers = [];
+
   const rooms = await getAllRooms();
+
   rooms.forEach(room => {
     if (room.x && room.y) {
-      const catInfo = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#667eea' };
-      const marker = L.circle([room.y, room.x], { radius: 12, color: catInfo.color, fillColor: catInfo.color, fillOpacity: 0.8, weight: 3 }).addTo(map);
-      marker.bindPopup(createPopupContent(room, catInfo), { maxWidth: 260 });
-      marker.on("click", () => { selectedRoom = room; });
+
+      const catInfo =
+        CATEGORIES.find(c => c.value === room.categorie) ||
+        { icon: '📍', color: '#667eea' };
+
+      const roomData = { ...room };
+
+      const marker = L.circle([room.y, room.x], {
+        radius: 12,
+        color: catInfo.color,
+        fillColor: catInfo.color,
+        fillOpacity: 0.8,
+        weight: 3
+      }).addTo(map);
+
+      marker.bindPopup(
+        createPopupContent(roomData, catInfo),
+        { maxWidth: 260 }
+      );
+
+      marker.on("click", () => {
+        selectedRoom = roomData;
+      });
+
       currentMarkers.push(marker);
     }
   });
+
+  // 👇 هادو خاصهم يكونو داخل function
   updateStats();
   updateCategoriesList();
 }
+
 
 async function updateStats() {
   const rooms = await getAllRooms();
@@ -360,27 +386,48 @@ async function deleteRoom() {
 
 // ============ MODIFIER (CORRIGÉ) ============
 async function editRoomById(id) {
-  console.log("editRoomById appelé avec id:", id);
+  console.log("EDIT CLICK:", id);
+
   const rooms = await getAllRooms();
-  const room = rooms.find(r => r.id === id);
-  if (room) {
-    selectedRoom = room;
-    openEditModal();
-  } else {
-    showToast("Erreur: salle non trouvée", "error");
+
+  const room = rooms.find(r => String(r.id) === String(id));
+
+  if (!room) {
+    showToast("Salle non trouvée", "error");
+    return;
   }
+
+  selectedRoom = room;
+
+  // مهم: مباشرة فتح المودال
+  openEditModal();
 }
+
 
 function openEditModal() {
   deactivatePickMode();
+
+  if (!selectedRoom) {
+    showToast("Erreur: aucune salle sélectionnée", "error");
+    return;
+  }
+
   fillForm(selectedRoom);
+
   document.getElementById("modal").style.display = "flex";
-  document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
-  document.getElementById("actions").innerHTML = `<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
+
+  document.getElementById("title").innerHTML =
+    '<i class="fas fa-edit"></i> Modifier la salle';
+
+  document.getElementById("actions").innerHTML =
+    `<button onclick="updateRoom()">Mettre à jour</button>
+     <button onclick="closeModal()">Annuler</button>`;
+
   pickedX = selectedRoom.x;
   pickedY = selectedRoom.y;
 }
-window.updateRoom = async function() { 
+
+async function updateRoom() {
 
   if (!selectedRoom) return;
 
@@ -388,26 +435,16 @@ window.updateRoom = async function() {
 
   const newMat = document.getElementById("mat").value.trim();
 
-  const isChanged = selectedRoom.matricule !== newMat;
-if (isChanged) {
-  const unique = await isMatriculeUnique(newMat, selectedRoom.id);
-  if (!unique) {
+  if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) {
     showToast("Matricule déjà utilisé", "error");
     return;
   }
-}
-
 
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
 
-  if (pickedX !== null && pickedY !== null &&
-    (pickedX !== selectedRoom.x || pickedY !== selectedRoom.y)) {
-  selectedRoom.x = pickedX;
-  selectedRoom.y = pickedY;
-}
-
+  if (pickedX !== null && pickedY !== null) {
     selectedRoom.x = pickedX;
     selectedRoom.y = pickedY;
   }
