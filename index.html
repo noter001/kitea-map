@@ -380,7 +380,7 @@ function openEditModal() {
   pickedX = selectedRoom.x;
   pickedY = selectedRoom.y;
 }
-async function updateRoom() {
+window.updateRoom = async function() { 
 
   if (!selectedRoom) return;
 
@@ -388,16 +388,26 @@ async function updateRoom() {
 
   const newMat = document.getElementById("mat").value.trim();
 
-  if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) {
+  const isChanged = selectedRoom.matricule !== newMat;
+if (isChanged) {
+  const unique = await isMatriculeUnique(newMat, selectedRoom.id);
+  if (!unique) {
     showToast("Matricule déjà utilisé", "error");
     return;
   }
+}
+
 
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
 
-  if (pickedX !== null && pickedY !== null) {
+  if (pickedX !== null && pickedY !== null &&
+    (pickedX !== selectedRoom.x || pickedY !== selectedRoom.y)) {
+  selectedRoom.x = pickedX;
+  selectedRoom.y = pickedY;
+}
+
     selectedRoom.x = pickedX;
     selectedRoom.y = pickedY;
   }
