@@ -267,37 +267,97 @@ async function updateStats() {
   document.getElementById('categoryCount').innerText = cats.size;
 }
 
+// متغير عام لحفظ حالة الفئات المفتوحة
+let expandedCategories = new Set();
+
 async function updateCategoriesList() {
   const rooms = await getAllRooms();
   const container = document.getElementById('categoriesList');
-  if (!rooms.length) { container.innerHTML = '<div style="padding:20px;text-align:center;">Aucune salle</div>'; return; }
-  const byCat = {};
-  CATEGORIES.forEach(c => byCat[c.value] = []);
-  byCat[''] = [];
-  rooms.forEach(r => { const cat = r.categorie || ''; if(!byCat[cat]) byCat[cat]=[]; byCat[cat].push(r); });
+  if (!rooms.length) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;">Aucune salle</div>';
+    return;
+  }
+
+  // تجميع الغرف حسب الفئة (بما في ذلك الفئات غير المعروفة)
+  const byCat = new Map();
+  rooms.forEach(room => {
+    const cat = room.categorie || 'sans-categorie';
+    if (!byCat.has(cat)) byCat.set(cat, []);
+    byCat.get(cat).push(room);
+  });
+
+  // تحويل الـ Map إلى مصفوفة وترتيبها
+  const sortedCategories = Array.from(byCat.keys()).sort();
+
   let html = '';
-  for (let cat of CATEGORIES) if (byCat[cat.value]?.length) html += generateCatHTML(cat.value, cat.icon, cat.label, byCat[cat.value]);
-  if (byCat[''].length) html += generateCatHTML('', '📋', 'Sans catégorie', byCat[''], true);
+  for (let cat of sortedCategories) {
+    const roomsList = byCat.get(cat);
+    // البحث عن معلومات الفئة (إذا كانت معروفة)
+    const catInfo = CATEGORIES.find(c => c.value === cat) || {
+      value: cat,
+      label: cat,
+      icon: '🏷️',
+      color: '#9e9e9e'
+    };
+    const isExpanded = expandedCategories.has(cat); // استرجاع الحالة
+    html += generateCatHTML(cat, catInfo.icon, catInfo.label, roomsList, isExpanded, cat === 'sans-categorie');
+  }
   container.innerHTML = html;
   attachCategoryEvents();
 }
 
-function generateCatHTML(catValue, icon, label, roomsList, isUncategorized = false) {
-  return `<div class="category-group" data-cat="${catValue}"><div class="category-header"><div class="category-name"><i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i> <span>${icon} ${label}</span><span class="category-count">${roomsList.length}</span></div><i class="fas fa-chevron-right toggle-icon"></i></div><div class="category-rooms">${roomsList.map(room => `<div class="room-item" onclick="selectAndFocusRoom(${room.id})"><div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div><div class="room-mat">${escapeHtml(room.matricule)}</div><div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div></div>`).join('')}</div></div>`;
+function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncategorized = false) {
+  const expandedClass = isExpanded ? 'expanded' : '';
+  const rotatedClass = isExpanded ? 'rotated' : '';
+  const displayLabel = isUncategorized ? 'Sans catégorie' : label;
+  const displayIcon = isUncategorized ? '📋' : icon;
+  
+  return `<div class="category-group" data-cat="${catValue}">
+    <div class="category-header">
+      <div class="category-name">
+        <i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i>
+        <span>${displayIcon} ${escapeHtml(displayLabel)}</span>
+        <span class="category-count">${roomsList.length}</span>
+      </div>
+      <i class="fas fa-chevron-right toggle-icon ${rotatedClass}"></i>
+    </div>
+    <div class="category-rooms ${expandedClass}">
+      ${roomsList.map(room => `
+        <div class="room-item" onclick="selectAndFocusRoom(${room.id})">
+          <div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div>
+          <div class="room-mat">${escapeHtml(room.matricule)}</div>
+          <div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div>
+        </div>
+      `).join('')}
+    </div>
+  </div>`;
 }
 
 function attachCategoryEvents() {
-  document.querySelectorAll('.category-header').forEach(header => {
-    header.removeEventListener('click', header._listener);
-    const listener = (e) => {
-      const group = header.closest('.category-group');
+  document.querySelectorAll('.category-group').forEach(group => {
+    const header = group.querySelector('.category-header');
+    if (!header) return;
+    
+    // إزالة المستمع القديم إن وجد
+    const newHeader = header.cloneNode(true);
+    header.parentNode.replaceChild(newHeader, header);
+    const finalHeader = newHeader;
+    
+    finalHeader.addEventListener('click', (e) => {
+      const catValue = group.getAttribute('data-cat');
       const roomsDiv = group.querySelector('.category-rooms');
-      const icon = header.querySelector('.toggle-icon');
-      roomsDiv.classList.toggle('expanded');
-      icon.classList.toggle('rotated');
-    };
-    header.addEventListener('click', listener);
-    header._listener = listener;
+      const icon = finalHeader.querySelector('.toggle-icon');
+      
+      if (roomsDiv.classList.contains('expanded')) {
+        roomsDiv.classList.remove('expanded');
+        icon.classList.remove('rotated');
+        expandedCategories.delete(catValue);
+      } else {
+        roomsDiv.classList.add('expanded');
+        icon.classList.add('rotated');
+        expandedCategories.add(catValue);
+      }
+    });
   });
 }
 
