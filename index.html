@@ -366,11 +366,38 @@ function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m
 async function focusOnRoom(id) {
   const rooms = await getAllRooms();
   const room = rooms.find(r => r.id === id);
-  if(room && room.x && room.y) {
-    map.setView([room.y, room.x], 2);
-    const marker = currentMarkers.find(m => { const ll = m.getLatLng(); return Math.abs(ll.lat - room.y) < 1 && Math.abs(ll.lng - room.x) < 1; });
-    if(marker) marker.openPopup();
-    showToast(`${room.name}`, 'success');
+  if (!room || room.x === undefined || room.y === undefined) {
+    showToast("الغرفة لا تحتوي على إحداثيات صالحة", "error");
+    return false;
+  }
+  
+  // تحريك الخريطة إلى موقع الغرفة
+  map.setView([room.y, room.x], 2);
+  
+  // انتظار قليلاً لضمان تحديث الخريطة ثم فتح popup
+  setTimeout(() => {
+    // البحث عن الماركر المطابق للإحداثيات
+    const marker = currentMarkers.find(m => {
+      const latlng = m.getLatLng();
+      return Math.abs(latlng.lat - room.y) < 1 && Math.abs(latlng.lng - room.x) < 1;
+    });
+    if (marker) {
+      marker.openPopup();
+      showToast(`📍 ${room.name} - ${room.matricule}`, 'success');
+    } else {
+      showToast(`تم التوجيه إلى ${room.name}`, 'success');
+    }
+  }, 150);
+}
+
+async function selectAndFocusRoom(id) {
+  const rooms = await getAllRooms();
+  const room = rooms.find(r => r.id === id);
+  if (room) {
+    selectedRoom = room;
+    await focusOnRoom(id);
+  } else {
+    showToast("الغرفة غير موجودة", "error");
   }
 }
 async function selectAndFocusRoom(id) {
