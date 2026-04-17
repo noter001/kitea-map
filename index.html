@@ -187,11 +187,19 @@ function initMap() {
 }
 
 function createPopupContent(room, catInfo) {
-  return `<div style="min-width:200px;"><div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color};display:flex;gap:8px;align-items:center;padding-bottom:6px;"><span>${catInfo.icon}</span><strong>${escapeHtml(room.categorie || 'Sans catégorie')}</strong></div><div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div><div><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div><div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity || '')}</div><hr style="margin:10px 0"><button class="edit-btn" data-id="${room.id}"
-style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">
-✏️ Modifier
-</button>
-
+  return `<div style="min-width:200px;">
+    <div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color};display:flex;gap:8px;align-items:center;padding-bottom:6px;">
+      <span>${catInfo.icon}</span>
+      <strong>${escapeHtml(room.categorie || 'Sans catégorie')}</strong>
+    </div>
+    <div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div>
+    <div><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div>
+    <div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity || '')}</div>
+    <hr style="margin:10px 0">
+    <button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">
+      ✏️ Modifier
+    </button>
+  </div>`;   // ✅ إغلاق السلسلة وإضافة القوس
 }
 
 async function drawRooms() {
