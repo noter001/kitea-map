@@ -400,11 +400,6 @@ async function selectAndFocusRoom(id) {
     showToast("الغرفة غير موجودة", "error");
   }
 }
-async function selectAndFocusRoom(id) {
-  const rooms = await getAllRooms();
-  selectedRoom = rooms.find(r => r.id === id);
-  focusOnRoom(id);
-}
 
 // ============ FONCTIONS MODALES ============
 function openModal(type) {
