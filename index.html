@@ -31,7 +31,11 @@
       <i class="fas fa-plus-circle"></i> Ajouter
     </button>
   </div>
-  
+  <div class="action-card">
+    <button class="action-btn delete-btn" onclick="openModal('delete')">
+      <i class="fas fa-trash-alt"></i> Supprimer
+    </button>
+  </div>
 </div>
 
 <div class="side-panel" id="sidePanel">
@@ -215,52 +219,38 @@ async function drawRooms() {
 
       const roomData = { ...room };
 
-      // داخل drawRooms()، عند إنشاء marker
-const marker = L.circle([room.y, room.x], {
-  radius: 12,
-  color: catInfo.color,
-  fillColor: catInfo.color,
-  fillOpacity: 0.8,
-  weight: 3
-}).addTo(map);
+      const marker = L.circle([room.y, room.x], {
+        radius: 12,
+        color: catInfo.color,
+        fillColor: catInfo.color,
+        fillOpacity: 0.8,
+        weight: 3
+      }).addTo(map);
 
-// ربط popup بمحتوى يتم إنشاؤه ديناميكياً عند الفتح
-marker.bindPopup(() => {
-  const catInfoDynamic = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#667eea' };
-  return createPopupContent(room, catInfoDynamic);
-}, { maxWidth: 260 });
+      marker.bindPopup(
+        createPopupContent(roomData, catInfo),
+        { maxWidth: 260 }
+      );
 
-// ربط أحداث الأزرار بعد فتح popup
-marker.on("popupopen", (e) => {
+      marker.on("click", () => {
+        selectedRoom = roomData;
+      });
+      
+      marker.on("popupopen", (e) => {
   const popup = e.popup.getElement();
-  const editBtn = popup.querySelector(".edit-btn");
-  const deleteBtn = popup.querySelector(".delete-from-popup-btn");
+  const btn = popup.querySelector(".edit-btn");
 
-  if (editBtn) {
-    editBtn.addEventListener("click", () => {
-      const id = editBtn.getAttribute("data-id");
-      editRoomById(parseInt(id));
-    });
-  }
-
-  if (deleteBtn) {
-    deleteBtn.addEventListener("click", async () => {
-      const id = parseInt(deleteBtn.getAttribute("data-id"));
-      if (confirm("هل أنت متأكد من حذف هذه الغرفة؟")) {
-        try {
-          await deleteRoomById(id);
-          showToast("✅ الغرفة محذوفة", "success");
-          await drawRooms(); // إعادة رسم كل شيء
-          map.closePopup();
-        } catch (err) {
-          showToast("❌ خطأ في الحذف: " + err.message, "error");
-        }
-      }
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const id = btn.getAttribute("data-id");
+      editRoomById(id);
     });
   }
 });
 
-currentMarkers.push(marker);
+      
+
+      currentMarkers.push(marker);
     }
   });
 
