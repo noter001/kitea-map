@@ -323,7 +323,7 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
     </div>
     <div class="category-rooms ${expandedClass}">
       ${roomsList.map(room => `
-        <div class="room-item" onclick="selectAndFocusRoom(${room.id})">
+        <div class="room-item" data-room-id="${room.id}">
           <div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div>
           <div class="room-mat">${escapeHtml(room.matricule)}</div>
           <div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div>
@@ -332,13 +332,32 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
     </div>
   </div>`;
 }
-
+function attachRoomItemEvents() {
+  document.querySelectorAll('.room-item').forEach(item => {
+    // إزالة أي مستمع قديم لتجنب التكرار
+    item.removeEventListener('click', item._clickHandler);
+    
+    const handler = async (e) => {
+      e.stopPropagation();
+      const roomId = parseInt(item.getAttribute('data-room-id'));
+      if (roomId) {
+        console.log("✅ تم النقر على الغرفة رقم:", roomId);
+        await selectAndFocusRoom(roomId);
+      } else {
+        console.error("❌ لم يتم العثور على data-room-id");
+      }
+    };
+    
+    item.addEventListener('click', handler);
+    item._clickHandler = handler;
+  });
+}
 function attachCategoryEvents() {
   document.querySelectorAll('.category-group').forEach(group => {
     const header = group.querySelector('.category-header');
     if (!header) return;
     
-    // إزالة المستمع القديم إن وجد
+    // استنساخ لتجنب تكرار المستمعات
     const newHeader = header.cloneNode(true);
     header.parentNode.replaceChild(newHeader, header);
     const finalHeader = newHeader;
@@ -357,46 +376,73 @@ function attachCategoryEvents() {
         icon.classList.add('rotated');
         expandedCategories.add(catValue);
       }
+      
+      // بعد فتح القسم، تأكد من ربط أحداث الغرف
+      setTimeout(() => attachRoomItemEvents(), 50);
     });
   });
+  
+  // ربط الأحداث للغرف الموجودة حالياً
+  attachRoomItemEvents();
 }
 
 function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
 async function focusOnRoom(id) {
+  console.log("🔍 focusOnRoom called with id:", id);
+  
   const rooms = await getAllRooms();
   const room = rooms.find(r => r.id === id);
-  if (!room || room.x === undefined || room.y === undefined) {
+  
+  if (!room) {
+    console.error("❌ Room not found for id:", id);
+    showToast("الغرفة غير موجودة", "error");
+    return false;
+  }
+  
+  console.log("📍 Room data:", room);
+  
+  if (room.x === undefined || room.y === undefined || room.x === null || room.y === null) {
+    console.error("❌ Invalid coordinates:", room.x, room.y);
     showToast("الغرفة لا تحتوي على إحداثيات صالحة", "error");
     return false;
   }
   
-  // تحريك الخريطة إلى موقع الغرفة
-  map.setView([room.y, room.x], 2);
+  // استخدام flyTo لتأثير حركي جميل
+  map.flyTo([room.y, room.x], 2, {
+    duration: 0.8,
+    animate: true
+  });
   
-  // انتظار قليلاً لضمان تحديث الخريطة ثم فتح popup
+  // فتح popup بعد وصول الخريطة
   setTimeout(() => {
-    // البحث عن الماركر المطابق للإحداثيات
     const marker = currentMarkers.find(m => {
       const latlng = m.getLatLng();
-      return Math.abs(latlng.lat - room.y) < 1 && Math.abs(latlng.lng - room.x) < 1;
+      return Math.abs(latlng.lat - room.y) < 5 && Math.abs(latlng.lng - room.x) < 5;
     });
+    
     if (marker) {
       marker.openPopup();
-      showToast(`📍 ${room.name} - ${room.matricule}`, 'success');
+      console.log("✅ Popup opened for room:", room.name);
     } else {
-      showToast(`تم التوجيه إلى ${room.name}`, 'success');
+      console.warn("⚠️ Marker not found for coordinates:", room.x, room.y);
     }
-  }, 150);
+    
+    showToast(`📍 ${room.name} - ${room.matricule}`, 'success');
+  }, 900);
+  
+  return true;
 }
 
 async function selectAndFocusRoom(id) {
+  console.log("🖱️ selectAndFocusRoom called with id:", id);
   const rooms = await getAllRooms();
   const room = rooms.find(r => r.id === id);
   if (room) {
     selectedRoom = room;
     await focusOnRoom(id);
   } else {
+    console.error("❌ Room not found in selectAndFocusRoom");
     showToast("الغرفة غير موجودة", "error");
   }
 }
