@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#2c3e50 0%,#1a2632 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#1e2a36 0%,#0f1720 100%)}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#667eea;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#667eea;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white}.action-btn.delete-btn{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#667eea10 0%,#764ba210 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #667eea}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#667eea;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #667eea;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#eef2ff;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:480px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #667eea;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}#actions{display:flex;gap:12px;margin-top:8px}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none}#actions button:first-child{background:linear-gradient(135deg,#667eea,#764ba2);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
+*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#2c3e50 0%,#1a2632 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#1e2a36 0%,#0f1720 100%)}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#667eea;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#667eea;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#667eea10 0%,#764ba210 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #667eea}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#667eea;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #667eea;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#eef2ff;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:480px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #667eea;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#667eea,#764ba2);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
 </style>
 </head>
 <body>
@@ -31,11 +31,7 @@
       <i class="fas fa-plus-circle"></i> Ajouter
     </button>
   </div>
-  <div class="action-card">
-    <button class="action-btn delete-btn" onclick="openModal('delete')">
-      <i class="fas fa-trash-alt"></i> Supprimer
-    </button>
-  </div>
+  <!-- Le bouton Supprimer a été retiré d'ici -->
 </div>
 
 <div class="side-panel" id="sidePanel">
@@ -79,7 +75,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ============ DÉFINITIONS GLOBALES (en premier) ============
+// ============ DÉFINITIONS GLOBALES ============
 let map = null;
 let picking = false;
 let pickedX = null, pickedY = null;
@@ -97,7 +93,6 @@ const CATEGORIES = [
   { value: 'accessoire', label: 'accessoire', icon: '🔧', color: '#9e9e9e' }
 ];
 
-// === Fonction Toast (définie immédiatement) ===
 function showToast(msg, type = 'success') {
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
@@ -113,23 +108,21 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const TABLE_NAME = 'rooms';
 
-// --- Fonctions CRUD avec Supabase ---
 async function getAllRooms() {
   const { data, error } = await supabaseClient
     .from(TABLE_NAME)
     .select('*')
     .order('id', { ascending: true });
-
   if (error) throw error;
   return data || [];
 }
-
 
 async function addRoom(room) {
   const { data, error } = await supabaseClient.from(TABLE_NAME).insert([room]).select();
   if (error) throw error;
   return data[0].id;
 }
+
 async function updateRoomInDB(room) {
   const { error } = await supabaseClient.from(TABLE_NAME).update({
     categorie: room.categorie, name: room.name, matricule: room.matricule,
@@ -137,10 +130,12 @@ async function updateRoomInDB(room) {
   }).eq('id', room.id);
   if (error) throw error;
 }
+
 async function deleteRoomById(id) {
   const { error } = await supabaseClient.from(TABLE_NAME).delete().eq('id', id);
   if (error) throw error;
 }
+
 async function isMatriculeUnique(matricule, excludeId = null) {
   let query = supabaseClient.from(TABLE_NAME).select('id').eq('matricule', matricule);
   if (excludeId) query = query.neq('id', excludeId);
@@ -199,26 +194,17 @@ function createPopupContent(room, catInfo) {
     <button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">
       ✏️ Modifier
     </button>
-  </div>`;   // ✅ إغلاق السلسلة وإضافة القوس
+  </div>`;
 }
 
 async function drawRooms() {
   if (!map) return;
-
   currentMarkers.forEach(m => map.removeLayer(m));
   currentMarkers = [];
-
   const rooms = await getAllRooms();
-
   rooms.forEach(room => {
     if (room.x && room.y) {
-
-      const catInfo =
-        CATEGORIES.find(c => c.value === room.categorie) ||
-        { icon: '📍', color: '#667eea' };
-
-      const roomData = { ...room };
-
+      const catInfo = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#667eea' };
       const marker = L.circle([room.y, room.x], {
         radius: 12,
         color: catInfo.color,
@@ -226,39 +212,24 @@ async function drawRooms() {
         fillOpacity: 0.8,
         weight: 3
       }).addTo(map);
-
-      marker.bindPopup(
-        createPopupContent(roomData, catInfo),
-        { maxWidth: 260 }
-      );
-
-      marker.on("click", () => {
-        selectedRoom = roomData;
-      });
-      
+      marker.bindPopup(createPopupContent(room, catInfo), { maxWidth: 260 });
+      marker.on("click", () => { selectedRoom = room; });
       marker.on("popupopen", (e) => {
-  const popup = e.popup.getElement();
-  const btn = popup.querySelector(".edit-btn");
-
-  if (btn) {
-    btn.addEventListener("click", () => {
-      const id = btn.getAttribute("data-id");
-      editRoomById(id);
-    });
-  }
-});
-
-      
-
+        const popup = e.popup.getElement();
+        const btn = popup.querySelector(".edit-btn");
+        if (btn) {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-id");
+            editRoomById(id);
+          });
+        }
+      });
       currentMarkers.push(marker);
     }
   });
-
-  // 👇 هادو خاصهم يكونو داخل function
   updateStats();
   updateCategoriesList();
 }
-
 
 async function updateStats() {
   const rooms = await getAllRooms();
@@ -267,7 +238,6 @@ async function updateStats() {
   document.getElementById('categoryCount').innerText = cats.size;
 }
 
-// متغير عام لحفظ حالة الفئات المفتوحة
 let expandedCategories = new Set();
 
 async function updateCategoriesList() {
@@ -277,29 +247,18 @@ async function updateCategoriesList() {
     container.innerHTML = '<div style="padding:20px;text-align:center;">Aucune salle</div>';
     return;
   }
-
-  // تجميع الغرف حسب الفئة (بما في ذلك الفئات غير المعروفة)
   const byCat = new Map();
   rooms.forEach(room => {
     const cat = room.categorie || 'sans-categorie';
     if (!byCat.has(cat)) byCat.set(cat, []);
     byCat.get(cat).push(room);
   });
-
-  // تحويل الـ Map إلى مصفوفة وترتيبها
   const sortedCategories = Array.from(byCat.keys()).sort();
-
   let html = '';
   for (let cat of sortedCategories) {
     const roomsList = byCat.get(cat);
-    // البحث عن معلومات الفئة (إذا كانت معروفة)
-    const catInfo = CATEGORIES.find(c => c.value === cat) || {
-      value: cat,
-      label: cat,
-      icon: '🏷️',
-      color: '#9e9e9e'
-    };
-    const isExpanded = expandedCategories.has(cat); // استرجاع الحالة
+    const catInfo = CATEGORIES.find(c => c.value === cat) || { value: cat, label: cat, icon: '🏷️', color: '#9e9e9e' };
+    const isExpanded = expandedCategories.has(cat);
     html += generateCatHTML(cat, catInfo.icon, catInfo.label, roomsList, isExpanded, cat === 'sans-categorie');
   }
   container.innerHTML = html;
@@ -311,7 +270,6 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
   const rotatedClass = isExpanded ? 'rotated' : '';
   const displayLabel = isUncategorized ? 'Sans catégorie' : label;
   const displayIcon = isUncategorized ? '📋' : icon;
-  
   return `<div class="category-group" data-cat="${catValue}">
     <div class="category-header">
       <div class="category-name">
@@ -337,31 +295,23 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
     </div>
   </div>`;
 }
+
 function attachRoomItemEvents() {
   document.querySelectorAll('.room-item').forEach(item => {
-    // إزالة المستمع القديم
     item.removeEventListener('click', item._clickHandler);
-    
     const handler = (e) => {
       e.stopPropagation();
       const roomId = parseInt(item.getAttribute('data-room-id'));
       const x = parseFloat(item.getAttribute('data-room-x'));
       const y = parseFloat(item.getAttribute('data-room-y'));
       const name = item.getAttribute('data-room-name');
-      
-      console.log("✅ تم النقر على:", { roomId, x, y, name });
-      
       if (isNaN(x) || isNaN(y)) {
-        console.error("❌ إحداثيات غير صالحة");
-        showToast("هذه الغرفة لا تحتوي على موقع محدد", "error");
+        showToast("Cette salle n'a pas de position valide", "error");
         return;
       }
-      
-      // تحريك الخريطة مباشرة دون الاتصال بقاعدة البيانات
       if (map) {
         map.flyTo([y, x], 2, { duration: 0.8 });
         setTimeout(() => {
-          // البحث عن الماركر لفتح popup
           const marker = currentMarkers.find(m => {
             const latlng = m.getLatLng();
             return Math.abs(latlng.lat - y) < 5 && Math.abs(latlng.lng - x) < 5;
@@ -370,30 +320,24 @@ function attachRoomItemEvents() {
           showToast(`📍 ${name}`, 'success');
         }, 800);
       }
-      
-      // تحديث selectedRoom (اختياري)
       selectedRoom = { id: roomId, x, y, name };
     };
-    
     item.addEventListener('click', handler);
     item._clickHandler = handler;
   });
 }
+
 function attachCategoryEvents() {
   document.querySelectorAll('.category-group').forEach(group => {
     const header = group.querySelector('.category-header');
     if (!header) return;
-    
-    // استنساخ لتجنب تكرار المستمعات
     const newHeader = header.cloneNode(true);
     header.parentNode.replaceChild(newHeader, header);
     const finalHeader = newHeader;
-    
     finalHeader.addEventListener('click', (e) => {
       const catValue = group.getAttribute('data-cat');
       const roomsDiv = group.querySelector('.category-rooms');
       const icon = finalHeader.querySelector('.toggle-icon');
-      
       if (roomsDiv.classList.contains('expanded')) {
         roomsDiv.classList.remove('expanded');
         icon.classList.remove('rotated');
@@ -403,78 +347,34 @@ function attachCategoryEvents() {
         icon.classList.add('rotated');
         expandedCategories.add(catValue);
       }
-      
-      // بعد فتح القسم، تأكد من ربط أحداث الغرف
       setTimeout(() => attachRoomItemEvents(), 50);
     });
   });
-  
-  // ربط الأحداث للغرف الموجودة حالياً
   attachRoomItemEvents();
 }
 
 function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
 async function focusOnRoom(id) {
-  console.log("🔍 focusOnRoom called with id:", id);
-  
   const rooms = await getAllRooms();
   const room = rooms.find(r => r.id === id);
-  
-  if (!room) {
-    console.error("❌ Room not found for id:", id);
-    showToast("الغرفة غير موجودة", "error");
+  if (!room || room.x === undefined || room.y === null) {
+    showToast("Position non disponible", "error");
     return false;
   }
-  
-  console.log("📍 Room data:", room);
-  
-  if (room.x === undefined || room.y === undefined || room.x === null || room.y === null) {
-    console.error("❌ Invalid coordinates:", room.x, room.y);
-    showToast("الغرفة لا تحتوي على إحداثيات صالحة", "error");
-    return false;
-  }
-  
-  // استخدام flyTo لتأثير حركي جميل
-  map.flyTo([room.y, room.x], 2, {
-    duration: 0.8,
-    animate: true
-  });
-  
-  // فتح popup بعد وصول الخريطة
+  map.flyTo([room.y, room.x], 2, { duration: 0.8 });
   setTimeout(() => {
     const marker = currentMarkers.find(m => {
       const latlng = m.getLatLng();
       return Math.abs(latlng.lat - room.y) < 5 && Math.abs(latlng.lng - room.x) < 5;
     });
-    
-    if (marker) {
-      marker.openPopup();
-      console.log("✅ Popup opened for room:", room.name);
-    } else {
-      console.warn("⚠️ Marker not found for coordinates:", room.x, room.y);
-    }
-    
+    if (marker) marker.openPopup();
     showToast(`📍 ${room.name} - ${room.matricule}`, 'success');
   }, 900);
-  
   return true;
 }
 
-async function selectAndFocusRoom(id) {
-  console.log("🖱️ selectAndFocusRoom called with id:", id);
-  const rooms = await getAllRooms();
-  const room = rooms.find(r => r.id === id);
-  if (room) {
-    selectedRoom = room;
-    await focusOnRoom(id);
-  } else {
-    console.error("❌ Room not found in selectAndFocusRoom");
-    showToast("الغرفة غير موجودة", "error");
-  }
-}
-
-// ============ FONCTIONS MODALES ============
+// ============ MODALES ============
 function openModal(type) {
   deactivatePickMode();
   document.getElementById("modal").style.display = "flex";
@@ -487,12 +387,8 @@ function openModal(type) {
     document.getElementById("last_activity").value = now;
     selectedRoom = null; pickedX = null; pickedY = null;
     clearForm();
-  } else if (type === "delete") {
-    if (!selectedRoom) { showToast("Sélectionnez une salle sur la carte", "error"); closeModal(); return; }
-    title.innerHTML = '<i class="fas fa-trash"></i> Supprimer une salle';
-    fillForm(selectedRoom);
-    actions.innerHTML = `<button onclick="deleteRoom()" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white">Confirmer</button><button onclick="closeModal()">Annuler</button>`;
   }
+  // Le cas 'delete' a été supprimé car le bouton n'existe plus
 }
 
 function validateFormFields() {
@@ -504,21 +400,16 @@ function validateFormFields() {
 }
 
 async function saveRoom() {
-
   if(!validateFormFields()) return;
-
   if(pickedX === null || pickedY === null) {
     showToast("Sélectionnez un emplacement","error");
     return;
   }
-
   const newMat = document.getElementById("mat").value.trim();
-
   if(!await isMatriculeUnique(newMat)) {
     showToast("Matricule existe déjà","error");
     return;
   }
-
   const newRoom = {
     categorie: document.getElementById("categorie").value,
     name: document.getElementById("name").value.trim(),
@@ -527,128 +418,90 @@ async function saveRoom() {
     y: pickedY,
     last_activity: new Date().toLocaleString()
   };
-
   try {
     await addRoom(newRoom);
-
-
     showToast("Salle ajoutée","success");
-
     closeModal();
     await drawRooms();
-
     clearForm();
     pickedX = null;
     pickedY = null;
-
   } catch(e) {
     showToast("Erreur: " + e.message,"error");
   }
 }
 
-
-async function deleteRoom() {
-  if(!selectedRoom) return;
-  if(!confirm("واش متأكد؟")) return;
-
+// Nouvelle fonction de suppression utilisée dans la modale d'édition
+async function deleteCurrentRoom() {
+  if (!selectedRoom) return;
+  if (!confirm("Voulez-vous vraiment supprimer cette salle ?")) return;
   try {
     await deleteRoomById(selectedRoom.id);
-
     showToast("Salle supprimée","success");
     closeModal();
     selectedRoom = null;
-
     await drawRooms();
-
   } catch(e) {
     showToast("Erreur: " + e.message,"error");
   }
 }
 
-// ============ MODIFIER (CORRIGÉ) ============
 async function editRoomById(id) {
-  console.log("EDIT CLICK:", id);
-
   const rooms = await getAllRooms();
-
   const room = rooms.find(r => String(r.id) === String(id));
-
   if (!room) {
     showToast("Salle non trouvée", "error");
     return;
   }
-
   selectedRoom = room;
-
-  // مهم: مباشرة فتح المودال
   openEditModal();
 }
 
-
 function openEditModal() {
   deactivatePickMode();
-
   if (!selectedRoom) {
     showToast("Erreur: aucune salle sélectionnée", "error");
     return;
   }
-
   fillForm(selectedRoom);
-
   document.getElementById("modal").style.display = "flex";
-
-  document.getElementById("title").innerHTML =
-    '<i class="fas fa-edit"></i> Modifier la salle';
-
-  document.getElementById("actions").innerHTML =
-    `<button onclick="updateRoom()">Mettre à jour</button>
-     <button onclick="closeModal()">Annuler</button>`;
-
+  document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
+  // Ajout du bouton Supprimer en plus de Mettre à jour et Annuler
+  document.getElementById("actions").innerHTML = `
+    <button onclick="updateRoom()" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white">Mettre à jour</button>
+    <button onclick="deleteCurrentRoom()" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white">Supprimer</button>
+    <button onclick="closeModal()">Annuler</button>
+  `;
   pickedX = selectedRoom.x;
   pickedY = selectedRoom.y;
 }
 
 async function updateRoom() {
-
   if (!selectedRoom) return;
-
   if (!validateFormFields()) return;
-
   const newMat = document.getElementById("mat").value.trim();
-
   if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) {
     showToast("Matricule déjà utilisé", "error");
     return;
   }
-
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
-
   if (pickedX !== null && pickedY !== null) {
     selectedRoom.x = pickedX;
     selectedRoom.y = pickedY;
   }
-
   selectedRoom.last_activity = new Date().toLocaleString();
-
   try {
-    await updateRoomInDB(selectedRoom); // ✅ FIX
-
-    
-
+    await updateRoomInDB(selectedRoom);
     showToast("Mise à jour réussie","success");
-
     closeModal();
     selectedRoom = null;
-
     await drawRooms();
-
   } catch(e) {
     showToast("Erreur: " + e.message,"error");
   }
 }
-
 
 function fillForm(room) {
   if (!room) return;
@@ -687,19 +540,10 @@ document.getElementById("search").addEventListener("input", async (e) => {
 
 // ============ INITIALISATION ============
 (async function init() {
-
   supabaseClient
-  .channel('rooms-channel')
-  .on(
-    'postgres_changes',
-    { event: '*', schema: 'public', table: 'rooms' },
-    async () => {
-      await drawRooms();
-    }
-  )
-  .subscribe();
-
-
+    .channel('rooms-channel')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, async () => { await drawRooms(); })
+    .subscribe();
   try {
     await initSampleData();
     initMap();
@@ -709,9 +553,7 @@ document.getElementById("search").addEventListener("input", async (e) => {
     console.error(error);
     showToast("Erreur de connexion", "error");
   }
-
 })();
-
 </script>
 </body>
 </html>
