@@ -323,7 +323,12 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
     </div>
     <div class="category-rooms ${expandedClass}">
       ${roomsList.map(room => `
-        <div class="room-item" data-room-id="${room.id}">
+        <div class="room-item" 
+             data-room-id="${room.id}"
+             data-room-x="${room.x}"
+             data-room-y="${room.y}"
+             data-room-name="${escapeHtml(room.name)}"
+             data-room-mat="${escapeHtml(room.matricule)}">
           <div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div>
           <div class="room-mat">${escapeHtml(room.matricule)}</div>
           <div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div>
@@ -334,18 +339,40 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
 }
 function attachRoomItemEvents() {
   document.querySelectorAll('.room-item').forEach(item => {
-    // إزالة أي مستمع قديم لتجنب التكرار
+    // إزالة المستمع القديم
     item.removeEventListener('click', item._clickHandler);
     
-    const handler = async (e) => {
+    const handler = (e) => {
       e.stopPropagation();
       const roomId = parseInt(item.getAttribute('data-room-id'));
-      if (roomId) {
-        console.log("✅ تم النقر على الغرفة رقم:", roomId);
-        await selectAndFocusRoom(roomId);
-      } else {
-        console.error("❌ لم يتم العثور على data-room-id");
+      const x = parseFloat(item.getAttribute('data-room-x'));
+      const y = parseFloat(item.getAttribute('data-room-y'));
+      const name = item.getAttribute('data-room-name');
+      
+      console.log("✅ تم النقر على:", { roomId, x, y, name });
+      
+      if (isNaN(x) || isNaN(y)) {
+        console.error("❌ إحداثيات غير صالحة");
+        showToast("هذه الغرفة لا تحتوي على موقع محدد", "error");
+        return;
       }
+      
+      // تحريك الخريطة مباشرة دون الاتصال بقاعدة البيانات
+      if (map) {
+        map.flyTo([y, x], 2, { duration: 0.8 });
+        setTimeout(() => {
+          // البحث عن الماركر لفتح popup
+          const marker = currentMarkers.find(m => {
+            const latlng = m.getLatLng();
+            return Math.abs(latlng.lat - y) < 5 && Math.abs(latlng.lng - x) < 5;
+          });
+          if (marker) marker.openPopup();
+          showToast(`📍 ${name}`, 'success');
+        }, 800);
+      }
+      
+      // تحديث selectedRoom (اختياري)
+      selectedRoom = { id: roomId, x, y, name };
     };
     
     item.addEventListener('click', handler);
