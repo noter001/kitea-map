@@ -2,14 +2,14 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Indoor Map - Gestion des salles avec galerie d'images</title>
+<title>Indoor Map - Gestion des salles avec authentification</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* --- جميع الأنماط مع الثيم الأحمر --- */
-*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
+/* --- tous les styles précédents (thème rouge) + styles pour la modale de login et gestion utilisateurs --- */
+*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}.user-info i{color:#ff4d4d}.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
 
-/* ===== STYLES LIGHTBOX (unchanged) ===== */
+/* ===== STYLES LIGHTBOX ===== */
 .lightbox {
   display: none;
   position: fixed;
@@ -95,6 +95,66 @@
     padding: 0;
   }
 }
+
+/* ===== MODALES ===== */
+.modal-login, .modal-user-management {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 30000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-login .modal-box, .modal-user-management .modal-box {
+  background: white;
+  padding: 28px;
+  border-radius: 28px;
+  width: 380px;
+  max-width: 90%;
+  text-align: center;
+}
+.modal-login h3, .modal-user-management h3 {
+  color: #cc0000;
+  margin-bottom: 20px;
+}
+.modal-login input, .modal-user-management input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+}
+.modal-login button, .modal-user-management button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg,#ff4d4d,#cc0000);
+  color: white;
+  border: none;
+  border-radius: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.error-msg {
+  color: red;
+  font-size: 12px;
+  margin-top: 8px;
+}
+.user-list {
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 15px 0;
+  text-align: left;
+}
+.user-list div {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -102,6 +162,10 @@
 <div class="top-toolbar">
   <div class="left-area">
     <button class="btn-login" id="loginBtn"><i class="fas fa-user-circle"></i> Login</button>
+    <div id="userInfo" style="display:none;" class="user-info">
+      <i class="fas fa-user-check"></i> <span id="userName"></span>
+      <button id="logoutBtn" class="btn-logout">Logout</button>
+    </div>
   </div>
   <div class="search-box">
     <i class="fas fa-search"></i>
@@ -113,10 +177,15 @@
   </div>
 </div>
 
-<div class="action-group-right">
+<div class="action-group-right" id="adminActions" style="display:none;">
   <div class="action-card">
     <button class="action-btn add-btn" onclick="openModal('add')">
       <i class="fas fa-plus-circle"></i> Ajouter
+    </button>
+  </div>
+  <div class="action-card" id="manageUsersBtn" style="display:none;">
+    <button class="action-btn" style="background:linear-gradient(135deg,#555,#333);color:white;" onclick="openUserManagement()">
+      <i class="fas fa-users-cog"></i> Gérer utilisateurs
     </button>
   </div>
 </div>
@@ -154,7 +223,6 @@
   <input id="coord" placeholder="Coordonnée (X,Y) *" readonly>
   <button onclick="startPick()"><i class="fas fa-crosshairs"></i></button>
 </div>
-<!-- حقل رفع صور متعددة -->
 <div>
   <label style="font-weight:bold; display:block; margin-bottom:6px;"><i class="fas fa-images"></i> Images de la salle (plusieurs)</label>
   <input type="file" id="imageInput" accept="image/*" multiple style="padding:6px;">
@@ -165,7 +233,7 @@
 </div>
 </div>
 
-<!-- Lightbox HTML -->
+<!-- Lightbox -->
 <div id="lightbox" class="lightbox">
   <button class="close-lightbox"><i class="fas fa-times"></i></button>
   <button class="nav-btn prev"><i class="fas fa-chevron-left"></i></button>
@@ -174,10 +242,156 @@
   <div class="counter" id="lightbox-counter"></div>
 </div>
 
+<!-- Login Modal -->
+<div id="loginModal" class="modal-login">
+  <div class="modal-box">
+    <h3><i class="fas fa-lock"></i> Connexion</h3>
+    <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" autocomplete="username">
+    <input type="password" id="loginPassword" placeholder="Mot de passe" autocomplete="current-password">
+    <button id="doLoginBtn">Se connecter</button>
+    <div id="loginError" class="error-msg"></div>
+    <hr style="margin:15px 0;">
+    <p style="font-size:12px; color:#666;">Admin: admin001 / admin001<br>Utilisateurs: user01/user01, user02/user02, user03/user03</p>
+  </div>
+</div>
+
+<!-- User Management Modal (admin only) -->
+<div id="userMgmtModal" class="modal-user-management">
+  <div class="modal-box">
+    <h3><i class="fas fa-users"></i> Gestion des utilisateurs</h3>
+    <div id="userList" class="user-list"></div>
+    <input type="text" id="newUsername" placeholder="Nouveau nom d'utilisateur">
+    <input type="password" id="newPassword" placeholder="Mot de passe">
+    <button id="createUserBtn">Créer un utilisateur</button>
+    <button onclick="closeUserManagement()" style="background:#666;">Fermer</button>
+    <div id="userMgmtError" class="error-msg"></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ============ DÉFINITIONS GLOBALES (inchangées) ============
+// ============ SYSTÈME D'AUTHENTIFICATION PERSONNALISÉ ============
+let currentUser = null; // { username, isAdmin }
+
+// Base de données utilisateurs (stockée dans localStorage)
+let users = [
+  { username: "admin001", password: "admin001", isAdmin: true },
+  { username: "user01", password: "user01", isAdmin: false },
+  { username: "user02", password: "user02", isAdmin: false },
+  { username: "user03", password: "user03", isAdmin: false }
+];
+
+function loadUsersFromStorage() {
+  const stored = localStorage.getItem("app_users");
+  if (stored) {
+    users = JSON.parse(stored);
+  } else {
+    saveUsersToStorage();
+  }
+}
+
+function saveUsersToStorage() {
+  localStorage.setItem("app_users", JSON.stringify(users));
+}
+
+function authenticate(username, password) {
+  const user = users.find(u => u.username === username && u.password === password);
+  if (user) {
+    currentUser = { username: user.username, isAdmin: user.isAdmin };
+    localStorage.setItem("app_current_user", JSON.stringify(currentUser));
+    return true;
+  }
+  return false;
+}
+
+function logout() {
+  currentUser = null;
+  localStorage.removeItem("app_current_user");
+  updateUIForUser();
+}
+
+function loadCurrentUserFromStorage() {
+  const stored = localStorage.getItem("app_current_user");
+  if (stored) {
+    currentUser = JSON.parse(stored);
+    // vérifier que l'utilisateur existe encore dans la base
+    const exists = users.some(u => u.username === currentUser.username);
+    if (!exists) currentUser = null;
+  }
+  updateUIForUser();
+}
+
+function updateUIForUser() {
+  const loginBtn = document.getElementById("loginBtn");
+  const userInfoDiv = document.getElementById("userInfo");
+  const userNameSpan = document.getElementById("userName");
+  const adminActions = document.getElementById("adminActions");
+  const manageUsersBtn = document.getElementById("manageUsersBtn");
+  
+  if (currentUser) {
+    loginBtn.style.display = "none";
+    userInfoDiv.style.display = "flex";
+    userNameSpan.textContent = currentUser.username;
+    adminActions.style.display = "flex";
+    // Afficher le bouton de gestion utilisateurs uniquement pour l'admin
+    if (currentUser.isAdmin) {
+      manageUsersBtn.style.display = "block";
+    } else {
+      manageUsersBtn.style.display = "none";
+    }
+  } else {
+    loginBtn.style.display = "flex";
+    userInfoDiv.style.display = "none";
+    adminActions.style.display = "none";
+    manageUsersBtn.style.display = "none";
+  }
+  // Mettre à jour l'affichage des popups et de la carte (pour masquer les boutons Modifier/Supprimer si non connecté)
+  drawRooms(); // redessine les popups avec les bons boutons
+}
+
+// Fonctions pour la gestion utilisateurs (admin uniquement)
+function openUserManagement() {
+  if (!currentUser || !currentUser.isAdmin) return;
+  document.getElementById("userMgmtModal").style.display = "flex";
+  refreshUserList();
+}
+
+function closeUserManagement() {
+  document.getElementById("userMgmtModal").style.display = "none";
+  document.getElementById("userMgmtError").innerText = "";
+}
+
+function refreshUserList() {
+  const container = document.getElementById("userList");
+  container.innerHTML = "";
+  users.forEach(u => {
+    const div = document.createElement("div");
+    div.innerHTML = `<strong>${u.username}</strong> ${u.isAdmin ? "(Admin)" : ""}`;
+    container.appendChild(div);
+  });
+}
+
+function createNewUser() {
+  const username = document.getElementById("newUsername").value.trim();
+  const password = document.getElementById("newPassword").value.trim();
+  if (!username || !password) {
+    document.getElementById("userMgmtError").innerText = "Veuillez remplir les deux champs.";
+    return;
+  }
+  if (users.find(u => u.username === username)) {
+    document.getElementById("userMgmtError").innerText = "Ce nom d'utilisateur existe déjà.";
+    return;
+  }
+  users.push({ username, password, isAdmin: false });
+  saveUsersToStorage();
+  document.getElementById("newUsername").value = "";
+  document.getElementById("newPassword").value = "";
+  document.getElementById("userMgmtError").innerText = "Utilisateur créé avec succès.";
+  refreshUserList();
+}
+
+// ============ FONCTIONS PRINCIPALES DE L'APPLICATION ============
 let map = null;
 let picking = false;
 let pickedX = null, pickedY = null;
@@ -186,7 +400,6 @@ let currentMarkers = [];
 let currentImageFiles = [];
 let existingImages = [];
 let imagesToDelete = [];
-
 let currentGalleryImages = [];
 let currentGalleryIndex = 0;
 
@@ -354,6 +567,10 @@ function initMap() {
 }
 
 async function deleteFromPopup(roomId) {
+  if (!currentUser) {
+    showToast("Vous devez être connecté pour supprimer", "error");
+    return;
+  }
   if (!confirm("هل أنت متأكد من حذف هذه الغرفة؟")) return;
   try {
     await deleteRoomById(roomId);
@@ -423,6 +640,19 @@ function createPopupContent(room, catInfo, images) {
     }
     imagesHtml += `</div>`;
   }
+  // Boutons Modifier/Supprimer seulement si utilisateur connecté
+  let buttonsHtml = '';
+  if (currentUser) {
+    buttonsHtml = `
+      <hr style="margin:10px 0">
+      <button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;margin-bottom:8px;">
+        ✏️ Modifier
+      </button>
+      <button class="delete-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">
+        🗑️ Supprimer
+      </button>
+    `;
+  }
   return `<div style="min-width:200px;">
     ${imagesHtml}
     <div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color};display:flex;gap:8px;align-items:center;padding-bottom:6px;">
@@ -432,13 +662,7 @@ function createPopupContent(room, catInfo, images) {
     <div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div>
     <div><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div>
     <div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity || '')}</div>
-    <hr style="margin:10px 0">
-    <button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;margin-bottom:8px;">
-      ✏️ Modifier
-    </button>
-    <button class="delete-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">
-      🗑️ Supprimer
-    </button>
+    ${buttonsHtml}
   </div>`;
 }
 
@@ -471,19 +695,21 @@ async function drawRooms() {
             openLightbox(imageUrls, index);
           });
         });
-        const editBtn = popup.querySelector(".edit-btn");
-        if (editBtn) {
-          editBtn.addEventListener("click", () => {
-            const id = editBtn.getAttribute("data-id");
-            editRoomById(id);
-          });
-        }
-        const deleteBtn = popup.querySelector(".delete-popup-btn");
-        if (deleteBtn) {
-          deleteBtn.addEventListener("click", () => {
-            const id = deleteBtn.getAttribute("data-id");
-            deleteFromPopup(id);
-          });
+        if (currentUser) {
+          const editBtn = popup.querySelector(".edit-btn");
+          if (editBtn) {
+            editBtn.addEventListener("click", () => {
+              const id = editBtn.getAttribute("data-id");
+              editRoomById(id);
+            });
+          }
+          const deleteBtn = popup.querySelector(".delete-popup-btn");
+          if (deleteBtn) {
+            deleteBtn.addEventListener("click", () => {
+              const id = deleteBtn.getAttribute("data-id");
+              deleteFromPopup(id);
+            });
+          }
         }
       });
       currentMarkers.push(marker);
@@ -682,6 +908,10 @@ function clearImages() {
 
 // ============ MODALES ============
 function openModal(type) {
+  if (!currentUser) {
+    showToast("Vous devez être connecté pour ajouter/modifier", "error");
+    return;
+  }
   deactivatePickMode();
   document.getElementById("modal").style.display = "flex";
   const actions = document.getElementById("actions");
@@ -743,6 +973,10 @@ async function saveRoom() {
 }
 
 async function editRoomById(id) {
+  if (!currentUser) {
+    showToast("Vous devez être connecté pour modifier", "error");
+    return;
+  }
   const rooms = await getAllRooms();
   const room = rooms.find(r => String(r.id) === String(id));
   if (!room) {
@@ -842,7 +1076,36 @@ function togglePanel() { const panel=document.getElementById('sidePanel'); const
 function showPanel() { const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
 
 // ============ ÉVÉNEMENTS ============
-document.getElementById("loginBtn").addEventListener("click", () => { showToast("🔐 Connexion en mode invité (démo)", "success"); });
+document.getElementById("loginBtn").addEventListener("click", () => {
+  document.getElementById("loginModal").style.display = "flex";
+});
+document.getElementById("doLoginBtn").addEventListener("click", () => {
+  const username = document.getElementById("loginUsername").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+  if (authenticate(username, password)) {
+    document.getElementById("loginModal").style.display = "none";
+    document.getElementById("loginError").innerText = "";
+    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginPassword").value = "";
+    updateUIForUser();
+    showToast(`Bienvenue ${username}`, "success");
+  } else {
+    document.getElementById("loginError").innerText = "Nom d'utilisateur ou mot de passe incorrect";
+  }
+});
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  logout();
+  showToast("Déconnecté", "success");
+});
+// Fermer les modales en cliquant à l'extérieur
+window.onclick = function(event) {
+  const loginModal = document.getElementById("loginModal");
+  const userMgmtModal = document.getElementById("userMgmtModal");
+  if (event.target === loginModal) loginModal.style.display = "none";
+  if (event.target === userMgmtModal) userMgmtModal.style.display = "none";
+}
+document.getElementById("createUserBtn").addEventListener("click", createNewUser);
+
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
   if(val === "") return;
@@ -853,6 +1116,9 @@ document.getElementById("search").addEventListener("input", async (e) => {
 
 // ============ INITIALISATION ============
 (async function init() {
+  loadUsersFromStorage();
+  loadCurrentUserFromStorage();
+  
   supabaseClient
     .channel('rooms-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, async () => { await drawRooms(); })
@@ -866,13 +1132,13 @@ document.getElementById("search").addEventListener("input", async (e) => {
     initMap();
     setupImageInput();
     await drawRooms();
-    showToast("Système prêt - Support multi-images avec galerie", "success");
+    showToast("Système prêt - Authentification locale", "success");
     
+    // Lightbox events
     const lightbox = document.getElementById('lightbox');
     const closeBtn = lightbox.querySelector('.close-lightbox');
     const prevBtn = lightbox.querySelector('.prev');
     const nextBtn = lightbox.querySelector('.next');
-    
     closeBtn.addEventListener('click', closeLightbox);
     prevBtn.addEventListener('click', prevImage);
     nextBtn.addEventListener('click', nextImage);
