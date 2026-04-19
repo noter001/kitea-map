@@ -266,7 +266,7 @@
     <button id="doLoginBtn">Se connecter</button>
     <div id="loginError" class="error-msg"></div>
     <hr style="margin:15px 0;">
-    <p style="font-size:12px; color:#666;">Admin: admin001 / admin001<br>Utilisateurs: user01/user01, user02/user02, user03/user03</p>
+    <p style="font-size:12px; color:#666;">Admin: admin001 / admin001<br>Utilisateurs: user01/user01</p>
   </div>
 </div>
 
@@ -292,9 +292,7 @@ let currentUser = null;
 // Base de données utilisateurs (stockée dans localStorage)
 let users = [
   { username: "admin001", password: "admin001", isAdmin: true },
-  { username: "user01", password: "user01", isAdmin: false },
-  { username: "user02", password: "user02", isAdmin: false },
-  { username: "user03", password: "user03", isAdmin: false }
+  { username: "user01", password: "user01", isAdmin: false }
 ];
 
 function loadUsersFromStorage() {
