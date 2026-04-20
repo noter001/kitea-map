@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Indoor Map - Gestion des salles avec authentification</title>
+<title>Indoor Map - Gestion des salles avec Supabase Auth</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* --- tous les styles précédents (thème rouge) + styles pour les modales --- */
+/* --- tous les styles identiques à la version rouge (inchangés) --- */
 *{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}.user-info i{color:#ff4d4d}.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
 
 /* ===== STYLES LIGHTBOX ===== */
@@ -96,8 +96,8 @@
   }
 }
 
-/* ===== MODALES ===== */
-.modal-login, .modal-user-management {
+/* ===== MODALE LOGIN (Supabase Auth) ===== */
+.modal-login {
   display: none;
   position: fixed;
   top: 0;
@@ -109,26 +109,26 @@
   justify-content: center;
   align-items: center;
 }
-.modal-login .modal-box, .modal-user-management .modal-box {
+.modal-login .modal-box {
   background: white;
   padding: 28px;
   border-radius: 28px;
-  width: 400px;
+  width: 380px;
   max-width: 90%;
   text-align: center;
 }
-.modal-login h3, .modal-user-management h3 {
+.modal-login h3 {
   color: #cc0000;
   margin-bottom: 20px;
 }
-.modal-login input, .modal-user-management input {
+.modal-login input {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
   border: 2px solid #e2e8f0;
   border-radius: 16px;
 }
-.modal-login button, .modal-user-management button {
+.modal-login button {
   width: 100%;
   padding: 12px;
   background: linear-gradient(135deg,#ff4d4d,#cc0000);
@@ -144,32 +144,6 @@
   font-size: 12px;
   margin-top: 8px;
 }
-.user-list {
-  max-height: 250px;
-  overflow-y: auto;
-  margin: 15px 0;
-  text-align: left;
-}
-.user-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-}
-.user-item .delete-user-btn {
-  background: #eb3349;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-size: 12px;
-}
-.user-item .delete-user-btn:hover {
-  background: #c0002a;
-}
 </style>
 </head>
 <body>
@@ -178,7 +152,7 @@
   <div class="left-area">
     <button class="btn-login" id="loginBtn"><i class="fas fa-user-circle"></i> Login</button>
     <div id="userInfo" style="display:none;" class="user-info">
-      <i class="fas fa-user-check"></i> <span id="userName"></span>
+      <i class="fas fa-user-check"></i> <span id="userEmail"></span>
       <button id="logoutBtn" class="btn-logout">Logout</button>
     </div>
   </div>
@@ -196,11 +170,6 @@
   <div class="action-card">
     <button class="action-btn add-btn" onclick="openModal('add')">
       <i class="fas fa-plus-circle"></i> Ajouter
-    </button>
-  </div>
-  <div class="action-card" id="manageUsersBtn" style="display:none;">
-    <button class="action-btn" style="background:linear-gradient(135deg,#555,#333);color:white;" onclick="openUserManagement()">
-      <i class="fas fa-users-cog"></i> Gérer utilisateurs
     </button>
   </div>
 </div>
@@ -257,177 +226,92 @@
   <div class="counter" id="lightbox-counter"></div>
 </div>
 
-<!-- Login Modal -->
+<!-- Login Modal Supabase -->
 <div id="loginModal" class="modal-login">
   <div class="modal-box">
     <h3><i class="fas fa-lock"></i> Connexion</h3>
-    <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" autocomplete="username">
-    <input type="password" id="loginPassword" placeholder="Mot de passe" autocomplete="current-password">
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Mot de passe">
     <button id="doLoginBtn">Se connecter</button>
     <div id="loginError" class="error-msg"></div>
     <hr style="margin:15px 0;">
-    <p style="font-size:12px; color:#666;">Admin: admin001 / admin001<br>Utilisateurs: user01/user01</p>
-  </div>
-</div>
-
-<!-- User Management Modal (admin only) -->
-<div id="userMgmtModal" class="modal-user-management">
-  <div class="modal-box">
-    <h3><i class="fas fa-users"></i> Gestion des utilisateurs</h3>
-    <div id="userList" class="user-list"></div>
-    <input type="text" id="newUsername" placeholder="Nouveau nom d'utilisateur">
-    <input type="password" id="newPassword" placeholder="Mot de passe">
-    <button id="createUserBtn">Créer un utilisateur</button>
-    <button onclick="closeUserManagement()" style="background:#666;">Fermer</button>
-    <div id="userMgmtError" class="error-msg"></div>
+    <p style="font-size:12px; color:#666;">Contactez l'administrateur pour obtenir un compte.</p>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ============ SYSTÈME D'AUTHENTIFICATION PERSONNALISÉ AVEC SUPPRESSION ============
-let currentUser = null;
+// ============ CONFIGURATION SUPABASE (déjà utilisée pour les données) ============
+const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
 
-// Base de données utilisateurs (stockée dans localStorage)
-let users = [
-  { username: "admin001", password: "admin001", isAdmin: true },
-  { username: "user01", password: "user01", isAdmin: false }
-];
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function loadUsersFromStorage() {
-  const stored = localStorage.getItem("app_users");
-  if (stored) {
-    users = JSON.parse(stored);
+// ============ GESTION DE L'AUTHENTIFICATION ============
+let currentUser = null;      // { id, email, isAdmin }
+let isAdmin = false;
+
+// Vérifier la session existante
+async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.user) {
+    currentUser = session.user;
+    await checkAdminStatus();
+    updateUIForUser();
+  }
+}
+
+async function checkAdminStatus() {
+  if (!currentUser) return false;
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('is_admin')
+    .eq('id', currentUser.id)
+    .maybeSingle();
+  if (error) {
+    console.error(error);
+    isAdmin = false;
   } else {
-    saveUsersToStorage();
+    isAdmin = data?.is_admin || false;
   }
+  return isAdmin;
 }
 
-function saveUsersToStorage() {
-  localStorage.setItem("app_users", JSON.stringify(users));
-}
-
-function authenticate(username, password) {
-  const user = users.find(u => u.username === username && u.password === password);
-  if (user) {
-    currentUser = { username: user.username, isAdmin: user.isAdmin };
-    localStorage.setItem("app_current_user", JSON.stringify(currentUser));
-    return true;
-  }
-  return false;
-}
-
-function logout() {
-  currentUser = null;
-  localStorage.removeItem("app_current_user");
+async function login(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw error;
+  currentUser = data.user;
+  await checkAdminStatus();
   updateUIForUser();
+  return true;
 }
 
-function loadCurrentUserFromStorage() {
-  const stored = localStorage.getItem("app_current_user");
-  if (stored) {
-    currentUser = JSON.parse(stored);
-    // vérifier que l'utilisateur existe encore dans la base
-    const exists = users.some(u => u.username === currentUser.username);
-    if (!exists) currentUser = null;
-  }
+async function logout() {
+  await supabase.auth.signOut();
+  currentUser = null;
+  isAdmin = false;
   updateUIForUser();
 }
 
 function updateUIForUser() {
   const loginBtn = document.getElementById("loginBtn");
   const userInfoDiv = document.getElementById("userInfo");
-  const userNameSpan = document.getElementById("userName");
+  const userEmailSpan = document.getElementById("userEmail");
   const adminActions = document.getElementById("adminActions");
-  const manageUsersBtn = document.getElementById("manageUsersBtn");
   
   if (currentUser) {
     loginBtn.style.display = "none";
     userInfoDiv.style.display = "flex";
-    userNameSpan.textContent = currentUser.username;
-    adminActions.style.display = "flex";
-    if (currentUser.isAdmin) {
-      manageUsersBtn.style.display = "block";
-    } else {
-      manageUsersBtn.style.display = "none";
-    }
+    userEmailSpan.textContent = currentUser.email;
+    adminActions.style.display = isAdmin ? "flex" : "none";
   } else {
     loginBtn.style.display = "flex";
     userInfoDiv.style.display = "none";
     adminActions.style.display = "none";
-    manageUsersBtn.style.display = "none";
   }
-  drawRooms(); // rafraîchir les popups pour masquer les boutons si non connecté
-}
-
-// Gestion utilisateurs (admin)
-function openUserManagement() {
-  if (!currentUser || !currentUser.isAdmin) return;
-  document.getElementById("userMgmtModal").style.display = "flex";
-  refreshUserList();
-}
-
-function closeUserManagement() {
-  document.getElementById("userMgmtModal").style.display = "none";
-  document.getElementById("userMgmtError").innerText = "";
-}
-
-function refreshUserList() {
-  const container = document.getElementById("userList");
-  container.innerHTML = "";
-  users.forEach(u => {
-    const div = document.createElement("div");
-    div.className = "user-item";
-    div.innerHTML = `
-      <span><strong>${escapeHtml(u.username)}</strong> ${u.isAdmin ? "(Admin)" : ""}</span>
-      ${(!u.isAdmin && currentUser && currentUser.isAdmin && u.username !== currentUser.username) ? 
-        `<button class="delete-user-btn" data-username="${u.username}">🗑️ Supprimer</button>` : ''}
-    `;
-    if (!u.isAdmin && currentUser && currentUser.isAdmin && u.username !== currentUser.username) {
-      const delBtn = div.querySelector(".delete-user-btn");
-      delBtn.addEventListener("click", () => deleteUser(u.username));
-    }
-    container.appendChild(div);
-  });
-}
-
-function deleteUser(username) {
-  if (!currentUser || !currentUser.isAdmin) return;
-  if (username === currentUser.username) {
-    showToast("Vous ne pouvez pas supprimer votre propre compte", "error");
-    return;
-  }
-  const userToDelete = users.find(u => u.username === username);
-  if (userToDelete && userToDelete.isAdmin) {
-    showToast("Impossible de supprimer un autre administrateur", "error");
-    return;
-  }
-  if (confirm(`Voulez-vous vraiment supprimer l'utilisateur "${username}" ?`)) {
-    users = users.filter(u => u.username !== username);
-    saveUsersToStorage();
-    refreshUserList();
-    showToast(`Utilisateur ${username} supprimé`, "success");
-  }
-}
-
-function createNewUser() {
-  const username = document.getElementById("newUsername").value.trim();
-  const password = document.getElementById("newPassword").value.trim();
-  if (!username || !password) {
-    document.getElementById("userMgmtError").innerText = "Veuillez remplir les deux champs.";
-    return;
-  }
-  if (users.find(u => u.username === username)) {
-    document.getElementById("userMgmtError").innerText = "Ce nom d'utilisateur existe déjà.";
-    return;
-  }
-  users.push({ username, password, isAdmin: false });
-  saveUsersToStorage();
-  document.getElementById("newUsername").value = "";
-  document.getElementById("newPassword").value = "";
-  document.getElementById("userMgmtError").innerText = "Utilisateur créé avec succès.";
-  refreshUserList();
+  // Rafraîchir les popups pour afficher/masquer les boutons
+  drawRooms();
 }
 
 // ============ FONCTIONS PRINCIPALES DE L'APPLICATION (inchangées) ============
@@ -461,30 +345,21 @@ function showToast(msg, type = 'success') {
   setTimeout(() => toast.remove(), 3000);
 }
 
-// ============ CONFIGURATION SUPABASE ============
-const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
-
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// === CRUD Rooms (identique à avant, utilise supabase client) ===
+const supabaseClient = supabase; // réutilisation
 const TABLE_NAME = 'rooms';
 const IMAGES_TABLE = 'room_images';
 const STORAGE_BUCKET = 'room-images';
 
-// === Fonctions de gestion des images ===
 async function uploadImage(file, roomId) {
   if (!file) return null;
   const ext = file.name.split('.').pop();
   const fileName = `${roomId}_${Date.now()}_${Math.random()}.${ext}`;
   const { data, error } = await supabaseClient.storage
     .from(STORAGE_BUCKET)
-    .upload(fileName, file, {
-      cacheControl: '3600',
-      contentType: file.type
-    });
+    .upload(fileName, file, { cacheControl: '3600', contentType: file.type });
   if (error) throw error;
-  const { data: publicUrlData } = supabaseClient.storage
-    .from(STORAGE_BUCKET)
-    .getPublicUrl(fileName);
+  const { data: publicUrlData } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
   return publicUrlData.publicUrl;
 }
 
@@ -498,44 +373,29 @@ async function deleteImageFromStorage(imageUrl) {
 }
 
 async function addRoomImage(roomId, imageUrl) {
-  const { error } = await supabaseClient.from(IMAGES_TABLE).insert({
-    room_id: roomId,
-    image_url: imageUrl
-  });
+  const { error } = await supabaseClient.from(IMAGES_TABLE).insert({ room_id: roomId, image_url: imageUrl });
   if (error) throw error;
 }
 
 async function getRoomImages(roomId) {
-  const { data, error } = await supabaseClient
-    .from(IMAGES_TABLE)
-    .select('*')
-    .eq('room_id', roomId)
-    .order('id', { ascending: true });
+  const { data, error } = await supabaseClient.from(IMAGES_TABLE).select('*').eq('room_id', roomId).order('id', { ascending: true });
   if (error) throw error;
   return data || [];
 }
 
 async function deleteRoomImage(imageId, imageUrl) {
-  const { error } = await supabaseClient.from(IMAGES_TABLE).delete().eq('id', imageId);
-  if (error) throw error;
+  await supabaseClient.from(IMAGES_TABLE).delete().eq('id', imageId);
   await deleteImageFromStorage(imageUrl);
 }
 
 async function deleteAllRoomImages(roomId) {
   const images = await getRoomImages(roomId);
-  for (const img of images) {
-    await deleteImageFromStorage(img.image_url);
-  }
-  const { error } = await supabaseClient.from(IMAGES_TABLE).delete().eq('room_id', roomId);
-  if (error) throw error;
+  for (const img of images) await deleteImageFromStorage(img.image_url);
+  await supabaseClient.from(IMAGES_TABLE).delete().eq('room_id', roomId);
 }
 
-// === CRUD Rooms ===
 async function getAllRooms() {
-  const { data, error } = await supabaseClient
-    .from(TABLE_NAME)
-    .select('*')
-    .order('id', { ascending: true });
+  const { data, error } = await supabaseClient.from(TABLE_NAME).select('*').order('id', { ascending: true });
   if (error) throw error;
   return data || [];
 }
@@ -586,7 +446,7 @@ async function initSampleData() {
   }
 }
 
-// ============ FONCTIONS DE LA CARTE ============
+// ============ FONCTIONS DE LA CARTE (avec gestion des droits) ============
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
   let bounds = [[0, 0], [3000, 2669]];
@@ -621,7 +481,6 @@ async function deleteFromPopup(roomId) {
   }
 }
 
-// Lightbox functions
 function openLightbox(imageUrls, startIndex) {
   if (!imageUrls || imageUrls.length === 0) return;
   currentGalleryImages = imageUrls;
@@ -1117,33 +976,29 @@ function showPanel() { const panel=document.getElementById('sidePanel'); panel.c
 document.getElementById("loginBtn").addEventListener("click", () => {
   document.getElementById("loginModal").style.display = "flex";
 });
-document.getElementById("doLoginBtn").addEventListener("click", () => {
-  const username = document.getElementById("loginUsername").value.trim();
+document.getElementById("doLoginBtn").addEventListener("click", async () => {
+  const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
-  if (authenticate(username, password)) {
+  try {
+    await login(email, password);
     document.getElementById("loginModal").style.display = "none";
     document.getElementById("loginError").innerText = "";
-    document.getElementById("loginUsername").value = "";
+    document.getElementById("loginEmail").value = "";
     document.getElementById("loginPassword").value = "";
-    updateUIForUser();
-    showToast(`Bienvenue ${username}`, "success");
-  } else {
-    document.getElementById("loginError").innerText = "Nom d'utilisateur ou mot de passe incorrect";
+    showToast(`Bienvenue ${email}`, "success");
+  } catch (error) {
+    document.getElementById("loginError").innerText = error.message || "Email ou mot de passe incorrect";
   }
 });
 document.getElementById("logoutBtn").addEventListener("click", () => {
   logout();
   showToast("Déconnecté", "success");
 });
-// Fermer les modales en cliquant à l'extérieur
+// Fermer la modale en cliquant à l'extérieur
 window.onclick = function(event) {
   const loginModal = document.getElementById("loginModal");
-  const userMgmtModal = document.getElementById("userMgmtModal");
   if (event.target === loginModal) loginModal.style.display = "none";
-  if (event.target === userMgmtModal) userMgmtModal.style.display = "none";
 }
-document.getElementById("createUserBtn").addEventListener("click", createNewUser);
-
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
   if(val === "") return;
@@ -1154,8 +1009,7 @@ document.getElementById("search").addEventListener("input", async (e) => {
 
 // ============ INITIALISATION ============
 (async function init() {
-  loadUsersFromStorage();
-  loadCurrentUserFromStorage();
+  await checkSession(); // restaure la session si elle existe
   
   supabaseClient
     .channel('rooms-channel')
@@ -1170,9 +1024,8 @@ document.getElementById("search").addEventListener("input", async (e) => {
     initMap();
     setupImageInput();
     await drawRooms();
-    showToast("Système prêt - Authentification avec suppression utilisateurs", "success");
+    showToast("Système prêt - Authentification Supabase", "success");
     
-    // Lightbox events
     const lightbox = document.getElementById('lightbox');
     const closeBtn = lightbox.querySelector('.close-lightbox');
     const prevBtn = lightbox.querySelector('.prev');
