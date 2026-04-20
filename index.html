@@ -2,14 +2,14 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Indoor Map - Gestion des salles avec Supabase Auth</title>
+<title>Indoor Map - Gestion des salles avec user_profiles</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* --- tous les styles identiques à la version rouge (inchangés) --- */
+/* ===== جميع الأنماط (نفس الثيم الأحمر مع lightbox) ===== */
 *{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}.user-info i{color:#ff4d4d}.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
 
-/* ===== STYLES LIGHTBOX ===== */
+/* ===== LIGHTBOX ===== */
 .lightbox {
   display: none;
   position: fixed;
@@ -96,7 +96,7 @@
   }
 }
 
-/* ===== MODALE LOGIN (Supabase Auth) ===== */
+/* ===== MODALE LOGIN ===== */
 .modal-login {
   display: none;
   position: fixed;
@@ -226,7 +226,7 @@
   <div class="counter" id="lightbox-counter"></div>
 </div>
 
-<!-- Login Modal Supabase -->
+<!-- Login Modal -->
 <div id="loginModal" class="modal-login">
   <div class="modal-box">
     <h3><i class="fas fa-lock"></i> Connexion</h3>
@@ -242,47 +242,44 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ============ CONFIGURATION SUPABASE (déjà utilisée pour les données) ============
+// ============ AUTHENTIFICATION AVEC user_profiles ============
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ============ GESTION DE L'AUTHENTIFICATION ============
-let currentUser = null;      // { id, email, isAdmin }
+let currentUser = null;
 let isAdmin = false;
 
-// Vérifier la session existante
 async function checkSession() {
   const { data: { session } } = await supabase.auth.getSession();
   if (session?.user) {
     currentUser = session.user;
-    await checkAdminStatus();
+    await checkAdminStatus(currentUser.id);
     updateUIForUser();
   }
 }
 
-async function checkAdminStatus() {
-  if (!currentUser) return false;
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('is_admin')
-    .eq('id', currentUser.id)
-    .maybeSingle();
-  if (error) {
-    console.error(error);
+async function checkAdminStatus(userId) {
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('is_admin')
+      .eq('id', userId)
+      .maybeSingle();
+    if (error) throw error;
+    isAdmin = data?.is_admin === true;
+  } catch (err) {
+    console.error('Erreur lecture user_profiles:', err);
     isAdmin = false;
-  } else {
-    isAdmin = data?.is_admin || false;
   }
-  return isAdmin;
 }
 
 async function login(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
   currentUser = data.user;
-  await checkAdminStatus();
+  await checkAdminStatus(currentUser.id);
   updateUIForUser();
   return true;
 }
@@ -299,7 +296,6 @@ function updateUIForUser() {
   const userInfoDiv = document.getElementById("userInfo");
   const userEmailSpan = document.getElementById("userEmail");
   const adminActions = document.getElementById("adminActions");
-  
   if (currentUser) {
     loginBtn.style.display = "none";
     userInfoDiv.style.display = "flex";
@@ -310,11 +306,15 @@ function updateUIForUser() {
     userInfoDiv.style.display = "none";
     adminActions.style.display = "none";
   }
-  // Rafraîchir les popups pour afficher/masquer les boutons
   drawRooms();
 }
 
-// ============ FONCTIONS PRINCIPALES DE L'APPLICATION (inchangées) ============
+// ============ CRUD ET CARTE ============
+const supabaseClient = supabase;
+const TABLE_NAME = 'rooms';
+const IMAGES_TABLE = 'room_images';
+const STORAGE_BUCKET = 'room-images';
+
 let map = null;
 let picking = false;
 let pickedX = null, pickedY = null;
@@ -345,19 +345,11 @@ function showToast(msg, type = 'success') {
   setTimeout(() => toast.remove(), 3000);
 }
 
-// === CRUD Rooms (identique à avant, utilise supabase client) ===
-const supabaseClient = supabase; // réutilisation
-const TABLE_NAME = 'rooms';
-const IMAGES_TABLE = 'room_images';
-const STORAGE_BUCKET = 'room-images';
-
 async function uploadImage(file, roomId) {
   if (!file) return null;
   const ext = file.name.split('.').pop();
   const fileName = `${roomId}_${Date.now()}_${Math.random()}.${ext}`;
-  const { data, error } = await supabaseClient.storage
-    .from(STORAGE_BUCKET)
-    .upload(fileName, file, { cacheControl: '3600', contentType: file.type });
+  const { data, error } = await supabaseClient.storage.from(STORAGE_BUCKET).upload(fileName, file, { cacheControl: '3600', contentType: file.type });
   if (error) throw error;
   const { data: publicUrlData } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
   return publicUrlData.publicUrl;
@@ -367,9 +359,7 @@ async function deleteImageFromStorage(imageUrl) {
   if (!imageUrl) return;
   const urlParts = imageUrl.split('/');
   const fileName = urlParts[urlParts.length - 1];
-  if (fileName) {
-    await supabaseClient.storage.from(STORAGE_BUCKET).remove([fileName]);
-  }
+  if (fileName) await supabaseClient.storage.from(STORAGE_BUCKET).remove([fileName]);
 }
 
 async function addRoomImage(roomId, imageUrl) {
@@ -446,7 +436,6 @@ async function initSampleData() {
   }
 }
 
-// ============ FONCTIONS DE LA CARTE (avec gestion des droits) ============
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
   let bounds = [[0, 0], [3000, 2669]];
@@ -466,19 +455,14 @@ function initMap() {
 }
 
 async function deleteFromPopup(roomId) {
-  if (!currentUser) {
-    showToast("Vous devez être connecté pour supprimer", "error");
-    return;
-  }
+  if (!currentUser) { showToast("Vous devez être connecté pour supprimer", "error"); return; }
   if (!confirm("هل أنت متأكد من حذف هذه الغرفة؟")) return;
   try {
     await deleteRoomById(roomId);
     showToast("تم حذف الغرفة بنجاح", "success");
     if (map) map.closePopup();
     await drawRooms();
-  } catch(e) {
-    showToast("خطأ في الحذف: " + e.message, "error");
-  }
+  } catch(e) { showToast("خطأ في الحذف: " + e.message, "error"); }
 }
 
 function openLightbox(imageUrls, startIndex) {
@@ -498,22 +482,9 @@ function updateLightboxImage() {
   }
 }
 
-function nextImage() {
-  if (currentGalleryImages.length === 0) return;
-  currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length;
-  updateLightboxImage();
-}
-
-function prevImage() {
-  if (currentGalleryImages.length === 0) return;
-  currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
-  updateLightboxImage();
-}
-
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('active');
-  currentGalleryImages = [];
-}
+function nextImage() { if (currentGalleryImages.length) { currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length; updateLightboxImage(); } }
+function prevImage() { if (currentGalleryImages.length) { currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length; updateLightboxImage(); } }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); currentGalleryImages = []; }
 
 function createPopupContent(room, catInfo, images) {
   let imagesHtml = '';
@@ -523,18 +494,10 @@ function createPopupContent(room, catInfo, images) {
     const moreCount = images.length - 3;
     imagesHtml = `<div style="display:flex; gap:5px; margin-bottom:8px; flex-wrap:wrap;">`;
     displayImages.forEach((img, idx) => {
-      imagesHtml += `<img src="${img.image_url}" 
-        class="popup-gallery-img" 
-        data-image-urls='${JSON.stringify(imageUrls)}' 
-        data-index="${idx}"
-        style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid #ddd; cursor:pointer;">`;
+      imagesHtml += `<img src="${img.image_url}" class="popup-gallery-img" data-image-urls='${JSON.stringify(imageUrls)}' data-index="${idx}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid #ddd; cursor:pointer;">`;
     });
     if (moreCount > 0) {
-      imagesHtml += `<div 
-        class="popup-gallery-more" 
-        data-image-urls='${JSON.stringify(imageUrls)}' 
-        data-index="3"
-        style="width:60px; height:60px; background:#eee; display:flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer;">+${moreCount}</div>`;
+      imagesHtml += `<div class="popup-gallery-more" data-image-urls='${JSON.stringify(imageUrls)}' data-index="3" style="width:60px; height:60px; background:#eee; display:flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer;">+${moreCount}</div>`;
     }
     imagesHtml += `</div>`;
   }
@@ -542,12 +505,8 @@ function createPopupContent(room, catInfo, images) {
   if (currentUser) {
     buttonsHtml = `
       <hr style="margin:10px 0">
-      <button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;margin-bottom:8px;">
-        ✏️ Modifier
-      </button>
-      <button class="delete-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">
-        🗑️ Supprimer
-      </button>
+      <button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;margin-bottom:8px;">✏️ Modifier</button>
+      <button class="delete-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">🗑️ Supprimer</button>
     `;
   }
   return `<div style="min-width:200px;">
@@ -572,13 +531,7 @@ async function drawRooms() {
     if (room.x && room.y) {
       const catInfo = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#ff4d4d' };
       const images = await getRoomImages(room.id);
-      const marker = L.circle([room.y, room.x], {
-        radius: 12,
-        color: catInfo.color,
-        fillColor: catInfo.color,
-        fillOpacity: 0.8,
-        weight: 3
-      }).addTo(map);
+      const marker = L.circle([room.y, room.x], { radius: 12, color: catInfo.color, fillColor: catInfo.color, fillOpacity: 0.8, weight: 3 }).addTo(map);
       marker.bindPopup(createPopupContent(room, catInfo, images), { maxWidth: 260 });
       marker.on("click", () => { selectedRoom = room; });
       marker.on("popupopen", (e) => {
@@ -594,19 +547,9 @@ async function drawRooms() {
         });
         if (currentUser) {
           const editBtn = popup.querySelector(".edit-btn");
-          if (editBtn) {
-            editBtn.addEventListener("click", () => {
-              const id = editBtn.getAttribute("data-id");
-              editRoomById(id);
-            });
-          }
+          if (editBtn) editBtn.addEventListener("click", () => editRoomById(editBtn.getAttribute("data-id")));
           const deleteBtn = popup.querySelector(".delete-popup-btn");
-          if (deleteBtn) {
-            deleteBtn.addEventListener("click", () => {
-              const id = deleteBtn.getAttribute("data-id");
-              deleteFromPopup(id);
-            });
-          }
+          if (deleteBtn) deleteBtn.addEventListener("click", () => deleteFromPopup(deleteBtn.getAttribute("data-id")));
         }
       });
       currentMarkers.push(marker);
@@ -628,16 +571,9 @@ let expandedCategories = new Set();
 async function updateCategoriesList() {
   const rooms = await getAllRooms();
   const container = document.getElementById('categoriesList');
-  if (!rooms.length) {
-    container.innerHTML = '<div style="padding:20px;text-align:center;">Aucune salle</div>';
-    return;
-  }
+  if (!rooms.length) { container.innerHTML = '<div style="padding:20px;text-align:center;">Aucune salle</div>'; return; }
   const byCat = new Map();
-  rooms.forEach(room => {
-    const cat = room.categorie || 'sans-categorie';
-    if (!byCat.has(cat)) byCat.set(cat, []);
-    byCat.get(cat).push(room);
-  });
+  rooms.forEach(room => { const cat = room.categorie || 'sans-categorie'; if (!byCat.has(cat)) byCat.set(cat, []); byCat.get(cat).push(room); });
   const sortedCategories = Array.from(byCat.keys()).sort();
   let html = '';
   for (let cat of sortedCategories) {
@@ -657,26 +593,11 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
   const displayIcon = isUncategorized ? '📋' : icon;
   return `<div class="category-group" data-cat="${catValue}">
     <div class="category-header">
-      <div class="category-name">
-        <i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i>
-        <span>${displayIcon} ${escapeHtml(displayLabel)}</span>
-        <span class="category-count">${roomsList.length}</span>
-      </div>
+      <div class="category-name"><i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i><span>${displayIcon} ${escapeHtml(displayLabel)}</span><span class="category-count">${roomsList.length}</span></div>
       <i class="fas fa-chevron-right toggle-icon ${rotatedClass}"></i>
     </div>
     <div class="category-rooms ${expandedClass}">
-      ${roomsList.map(room => `
-        <div class="room-item" 
-             data-room-id="${room.id}"
-             data-room-x="${room.x}"
-             data-room-y="${room.y}"
-             data-room-name="${escapeHtml(room.name)}"
-             data-room-mat="${escapeHtml(room.matricule)}">
-          <div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div>
-          <div class="room-mat">${escapeHtml(room.matricule)}</div>
-          <div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div>
-        </div>
-      `).join('')}
+      ${roomsList.map(room => `<div class="room-item" data-room-id="${room.id}" data-room-x="${room.x}" data-room-y="${room.y}" data-room-name="${escapeHtml(room.name)}" data-room-mat="${escapeHtml(room.matricule)}"><div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div><div class="room-mat">${escapeHtml(room.matricule)}</div><div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div></div>`).join('')}
     </div>
   </div>`;
 }
@@ -690,17 +611,11 @@ function attachRoomItemEvents() {
       const x = parseFloat(item.getAttribute('data-room-x'));
       const y = parseFloat(item.getAttribute('data-room-y'));
       const name = item.getAttribute('data-room-name');
-      if (isNaN(x) || isNaN(y)) {
-        showToast("Cette salle n'a pas de position valide", "error");
-        return;
-      }
+      if (isNaN(x) || isNaN(y)) { showToast("Cette salle n'a pas de position valide", "error"); return; }
       if (map) {
         map.flyTo([y, x], 2, { duration: 0.8 });
         setTimeout(() => {
-          const marker = currentMarkers.find(m => {
-            const latlng = m.getLatLng();
-            return Math.abs(latlng.lat - y) < 5 && Math.abs(latlng.lng - x) < 5;
-          });
+          const marker = currentMarkers.find(m => { const ll = m.getLatLng(); return Math.abs(ll.lat - y) < 5 && Math.abs(ll.lng - x) < 5; });
           if (marker) marker.openPopup();
           showToast(`📍 ${name}`, 'success');
         }, 800);
@@ -723,15 +638,8 @@ function attachCategoryEvents() {
       const catValue = group.getAttribute('data-cat');
       const roomsDiv = group.querySelector('.category-rooms');
       const icon = finalHeader.querySelector('.toggle-icon');
-      if (roomsDiv.classList.contains('expanded')) {
-        roomsDiv.classList.remove('expanded');
-        icon.classList.remove('rotated');
-        expandedCategories.delete(catValue);
-      } else {
-        roomsDiv.classList.add('expanded');
-        icon.classList.add('rotated');
-        expandedCategories.add(catValue);
-      }
+      if (roomsDiv.classList.contains('expanded')) { roomsDiv.classList.remove('expanded'); icon.classList.remove('rotated'); expandedCategories.delete(catValue); }
+      else { roomsDiv.classList.add('expanded'); icon.classList.add('rotated'); expandedCategories.add(catValue); }
       setTimeout(() => attachRoomItemEvents(), 50);
     });
   });
@@ -740,48 +648,31 @@ function attachCategoryEvents() {
 
 function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-// ============ GESTION DES IMAGES DANS LE MODAL ============
 function setupImageInput() {
   const input = document.getElementById('imageInput');
   input.onchange = (e) => {
     const files = Array.from(e.target.files);
-    if (files.length) {
-      currentImageFiles.push(...files);
-      updateImagePreview();
-    }
+    if (files.length) { currentImageFiles.push(...files); updateImagePreview(); }
     input.value = '';
   };
 }
-
 function updateImagePreview() {
   const container = document.getElementById('imagePreviewContainer');
   container.innerHTML = '';
   currentImageFiles.forEach((file, index) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
-      const div = document.createElement('div');
-      div.className = 'image-item';
-      div.innerHTML = `
-        <img src="${ev.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
-        <button type="button" class="delete-img-btn" data-index="${index}">🗑️</button>
-      `;
-      div.querySelector('.delete-img-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        currentImageFiles.splice(index, 1);
-        updateImagePreview();
-      });
+      const div = document.createElement('div'); div.className = 'image-item';
+      div.innerHTML = `<img src="${ev.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;"><button type="button" class="delete-img-btn" data-index="${index}">🗑️</button>`;
+      div.querySelector('.delete-img-btn').addEventListener('click', (e) => { e.stopPropagation(); currentImageFiles.splice(index, 1); updateImagePreview(); });
       container.appendChild(div);
     };
     reader.readAsDataURL(file);
   });
   if (existingImages.length > 0) {
     existingImages.forEach((img, idx) => {
-      const div = document.createElement('div');
-      div.className = 'image-item';
-      div.innerHTML = `
-        <img src="${img.image_url}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;">
-        <button type="button" class="delete-existing-img-btn" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>
-      `;
+      const div = document.createElement('div'); div.className = 'image-item';
+      div.innerHTML = `<img src="${img.image_url}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;"><button type="button" class="delete-existing-img-btn" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`;
       div.querySelector('.delete-existing-img-btn').addEventListener('click', async (e) => {
         e.stopPropagation();
         const imageId = parseInt(e.target.getAttribute('data-id'));
@@ -794,21 +685,10 @@ function updateImagePreview() {
     });
   }
 }
+function clearImages() { currentImageFiles = []; existingImages = []; imagesToDelete = []; document.getElementById('imageInput').value = ''; document.getElementById('imagePreviewContainer').innerHTML = ''; }
 
-function clearImages() {
-  currentImageFiles = [];
-  existingImages = [];
-  imagesToDelete = [];
-  document.getElementById('imageInput').value = '';
-  document.getElementById('imagePreviewContainer').innerHTML = '';
-}
-
-// ============ MODALES ============
 function openModal(type) {
-  if (!currentUser) {
-    showToast("Vous devez être connecté pour ajouter/modifier", "error");
-    return;
-  }
+  if (!currentUser) { showToast("Vous devez être connecté pour ajouter/modifier", "error"); return; }
   deactivatePickMode();
   document.getElementById("modal").style.display = "flex";
   const actions = document.getElementById("actions");
@@ -819,11 +699,9 @@ function openModal(type) {
     actions.innerHTML = `<button onclick="saveRoom()"><i class="fas fa-save"></i> Enregistrer</button><button onclick="closeModal()">Annuler</button>`;
     document.getElementById("last_activity").value = now;
     selectedRoom = null; pickedX = null; pickedY = null;
-    clearForm();
-    clearImages();
+    clearForm(); clearImages();
   }
 }
-
 function validateFormFields() {
   if(!document.getElementById("categorie").value) { showToast("Choisissez une catégorie","error"); return false; }
   if(!document.getElementById("name").value.trim()) { showToast("Nom requis","error"); return false; }
@@ -831,116 +709,63 @@ function validateFormFields() {
   if(!document.getElementById("coord").value) { showToast("Position sur la carte requise","error"); return false; }
   return true;
 }
-
 async function saveRoom() {
   if(!validateFormFields()) return;
-  if(pickedX === null || pickedY === null) {
-    showToast("Sélectionnez un emplacement","error");
-    return;
-  }
+  if(pickedX === null || pickedY === null) { showToast("Sélectionnez un emplacement","error"); return; }
   const newMat = document.getElementById("mat").value.trim();
-  if(!await isMatriculeUnique(newMat)) {
-    showToast("Matricule existe déjà","error");
-    return;
-  }
+  if(!await isMatriculeUnique(newMat)) { showToast("Matricule existe déjà","error"); return; }
   const newRoom = {
     categorie: document.getElementById("categorie").value,
     name: document.getElementById("name").value.trim(),
     matricule: newMat,
-    x: pickedX,
-    y: pickedY,
+    x: pickedX, y: pickedY,
     last_activity: new Date().toLocaleString()
   };
   try {
     const roomId = await addRoom(newRoom);
-    for (const file of currentImageFiles) {
-      const imageUrl = await uploadImage(file, roomId);
-      await addRoomImage(roomId, imageUrl);
-    }
+    for (const file of currentImageFiles) { const imageUrl = await uploadImage(file, roomId); await addRoomImage(roomId, imageUrl); }
     showToast("Salle ajoutée avec succès","success");
-    closeModal();
-    await drawRooms();
-    clearForm();
-    pickedX = null;
-    pickedY = null;
-    clearImages();
-  } catch(e) {
-    showToast("Erreur: " + e.message,"error");
-  }
+    closeModal(); await drawRooms(); clearForm(); pickedX=null; pickedY=null; clearImages();
+  } catch(e) { showToast("Erreur: " + e.message,"error"); }
 }
-
 async function editRoomById(id) {
-  if (!currentUser) {
-    showToast("Vous devez être connecté pour modifier", "error");
-    return;
-  }
+  if (!currentUser) { showToast("Vous devez être connecté pour modifier", "error"); return; }
   const rooms = await getAllRooms();
   const room = rooms.find(r => String(r.id) === String(id));
-  if (!room) {
-    showToast("Salle non trouvée", "error");
-    return;
-  }
+  if (!room) { showToast("Salle non trouvée", "error"); return; }
   selectedRoom = room;
   openEditModal();
 }
-
 async function openEditModal() {
   deactivatePickMode();
-  if (!selectedRoom) {
-    showToast("Erreur: aucune salle sélectionnée", "error");
-    return;
-  }
+  if (!selectedRoom) { showToast("Erreur: aucune salle sélectionnée", "error"); return; }
   fillForm(selectedRoom);
   existingImages = await getRoomImages(selectedRoom.id);
-  currentImageFiles = [];
-  imagesToDelete = [];
+  currentImageFiles = []; imagesToDelete = [];
   updateImagePreview();
-  
   document.getElementById("modal").style.display = "flex";
   document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
-  document.getElementById("actions").innerHTML = `
-    <button onclick="updateRoom()" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white">Mettre à jour</button>
-    <button onclick="closeModal()">Annuler</button>
-  `;
-  pickedX = selectedRoom.x;
-  pickedY = selectedRoom.y;
+  document.getElementById("actions").innerHTML = `<button onclick="updateRoom()" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
+  pickedX = selectedRoom.x; pickedY = selectedRoom.y;
 }
-
 async function updateRoom() {
   if (!selectedRoom) return;
   if (!validateFormFields()) return;
   const newMat = document.getElementById("mat").value.trim();
-  if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) {
-    showToast("Matricule déjà utilisé", "error");
-    return;
-  }
+  if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) { showToast("Matricule déjà utilisé", "error"); return; }
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
-  if (pickedX !== null && pickedY !== null) {
-    selectedRoom.x = pickedX;
-    selectedRoom.y = pickedY;
-  }
+  if (pickedX !== null && pickedY !== null) { selectedRoom.x = pickedX; selectedRoom.y = pickedY; }
   selectedRoom.last_activity = new Date().toLocaleString();
-  
   try {
     await updateRoomInDB(selectedRoom);
-    for (const img of imagesToDelete) {
-      await deleteRoomImage(img.id, img.url);
-    }
-    for (const file of currentImageFiles) {
-      const imageUrl = await uploadImage(file, selectedRoom.id);
-      await addRoomImage(selectedRoom.id, imageUrl);
-    }
+    for (const img of imagesToDelete) await deleteRoomImage(img.id, img.url);
+    for (const file of currentImageFiles) { const imageUrl = await uploadImage(file, selectedRoom.id); await addRoomImage(selectedRoom.id, imageUrl); }
     showToast("Mise à jour réussie","success");
-    closeModal();
-    selectedRoom = null;
-    await drawRooms();
-  } catch(e) {
-    showToast("Erreur: " + e.message,"error");
-  }
+    closeModal(); selectedRoom = null; await drawRooms();
+  } catch(e) { showToast("Erreur: " + e.message,"error"); }
 }
-
 function fillForm(room) {
   if (!room) return;
   document.getElementById("categorie").value = room.categorie || "";
@@ -948,24 +773,10 @@ function fillForm(room) {
   document.getElementById("mat").value = room.matricule || "";
   document.getElementById("coord").value = (room.x && room.y) ? room.x + "," + room.y : "";
   document.getElementById("last_activity").value = room.last_activity || "";
-  pickedX = room.x;
-  pickedY = room.y;
+  pickedX = room.x; pickedY = room.y;
 }
-
-function clearForm() {
-  document.getElementById("categorie").value = "";
-  document.getElementById("name").value = "";
-  document.getElementById("mat").value = "";
-  document.getElementById("coord").value = "";
-  document.getElementById("last_activity").value = "";
-}
-
-function closeModal() { 
-  document.getElementById("modal").style.display="none"; 
-  deactivatePickMode(); 
-  pickedX=null; pickedY=null;
-  clearImages();
-}
+function clearForm() { document.getElementById("categorie").value = ""; document.getElementById("name").value = ""; document.getElementById("mat").value = ""; document.getElementById("coord").value = ""; document.getElementById("last_activity").value = ""; }
+function closeModal() { document.getElementById("modal").style.display="none"; deactivatePickMode(); pickedX=null; pickedY=null; clearImages(); }
 function startPick() { closeModal(); activatePickMode(); showToast("Cliquez sur la carte", "success"); }
 function activatePickMode() { picking=true; document.getElementById('map').classList.add('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor='crosshair'; }
 function deactivatePickMode() { picking=false; document.getElementById('map').classList.remove('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor=''; }
@@ -973,9 +784,7 @@ function togglePanel() { const panel=document.getElementById('sidePanel'); const
 function showPanel() { const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
 
 // ============ ÉVÉNEMENTS ============
-document.getElementById("loginBtn").addEventListener("click", () => {
-  document.getElementById("loginModal").style.display = "flex";
-});
+document.getElementById("loginBtn").addEventListener("click", () => document.getElementById("loginModal").style.display = "flex");
 document.getElementById("doLoginBtn").addEventListener("click", async () => {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
@@ -990,15 +799,8 @@ document.getElementById("doLoginBtn").addEventListener("click", async () => {
     document.getElementById("loginError").innerText = error.message || "Email ou mot de passe incorrect";
   }
 });
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  logout();
-  showToast("Déconnecté", "success");
-});
-// Fermer la modale en cliquant à l'extérieur
-window.onclick = function(event) {
-  const loginModal = document.getElementById("loginModal");
-  if (event.target === loginModal) loginModal.style.display = "none";
-}
+document.getElementById("logoutBtn").addEventListener("click", () => { logout(); showToast("Déconnecté", "success"); });
+window.onclick = function(event) { const loginModal = document.getElementById("loginModal"); if (event.target === loginModal) loginModal.style.display = "none"; };
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
   if(val === "") return;
@@ -1009,43 +811,27 @@ document.getElementById("search").addEventListener("input", async (e) => {
 
 // ============ INITIALISATION ============
 (async function init() {
-  await checkSession(); // restaure la session si elle existe
-  
-  supabaseClient
-    .channel('rooms-channel')
-    .on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, async () => { await drawRooms(); })
-    .subscribe();
-  supabaseClient
-    .channel('images-channel')
-    .on('postgres_changes', { event: '*', schema: 'public', table: IMAGES_TABLE }, async () => { await drawRooms(); })
-    .subscribe();
+  await checkSession();
+  supabaseClient.channel('rooms-channel').on('postgres_changes', { event: '*', schema: 'public', table: TABLE_NAME }, async () => { await drawRooms(); }).subscribe();
+  supabaseClient.channel('images-channel').on('postgres_changes', { event: '*', schema: 'public', table: IMAGES_TABLE }, async () => { await drawRooms(); }).subscribe();
   try {
     await initSampleData();
     initMap();
     setupImageInput();
     await drawRooms();
-    showToast("Système prêt - Authentification Supabase", "success");
-    
+    showToast("Système prêt - Authentification avec user_profiles", "success");
     const lightbox = document.getElementById('lightbox');
-    const closeBtn = lightbox.querySelector('.close-lightbox');
-    const prevBtn = lightbox.querySelector('.prev');
-    const nextBtn = lightbox.querySelector('.next');
-    closeBtn.addEventListener('click', closeLightbox);
-    prevBtn.addEventListener('click', prevImage);
-    nextBtn.addEventListener('click', nextImage);
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) closeLightbox();
-    });
+    lightbox.querySelector('.close-lightbox').addEventListener('click', closeLightbox);
+    lightbox.querySelector('.prev').addEventListener('click', prevImage);
+    lightbox.querySelector('.next').addEventListener('click', nextImage);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
     document.addEventListener('keydown', (e) => {
       if (!lightbox.classList.contains('active')) return;
       if (e.key === 'ArrowLeft') prevImage();
       if (e.key === 'ArrowRight') nextImage();
       if (e.key === 'Escape') closeLightbox();
     });
-  } catch (error) {
-    console.error(error);
-    showToast("Erreur de connexion", "error");
-  }
+  } catch (error) { console.error(error); showToast("Erreur de connexion", "error"); }
 })();
 </script>
 </body>
