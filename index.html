@@ -2,321 +2,738 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Indoor Map - Gestion des salles avec user_profiles</title>
+<title>Indoor Map - Gestion des salles avec authentification Supabase</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* ===== جميع الأنماط السابقة (نفس الثيم الأحمر) ===== */
-*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}.user-info i{color:#ff4d4d}.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
-
-/* ===== LIGHTBOX ===== */
-.lightbox {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.95);
-  z-index: 20000;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-.lightbox.active {
-  display: flex;
-}
-.lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.5);
-}
-.lightbox .nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.6);
-  color: white;
-  border: none;
-  font-size: 40px;
-  padding: 15px 20px;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
-}
-.lightbox .nav-btn:hover {
-  background: rgba(0,0,0,0.9);
-}
-.lightbox .prev {
-  left: 20px;
-}
-.lightbox .next {
-  right: 20px;
-}
-.lightbox .close-lightbox {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 40px;
-  color: white;
-  background: none;
-  border: none;
-  cursor: pointer;
-  z-index: 20001;
-}
-.lightbox .counter {
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: white;
-  background: rgba(0,0,0,0.6);
-  display: inline-block;
-  width: auto;
-  margin: 0 auto;
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 14px;
-  pointer-events: none;
-}
-@media (max-width: 768px) {
-  .lightbox .nav-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-    padding: 0;
-  }
-}
-
-/* ===== MODALE LOGIN ===== */
-.modal-login {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  z-index: 30000;
-  justify-content: center;
-  align-items: center;
-}
-.modal-login .modal-box {
-  background: white;
-  padding: 28px;
-  border-radius: 28px;
-  width: 380px;
-  max-width: 90%;
-  text-align: center;
-}
-.modal-login h3 {
-  color: #cc0000;
-  margin-bottom: 20px;
-}
-.modal-login input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 2px solid #e2e8f0;
-  border-radius: 16px;
-}
-.modal-login button {
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg,#ff4d4d,#cc0000);
-  color: white;
-  border: none;
-  border-radius: 40px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-}
-.error-msg {
-  color: red;
-  font-size: 12px;
-  margin-top: 8px;
-}
+*{margin:0;padding:0;box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}
+#map{height:100vh;width:100%;cursor:default}
+.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:8px}
+.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px}
+.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer}
+.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px}
+.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;display:flex;gap:25px}
+.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}
+.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border-radius:50px}
+.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden}
+.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between}
+.categories-list{flex:1;overflow-y:auto;padding:12px}
+.category-group{margin-bottom:16px;background:#f8f9ff;border-radius:14px}
+.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;border-left:5px solid #ff4d4d}
+.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s}
+.category-rooms.expanded{max-height:550px;overflow-y:auto}
+.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;border-left:3px solid #ff4d4d}
+.room-name{font-weight:bold}
+.room-mat{font-size:11px;color:#475569;margin-top:5px}
+#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center}
+.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px}
+.coord-row{display:flex;gap:10px;align-items:center}
+.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.image-item{position:relative}
+.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px}
+.delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease}
+.lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:20000;justify-content:center;align-items:center}
+.lightbox.active{display:flex}
+.lightbox img{max-width:90%;max-height:90%}
+.lightbox .nav-btn{position:absolute;top:50%;background:rgba(0,0,0,0.6);color:white;border:none;font-size:40px;padding:15px;cursor:pointer;border-radius:50%}
+.lightbox .prev{left:20px}
+.lightbox .next{right:20px}
+.lightbox .close-lightbox{position:absolute;top:20px;right:30px;font-size:40px;color:white;background:none;border:none;cursor:pointer}
+.login-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;justify-content:center;align-items:center;z-index:99999}
+.login-card{background:white;padding:40px;border-radius:40px;width:380px;text-align:center}
+.login-card input{width:100%;padding:14px;margin:10px 0;border:2px solid #e2e8f0;border-radius:30px}
+.login-card button{width:100%;padding:14px;background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:30px;font-weight:bold;cursor:pointer}
+.error-msg{color:red;margin-top:10px}
+.user-list{max-height:200px;overflow-y:auto;margin:15px 0;text-align:left}
+.app-container{display:none}
 </style>
 </head>
 <body>
 
-<div class="top-toolbar">
-  <div class="left-area">
-    <button class="btn-login" id="loginBtn"><i class="fas fa-user-circle"></i> Login</button>
-    <div id="userInfo" style="display:none;" class="user-info">
-      <i class="fas fa-user-check"></i> <span id="userEmail"></span>
-      <button id="logoutBtn" class="btn-logout">Logout</button>
+<!-- شاشة تسجيل الدخول الإجبارية -->
+<div id="loginOverlay" class="login-overlay">
+    <div class="login-card">
+        <h2><i class="fas fa-lock"></i> تسجيل الدخول</h2>
+        <input type="text" id="loginEmail" placeholder="البريد الإلكتروني">
+        <input type="password" id="loginPassword" placeholder="كلمة المرور">
+        <button id="doLoginBtn">دخول</button>
+        <div id="loginError" class="error-msg"></div>
+        <hr style="margin:20px 0 10px;">
+        <p style="font-size:12px;">Admin: admin001@example.com / admin001</p>
     </div>
-  </div>
-  <div class="search-box">
-    <i class="fas fa-search"></i>
-    <input id="search" placeholder="Rechercher par nom, matricule ou catégorie...">
-  </div>
-  <div class="stats-bar">
-    <i class="fas fa-building"></i> Salles: <span id="roomCount">0</span>
-    <i class="fas fa-tags"></i> Catégories: <span id="categoryCount">0</span>
-  </div>
 </div>
 
-<div class="action-group-right" id="adminActions" style="display:none;">
-  <div class="action-card">
-    <button class="action-btn add-btn" onclick="openModal('add')">
-      <i class="fas fa-plus-circle"></i> Ajouter
-    </button>
-  </div>
-</div>
+<!-- التطبيق الرئيسي -->
+<div id="appContainer" class="app-container">
+    <div class="top-toolbar">
+        <div class="left-area">
+            <div id="userInfo" class="user-info">
+                <i class="fas fa-user-check"></i> <span id="userName"></span>
+                <button id="logoutBtn" class="btn-logout">تسجيل خروج</button>
+            </div>
+        </div>
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input id="search" placeholder="بحث باسم أو رمز أو فئة...">
+        </div>
+        <div class="stats-bar">
+            <i class="fas fa-building"></i> غرف: <span id="roomCount">0</span>
+            <i class="fas fa-tags"></i> فئات: <span id="categoryCount">0</span>
+        </div>
+    </div>
 
-<div class="side-panel" id="sidePanel">
-  <div class="panel-header">
-    <h4><i class="fas fa-folder-tree"></i> Catégories de salles</h4>
-    <button class="toggle-panel" onclick="togglePanel()">
-      <i class="fas fa-chevron-left"></i>
-    </button>
-  </div>
-  <div class="categories-list" id="categoriesList"></div>
-</div>
-<button class="show-panel-btn" id="showPanelBtn" onclick="showPanel()"><i class="fas fa-chevron-right"></i></button>
+    <div class="action-group-right" id="adminActions" style="display:none;">
+        <button class="action-btn" onclick="openModal('add')"><i class="fas fa-plus-circle"></i> إضافة غرفة</button>
+        <button id="manageUsersBtn" class="action-btn" style="background:#555;" onclick="openUserManagement()"><i class="fas fa-users-cog"></i> إدارة المستخدمين</button>
+    </div>
 
-<div id="map"></div>
+    <div class="side-panel" id="sidePanel">
+        <div class="panel-header">
+            <h4><i class="fas fa-folder-tree"></i> فئات الغرف</h4>
+            <button class="toggle-panel" onclick="togglePanel()"><i class="fas fa-chevron-left"></i></button>
+        </div>
+        <div class="categories-list" id="categoriesList"></div>
+    </div>
+    <button class="show-panel-btn" id="showPanelBtn" onclick="showPanel()" style="display:none;"><i class="fas fa-chevron-right"></i></button>
 
-<div id="modal">
-<div class="modal-box">
-<h3 id="title">Action</h3>
-<select id="categorie">
-  <option value="">-- Sélectionnez une catégorie --</option>
-  <option value="salon et séjour">🏠 salon et séjour</option>
-  <option value="salle à manger">🍽️ salle à manger</option>
-  <option value="chambre adulte">🛏️ chambre adulte</option>
-  <option value="chambre enfant">🧸 chambre enfant</option>
-  <option value="rangement">📦 rangement</option>
-  <option value="bureautique">💼 Bureautique</option>
-  <option value="jardin">🌳 jardin</option>
-  <option value="accessoire">🔧 accessoire</option>
-</select>
-<input id="name" placeholder="Nom de la salle *">
-<input id="mat" placeholder="Matricule *">
-<div class="coord-row">
-  <input id="coord" placeholder="Coordonnée (X,Y) *" readonly>
-  <button onclick="startPick()"><i class="fas fa-crosshairs"></i></button>
-</div>
-<div>
-  <label style="font-weight:bold; display:block; margin-bottom:6px;"><i class="fas fa-images"></i> Images de la salle (plusieurs)</label>
-  <input type="file" id="imageInput" accept="image/*" multiple style="padding:6px;">
-  <div id="imagePreviewContainer" class="image-preview-list" style="margin-top:8px;"></div>
-</div>
-<input id="last_activity" readonly placeholder="Dernière activité">
-<div id="actions"></div>
-</div>
-</div>
+    <div id="map"></div>
 
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox">
-  <button class="close-lightbox"><i class="fas fa-times"></i></button>
-  <button class="nav-btn prev"><i class="fas fa-chevron-left"></i></button>
-  <img id="lightbox-img" src="" alt="">
-  <button class="nav-btn next"><i class="fas fa-chevron-right"></i></button>
-  <div class="counter" id="lightbox-counter"></div>
-</div>
+    <!-- Modal إضافة/تعديل -->
+    <div id="modal">
+        <div class="modal-box">
+            <h3 id="title">إجراء</h3>
+            <select id="categorie">
+                <option value="">-- اختر فئة --</option>
+                <option value="salon et séjour">🏠 صالون</option>
+                <option value="salle à manger">🍽️ غرفة طعام</option>
+                <option value="chambre adulte">🛏️ غرفة نوم كبار</option>
+                <option value="chambre enfant">🧸 غرفة أطفال</option>
+                <option value="rangement">📦 تخزين</option>
+                <option value="bureautique">💼 مكتب</option>
+                <option value="jardin">🌳 حديقة</option>
+                <option value="accessoire">🔧 ملحقات</option>
+            </select>
+            <input id="name" placeholder="اسم الغرفة *">
+            <input id="mat" placeholder="الرمز الفريد *">
+            <div class="coord-row">
+                <input id="coord" placeholder="الإحداثيات (X,Y) *" readonly>
+                <button onclick="startPick()"><i class="fas fa-crosshairs"></i></button>
+            </div>
+            <div>
+                <label>صور الغرفة (يمكن اختيار عدة)</label>
+                <input type="file" id="imageInput" accept="image/*" multiple>
+                <div id="imagePreviewContainer" class="image-preview-list"></div>
+            </div>
+            <input id="last_activity" readonly placeholder="آخر نشاط">
+            <div id="actions"></div>
+        </div>
+    </div>
 
-<!-- Login Modal -->
-<div id="loginModal" class="modal-login">
-  <div class="modal-box">
-    <h3><i class="fas fa-lock"></i> Connexion</h3>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPassword" placeholder="Mot de passe">
-    <button id="doLoginBtn">Se connecter</button>
-    <div id="loginError" class="error-msg"></div>
-    <hr style="margin:15px 0;">
-    <p style="font-size:12px; color:#666;">Contactez l'administrateur pour obtenir un compte.</p>
-  </div>
+    <!-- Lightbox للصور -->
+    <div id="lightbox" class="lightbox">
+        <button class="close-lightbox"><i class="fas fa-times"></i></button>
+        <button class="nav-btn prev"><i class="fas fa-chevron-left"></i></button>
+        <img id="lightbox-img" src="">
+        <button class="nav-btn next"><i class="fas fa-chevron-right"></i></button>
+        <div class="counter" id="lightbox-counter"></div>
+    </div>
+
+    <!-- Modal إدارة المستخدمين (للمدير فقط) -->
+    <div id="userMgmtModal" class="modal-box" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:400px; z-index:30000;">
+        <h3>إدارة المستخدمين</h3>
+        <div id="userList" class="user-list"></div>
+        <input type="text" id="newUsername" placeholder="اسم المستخدم">
+        <input type="email" id="newEmail" placeholder="البريد الإلكتروني">
+        <input type="password" id="newPassword" placeholder="كلمة المرور">
+        <button id="createUserBtn" style="background:#cc0000; color:white; padding:10px;">إنشاء مستخدم</button>
+        <button onclick="closeUserManagement()" style="background:#666;">إلغاء</button>
+        <div id="userMgmtError" class="error-msg"></div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ============ CONFIGURATION SUPABASE ============
+// ========== تكوين Supabase ==========
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
-
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ============ GESTION DE L'AUTHENTIFICATION AVEC user_profiles ============
 let currentUser = null;
-let isAdmin = false;
+let map = null;
+let picking = false;
+let pickedX = null, pickedY = null;
+let selectedRoom = null;
+let currentMarkers = [];
+let currentImageFiles = [];
+let existingImages = [];
+let imagesToDelete = [];
+let currentGalleryImages = [];
+let currentGalleryIndex = 0;
+let expandedCategories = new Set();
 
-// التحقق من الجلسة الحالية وجلب صلاحية admin من جدول user_profiles
-async function checkSession() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session?.user) {
-    currentUser = session.user;
-    await checkAdminStatus(currentUser.id);
-    updateUIForUser();
-  }
+const CATEGORIES = [
+    { value: 'salon et séjour', label: 'salon et séjour', icon: '🏠', color: '#ff4d4d' },
+    { value: 'salle à manger', label: 'salle à manger', icon: '🍽️', color: '#4caf50' },
+    { value: 'chambre adulte', label: 'chambre adulte', icon: '🛏️', color: '#ff9800' },
+    { value: 'chambre enfant', label: 'chambre enfant', icon: '🧸', color: '#e91e63' },
+    { value: 'rangement', label: 'rangement', icon: '📦', color: '#607d8b' },
+    { value: 'bureautique', label: 'Bureautique', icon: '💼', color: '#3f51b5' },
+    { value: 'jardin', label: 'jardin', icon: '🌳', color: '#8bc34a' },
+    { value: 'accessoire', label: 'accessoire', icon: '🔧', color: '#9e9e9e' }
+];
+
+function showToast(msg, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> ${msg}`;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
 }
 
-async function checkAdminStatus(userId) {
-  try {
-    const { data, error } = await supabase
-      .from('user_profiles')
-      .select('is_admin')
-      .eq('id', userId)
-      .maybeSingle();
-    if (error) throw error;
-    isAdmin = data?.is_admin === true;
-  } catch (err) {
-    console.error('Erreur lecture user_profiles:', err);
-    isAdmin = false;
-  }
-}
-
+// ========== دوال المصادقة ==========
 async function login(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
-  currentUser = data.user;
-  await checkAdminStatus(currentUser.id);
-  updateUIForUser();
-  return true;
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    // جلب معلومات الصلاحيات من جدول user_profiles
+    const { data: profile, error: profileError } = await supabase
+        .from('user_profiles')
+        .select('username, is_admin')
+        .eq('id', data.user.id)
+        .single();
+    if (profileError && profileError.code !== 'PGRST116') throw profileError;
+    currentUser = {
+        id: data.user.id,
+        email: data.user.email,
+        username: profile?.username || data.user.email.split('@')[0],
+        isAdmin: profile?.is_admin || false
+    };
+    localStorage.setItem('supabase_user', JSON.stringify(currentUser));
+    return currentUser;
 }
 
 async function logout() {
-  await supabase.auth.signOut();
-  currentUser = null;
-  isAdmin = false;
-  updateUIForUser();
+    await supabase.auth.signOut();
+    currentUser = null;
+    localStorage.removeItem('supabase_user');
+    document.getElementById('appContainer').style.display = 'none';
+    document.getElementById('loginOverlay').style.display = 'flex';
 }
 
-function updateUIForUser() {
-  const loginBtn = document.getElementById("loginBtn");
-  const userInfoDiv = document.getElementById("userInfo");
-  const userEmailSpan = document.getElementById("userEmail");
-  const adminActions = document.getElementById("adminActions");
-  if (currentUser) {
-    loginBtn.style.display = "none";
-    userInfoDiv.style.display = "flex";
-    userEmailSpan.textContent = currentUser.email;
-    adminActions.style.display = isAdmin ? "flex" : "none";
-  } else {
-    loginBtn.style.display = "flex";
-    userInfoDiv.style.display = "none";
-    adminActions.style.display = "none";
-  }
-  // إعادة رسم الخريطة لإظهار/إخفاء أزرار التعديل والحذف في popups
-  drawRooms();
+async function checkAutoLogin() {
+    const stored = localStorage.getItem('supabase_user');
+    if (stored) {
+        currentUser = JSON.parse(stored);
+        // التحقق من صحة الجلسة مع Supabase
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && user.id === currentUser.id) {
+            showApp();
+            return true;
+        } else {
+            logout();
+        }
+    }
+    return false;
 }
 
-// ============ CRUD ووظائف الخريطة (نفس الكود السابق) ============
-// ... (تم حذف التكرار للمساحة، لكن يجب أن تحتوي على جميع الدوال السابقة كاملة)
-// سأقدمها مختصرة ولكنها كاملة في الرد النهائي
+function showApp() {
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    document.getElementById('userName').innerText = currentUser.username;
+    if (currentUser.isAdmin) {
+        document.getElementById('adminActions').style.display = 'flex';
+        document.getElementById('manageUsersBtn').style.display = 'block';
+    } else {
+        document.getElementById('adminActions').style.display = 'flex';
+        document.getElementById('manageUsersBtn').style.display = 'none';
+    }
+    if (!map) initMap();
+    drawRooms();
+}
 
-// نظراً لطول الكود، سأعطيه في الرد النهائي كاملاً دون اختصار.
+// ========== إدارة المستخدمين (للمدير فقط) ==========
+async function openUserManagement() {
+    if (!currentUser?.isAdmin) return;
+    document.getElementById('userMgmtModal').style.display = 'block';
+    await refreshUserList();
+}
+
+function closeUserManagement() {
+    document.getElementById('userMgmtModal').style.display = 'none';
+}
+
+async function refreshUserList() {
+    const { data, error } = await supabase
+        .from('user_profiles')
+        .select('username, is_admin');
+    if (error) { showToast('خطأ في جلب المستخدمين', 'error'); return; }
+    const container = document.getElementById('userList');
+    container.innerHTML = '';
+    data.forEach(prof => {
+        const div = document.createElement('div');
+        div.innerHTML = `<strong>${escapeHtml(prof.username)}</strong> ${prof.is_admin ? '(مدير)' : '(مستخدم)'}`;
+        container.appendChild(div);
+    });
+}
+
+async function createNewUser() {
+    if (!currentUser?.isAdmin) return;
+    const username = document.getElementById('newUsername').value.trim();
+    const email = document.getElementById('newEmail').value.trim();
+    const password = document.getElementById('newPassword').value.trim();
+    if (!username || !email || !password) {
+        document.getElementById('userMgmtError').innerText = 'جميع الحقول مطلوبة';
+        return;
+    }
+    try {
+        // إنشاء مستخدم في Supabase Auth
+        const { data: authData, error: signUpError } = await supabase.auth.admin.createUser({
+            email: email,
+            password: password,
+            email_confirm: true
+        });
+        if (signUpError) throw signUpError;
+        // إضافة سجل في user_profiles
+        const { error: profileError } = await supabase
+            .from('user_profiles')
+            .insert({ id: authData.user.id, username: username, is_admin: false });
+        if (profileError) throw profileError;
+        showToast(`تم إنشاء المستخدم ${username} بنجاح`, 'success');
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newEmail').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('userMgmtError').innerText = '';
+        refreshUserList();
+    } catch (err) {
+        document.getElementById('userMgmtError').innerText = err.message;
+    }
+}
+
+// ========== دوال إدارة الغرف والصور (نفس الكود السابق مع تعديل استخدام supabase) ==========
+async function getAllRooms() {
+    const { data, error } = await supabase.from('rooms').select('*').order('id');
+    if (error) throw error;
+    return data;
+}
+
+async function addRoom(room) {
+    const { data, error } = await supabase.from('rooms').insert([room]).select();
+    if (error) throw error;
+    return data[0].id;
+}
+
+async function updateRoomInDB(room) {
+    const { error } = await supabase.from('rooms').update({
+        categorie: room.categorie,
+        name: room.name,
+        matricule: room.matricule,
+        x: room.x,
+        y: room.y,
+        last_activity: room.last_activity
+    }).eq('id', room.id);
+    if (error) throw error;
+}
+
+async function deleteRoomById(id) {
+    // حذف الصور أولا (يتم تلقائيا عبر CASCADE في قاعدة البيانات إذا كان معرفاً)
+    const { error } = await supabase.from('rooms').delete().eq('id', id);
+    if (error) throw error;
+}
+
+async function uploadImage(file, roomId) {
+    const ext = file.name.split('.').pop();
+    const fileName = `${roomId}_${Date.now()}_${Math.random()}.${ext}`;
+    const { error } = await supabase.storage.from('room-images').upload(fileName, file);
+    if (error) throw error;
+    const { data: publicUrl } = supabase.storage.from('room-images').getPublicUrl(fileName);
+    return publicUrl.publicUrl;
+}
+
+async function addRoomImage(roomId, imageUrl) {
+    const { error } = await supabase.from('room_images').insert({ room_id: roomId, image_url: imageUrl });
+    if (error) throw error;
+}
+
+async function getRoomImages(roomId) {
+    const { data, error } = await supabase.from('room_images').select('*').eq('room_id', roomId);
+    if (error) throw error;
+    return data || [];
+}
+
+async function deleteRoomImage(imageId, imageUrl) {
+    // استخراج اسم الملف من الرابط
+    const fileName = imageUrl.split('/').pop();
+    await supabase.storage.from('room-images').remove([fileName]);
+    await supabase.from('room_images').delete().eq('id', imageId);
+}
+
+async function isMatriculeUnique(matricule, excludeId = null) {
+    let query = supabase.from('rooms').select('id').eq('matricule', matricule);
+    if (excludeId) query = query.neq('id', excludeId);
+    const { data, error } = await query;
+    if (error) throw error;
+    return data.length === 0;
+}
+
+// ========== دوال الخريطة وعرض البيانات ==========
+function initMap() {
+    map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
+    let bounds = [[0, 0], [3000, 2669]];
+    L.imageOverlay('floor1.jpg', bounds).addTo(map);
+    map.fitBounds(bounds);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    map.on("click", function(e) {
+        if (picking) {
+            pickedX = Math.round(e.latlng.lng);
+            pickedY = Math.round(e.latlng.lat);
+            document.getElementById("coord").value = pickedX + "," + pickedY;
+            deactivatePickMode();
+            document.getElementById("modal").style.display = "flex";
+        }
+    });
+}
+
+function createPopupContent(room, catInfo, images) {
+    let imagesHtml = '';
+    if (images && images.length > 0) {
+        const imageUrls = images.map(img => img.image_url);
+        const displayImages = images.slice(0, 3);
+        imagesHtml = `<div style="display:flex; gap:5px; margin-bottom:8px;">`;
+        displayImages.forEach((img, idx) => {
+            imagesHtml += `<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(imageUrls)}' data-index="${idx}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer;">`;
+        });
+        if (images.length > 3) imagesHtml += `<div class="popup-gallery-more" data-urls='${JSON.stringify(imageUrls)}' data-index="3" style="width:60px;height:60px;background:#eee;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;">+${images.length-3}</div>`;
+        imagesHtml += `</div>`;
+    }
+    let buttonsHtml = '';
+    if (currentUser) {
+        buttonsHtml = `<hr><button class="edit-btn" data-id="${room.id}" style="background:#cc0000;color:white;border:none;border-radius:40px;padding:8px;width:100%;margin-bottom:5px;">✏️ تعديل</button>
+                       <button class="delete-popup-btn" data-id="${room.id}" style="background:#eb3349;color:white;border:none;border-radius:40px;padding:8px;width:100%;">🗑️ حذف</button>`;
+    }
+    return `<div>${imagesHtml}<div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color}">${catInfo.icon} ${escapeHtml(room.categorie)}</div>
+            <div><strong>الاسم:</strong> ${escapeHtml(room.name)}</div>
+            <div><strong>الرمز:</strong> ${escapeHtml(room.matricule)}</div>
+            <div><strong>آخر نشاط:</strong> ${escapeHtml(room.last_activity)}</div>${buttonsHtml}</div>`;
+}
+
+async function drawRooms() {
+    if (!map) return;
+    currentMarkers.forEach(m => map.removeLayer(m));
+    currentMarkers = [];
+    const rooms = await getAllRooms();
+    for (const room of rooms) {
+        if (room.x && room.y) {
+            const catInfo = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#ff4d4d' };
+            const images = await getRoomImages(room.id);
+            const marker = L.circle([room.y, room.x], { radius: 12, color: catInfo.color, fillColor: catInfo.color, fillOpacity: 0.8, weight: 3 }).addTo(map);
+            marker.bindPopup(createPopupContent(room, catInfo, images), { maxWidth: 260 });
+            marker.on("popupopen", (e) => {
+                const popup = e.popup.getElement();
+                popup.querySelectorAll('.popup-gallery-img, .popup-gallery-more').forEach(el => {
+                    el.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        const urls = JSON.parse(el.getAttribute('data-urls'));
+                        const idx = parseInt(el.getAttribute('data-index')) || 0;
+                        openLightbox(urls, idx);
+                    });
+                });
+                const editBtn = popup.querySelector('.edit-btn');
+                if (editBtn) editBtn.addEventListener('click', () => editRoomById(editBtn.getAttribute('data-id')));
+                const delBtn = popup.querySelector('.delete-popup-btn');
+                if (delBtn) delBtn.addEventListener('click', () => deleteFromPopup(delBtn.getAttribute('data-id')));
+            });
+            currentMarkers.push(marker);
+        }
+    }
+    updateStats();
+    updateCategoriesList();
+}
+
+async function updateStats() {
+    const rooms = await getAllRooms();
+    const cats = new Set(rooms.map(r => r.categorie).filter(Boolean));
+    document.getElementById('roomCount').innerText = rooms.length;
+    document.getElementById('categoryCount').innerText = cats.size;
+}
+
+async function updateCategoriesList() {
+    const rooms = await getAllRooms();
+    const container = document.getElementById('categoriesList');
+    if (!rooms.length) { container.innerHTML = '<div style="padding:20px;">لا توجد غرف</div>'; return; }
+    const byCat = new Map();
+    rooms.forEach(r => { const cat = r.categorie || 'بدون فئة'; if (!byCat.has(cat)) byCat.set(cat, []); byCat.get(cat).push(r); });
+    let html = '';
+    for (let [cat, list] of byCat.entries()) {
+        const catInfo = CATEGORIES.find(c => c.value === cat) || { icon: '📁', label: cat, color: '#999' };
+        const isExpanded = expandedCategories.has(cat);
+        html += `<div class="category-group" data-cat="${cat}">
+            <div class="category-header"><div class="category-name">${catInfo.icon} ${escapeHtml(catInfo.label)} <span class="category-count">${list.length}</span></div><i class="fas fa-chevron-right toggle-icon ${isExpanded ? 'rotated' : ''}"></i></div>
+            <div class="category-rooms ${isExpanded ? 'expanded' : ''}">${list.map(r => `<div class="room-item" data-room-id="${r.id}" data-x="${r.x}" data-y="${r.y}" data-name="${escapeHtml(r.name)}"><div class="room-name">${escapeHtml(r.name)}</div><div class="room-mat">${escapeHtml(r.matricule)}</div></div>`).join('')}</div>
+        </div>`;
+    }
+    container.innerHTML = html;
+    document.querySelectorAll('.category-header').forEach(header => {
+        header.addEventListener('click', (e) => {
+            const group = header.closest('.category-group');
+            const cat = group.getAttribute('data-cat');
+            const roomsDiv = group.querySelector('.category-rooms');
+            const icon = header.querySelector('.toggle-icon');
+            if (roomsDiv.classList.contains('expanded')) {
+                roomsDiv.classList.remove('expanded');
+                icon.classList.remove('rotated');
+                expandedCategories.delete(cat);
+            } else {
+                roomsDiv.classList.add('expanded');
+                icon.classList.add('rotated');
+                expandedCategories.add(cat);
+            }
+        });
+    });
+    document.querySelectorAll('.room-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const x = parseFloat(item.getAttribute('data-x'));
+            const y = parseFloat(item.getAttribute('data-y'));
+            if (isNaN(x) || isNaN(y)) return;
+            map.flyTo([y, x], 2);
+            setTimeout(() => {
+                const marker = currentMarkers.find(m => Math.abs(m.getLatLng().lat - y) < 5 && Math.abs(m.getLatLng().lng - x) < 5);
+                if (marker) marker.openPopup();
+            }, 800);
+        });
+    });
+}
+
+// ========== دوال إضافية: فتح وإغلاق المودال، معالجة الصور، البحث، إلخ ==========
+function openModal(type) {
+    if (!currentUser) return;
+    deactivatePickMode();
+    document.getElementById('modal').style.display = 'flex';
+    const actionsDiv = document.getElementById('actions');
+    if (type === 'add') {
+        document.getElementById('title').innerHTML = 'إضافة غرفة جديدة';
+        actionsDiv.innerHTML = `<button onclick="saveRoom()">حفظ</button><button onclick="closeModal()">إلغاء</button>`;
+        document.getElementById('last_activity').value = new Date().toLocaleString();
+        selectedRoom = null; pickedX = null; pickedY = null;
+        clearForm();
+        clearImages();
+    }
+}
+
+async function saveRoom() {
+    if (!validateForm()) return;
+    if (pickedX === null || pickedY === null) { showToast('حدد موقع الغرفة على الخريطة', 'error'); return; }
+    const newMat = document.getElementById('mat').value.trim();
+    if (!await isMatriculeUnique(newMat)) { showToast('الرمز موجود مسبقاً', 'error'); return; }
+    const newRoom = {
+        categorie: document.getElementById('categorie').value,
+        name: document.getElementById('name').value.trim(),
+        matricule: newMat,
+        x: pickedX,
+        y: pickedY,
+        last_activity: new Date().toLocaleString()
+    };
+    try {
+        const roomId = await addRoom(newRoom);
+        for (const file of currentImageFiles) {
+            const url = await uploadImage(file, roomId);
+            await addRoomImage(roomId, url);
+        }
+        showToast('تمت الإضافة بنجاح', 'success');
+        closeModal();
+        drawRooms();
+    } catch(e) { showToast(e.message, 'error'); }
+}
+
+async function editRoomById(id) {
+    if (!currentUser) return;
+    const rooms = await getAllRooms();
+    const room = rooms.find(r => r.id == id);
+    if (!room) return;
+    selectedRoom = room;
+    fillForm(room);
+    existingImages = await getRoomImages(room.id);
+    currentImageFiles = [];
+    imagesToDelete = [];
+    updateImagePreview();
+    document.getElementById('modal').style.display = 'flex';
+    document.getElementById('title').innerHTML = 'تعديل الغرفة';
+    document.getElementById('actions').innerHTML = `<button onclick="updateRoom()">تحديث</button><button onclick="closeModal()">إلغاء</button>`;
+    pickedX = room.x; pickedY = room.y;
+}
+
+async function updateRoom() {
+    if (!selectedRoom || !validateForm()) return;
+    const newMat = document.getElementById('mat').value.trim();
+    if (selectedRoom.matricule !== newMat && !await isMatriculeUnique(newMat, selectedRoom.id)) {
+        showToast('الرمز مستخدم من قبل', 'error');
+        return;
+    }
+    selectedRoom.categorie = document.getElementById('categorie').value;
+    selectedRoom.name = document.getElementById('name').value.trim();
+    selectedRoom.matricule = newMat;
+    if (pickedX !== null && pickedY !== null) { selectedRoom.x = pickedX; selectedRoom.y = pickedY; }
+    selectedRoom.last_activity = new Date().toLocaleString();
+    try {
+        await updateRoomInDB(selectedRoom);
+        for (const img of imagesToDelete) await deleteRoomImage(img.id, img.url);
+        for (const file of currentImageFiles) {
+            const url = await uploadImage(file, selectedRoom.id);
+            await addRoomImage(selectedRoom.id, url);
+        }
+        showToast('تم التحديث', 'success');
+        closeModal();
+        drawRooms();
+    } catch(e) { showToast(e.message, 'error'); }
+}
+
+function validateForm() {
+    if (!document.getElementById('categorie').value) { showToast('اختر فئة', 'error'); return false; }
+    if (!document.getElementById('name').value.trim()) { showToast('أدخل اسم الغرفة', 'error'); return false; }
+    if (!document.getElementById('mat').value.trim()) { showToast('أدخل الرمز', 'error'); return false; }
+    if (!document.getElementById('coord').value) { showToast('حدد الموقع على الخريطة', 'error'); return false; }
+    return true;
+}
+
+function fillForm(room) {
+    document.getElementById('categorie').value = room.categorie || '';
+    document.getElementById('name').value = room.name || '';
+    document.getElementById('mat').value = room.matricule || '';
+    document.getElementById('coord').value = (room.x && room.y) ? `${room.x},${room.y}` : '';
+    document.getElementById('last_activity').value = room.last_activity || '';
+}
+
+function clearForm() {
+    document.getElementById('categorie').value = '';
+    document.getElementById('name').value = '';
+    document.getElementById('mat').value = '';
+    document.getElementById('coord').value = '';
+    document.getElementById('last_activity').value = '';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    deactivatePickMode();
+    pickedX = pickedY = null;
+    clearImages();
+}
+
+function setupImageInput() {
+    const input = document.getElementById('imageInput');
+    input.onchange = () => {
+        const files = Array.from(input.files);
+        if (files.length) {
+            currentImageFiles.push(...files);
+            updateImagePreview();
+        }
+        input.value = '';
+    };
+}
+
+function updateImagePreview() {
+    const container = document.getElementById('imagePreviewContainer');
+    container.innerHTML = '';
+    currentImageFiles.forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const div = document.createElement('div');
+            div.className = 'image-item';
+            div.innerHTML = `<img src="${e.target.result}"><button class="delete-img-btn" data-idx="${idx}">🗑️</button>`;
+            div.querySelector('.delete-img-btn').onclick = () => { currentImageFiles.splice(idx, 1); updateImagePreview(); };
+            container.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    });
+    existingImages.forEach((img, idx) => {
+        const div = document.createElement('div');
+        div.className = 'image-item';
+        div.innerHTML = `<img src="${img.image_url}"><button class="delete-img-btn" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`;
+        div.querySelector('.delete-img-btn').onclick = () => {
+            imagesToDelete.push({ id: img.id, url: img.image_url });
+            existingImages = existingImages.filter(i => i.id !== img.id);
+            updateImagePreview();
+        };
+        container.appendChild(div);
+    });
+}
+
+function clearImages() {
+    currentImageFiles = [];
+    existingImages = [];
+    imagesToDelete = [];
+    document.getElementById('imageInput').value = '';
+    document.getElementById('imagePreviewContainer').innerHTML = '';
+}
+
+async function deleteFromPopup(roomId) {
+    if (!currentUser || !confirm('هل أنت متأكد من حذف هذه الغرفة؟')) return;
+    try {
+        await deleteRoomById(roomId);
+        showToast('تم الحذف', 'success');
+        drawRooms();
+    } catch(e) { showToast(e.message, 'error'); }
+}
+
+function startPick() { closeModal(); picking = true; document.getElementById('map').classList.add('picking-mode'); document.querySelector('.leaflet-container').style.cursor = 'crosshair'; showToast('انقر على الخريطة لتحديد الموقع', 'success'); }
+function deactivatePickMode() { picking = false; document.getElementById('map')?.classList.remove('picking-mode'); if(document.querySelector('.leaflet-container')) document.querySelector('.leaflet-container').style.cursor = ''; }
+function togglePanel() { const panel = document.getElementById('sidePanel'); panel.classList.toggle('collapsed'); const icon = panel.querySelector('.toggle-panel i'); if(panel.classList.contains('collapsed')) { icon.classList.remove('fa-chevron-left'); icon.classList.add('fa-chevron-right'); document.getElementById('showPanelBtn').style.display = 'flex'; } else { icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display = 'none'; } }
+function showPanel() { const panel = document.getElementById('sidePanel'); panel.classList.remove('collapsed'); panel.querySelector('.toggle-panel i').classList.remove('fa-chevron-right'); panel.querySelector('.toggle-panel i').classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display = 'none'; }
+
+function openLightbox(imageUrls, startIndex) {
+    if (!imageUrls.length) return;
+    currentGalleryImages = imageUrls;
+    currentGalleryIndex = startIndex;
+    document.getElementById('lightbox-img').src = currentGalleryImages[currentGalleryIndex];
+    document.getElementById('lightbox-counter').innerText = `${currentGalleryIndex+1}/${currentGalleryImages.length}`;
+    document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); currentGalleryImages = []; }
+function nextImage() { if(currentGalleryImages.length) { currentGalleryIndex = (currentGalleryIndex+1)%currentGalleryImages.length; document.getElementById('lightbox-img').src = currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText = `${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
+function prevImage() { if(currentGalleryImages.length) { currentGalleryIndex = (currentGalleryIndex-1+currentGalleryImages.length)%currentGalleryImages.length; document.getElementById('lightbox-img').src = currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText = `${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
+
+function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+
+// ========== أحداث الصفحة ==========
+document.getElementById('doLoginBtn').onclick = async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    try {
+        await login(email, password);
+        showApp();
+    } catch(err) {
+        document.getElementById('loginError').innerText = 'البريد أو كلمة المرور غير صحيحة';
+    }
+};
+document.getElementById('logoutBtn').onclick = () => logout();
+document.getElementById('createUserBtn').onclick = () => createNewUser();
+document.getElementById('search').addEventListener('input', async (e) => {
+    const val = e.target.value.toLowerCase();
+    if (!val) return;
+    const rooms = await getAllRooms();
+    const found = rooms.find(r => r.name.toLowerCase().includes(val) || r.matricule.toLowerCase().includes(val) || (r.categorie && r.categorie.toLowerCase().includes(val)));
+    if (found) {
+        map.flyTo([found.y, found.x], 2);
+        const marker = currentMarkers.find(m => Math.abs(m.getLatLng().lat - found.y) < 1 && Math.abs(m.getLatLng().lng - found.x) < 1);
+        if (marker) marker.openPopup();
+        showToast(`تم العثور: ${found.name}`, 'success');
+    } else showToast('لا توجد غرفة', 'error');
+});
+
+// ========== بدء التشغيل ==========
+window.onload = async () => {
+    setupImageInput();
+    // إضافة مستمعي أحداث الـ Lightbox
+    const lb = document.getElementById('lightbox');
+    lb.querySelector('.close-lightbox').onclick = closeLightbox;
+    lb.querySelector('.prev').onclick = prevImage;
+    lb.querySelector('.next').onclick = nextImage;
+    lb.onclick = (e) => { if(e.target === lb) closeLightbox(); };
+    document.addEventListener('keydown', (e) => { if(lb.classList.contains('active')) { if(e.key === 'ArrowLeft') prevImage(); if(e.key === 'ArrowRight') nextImage(); if(e.key === 'Escape') closeLightbox(); } });
+    await checkAutoLogin();
+};
 </script>
 </body>
 </html>
