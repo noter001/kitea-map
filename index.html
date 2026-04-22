@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* --- Tous les styles précédents (conservez-les) --- */
+/* جميع الأنماط كما هي (لم تتغير) */
 *{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}.user-info i{color:#ff4d4d}.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
 
 .lightbox {
@@ -217,7 +217,7 @@
 // ============ CONFIGURATION SUPABASE ============
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ============ VARIABLES GLOBALES ============
 let currentSession = null;     // { user, role, username }
@@ -245,15 +245,13 @@ const CATEGORIES = [
 
 // ============ FONCTIONS AUTHENTIFICATION ============
 async function login(username, password) {
-  // Convertir username en email factice
   const email = username + "@app.local";
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabaseClient.auth.signInWithPassword({
     email: email,
     password: password
   });
   if (error) throw new Error(error.message);
-  // Récupérer le profil depuis la table profiles
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await supabaseClient
     .from('profiles')
     .select('username, role')
     .eq('id', data.user.id)
@@ -263,20 +261,20 @@ async function login(username, password) {
 }
 
 async function logout() {
-  await supabase.auth.signOut();
+  await supabaseClient.auth.signOut();
   currentSession = null;
   updateUIForUser();
-  await drawRooms(); // rafraîchir l'affichage des popups
+  await drawRooms();
 }
 
 async function loadCurrentSession() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) {
     currentSession = null;
     updateUIForUser();
     return;
   }
-  const { data: profile } = await supabase
+  const { data: profile } = await supabaseClient
     .from('profiles')
     .select('username, role')
     .eq('id', session.user.id)
@@ -307,7 +305,6 @@ function updateUIForUser() {
     userNameSpan.textContent = currentSession.username;
     userRoleSpan.textContent = currentSession.role === 'admin' ? 'Admin' : 'User';
     adminActions.style.display = "flex";
-    // Gestion utilisateurs visible uniquement pour admin
     if (currentSession.role === 'admin') {
       manageUsersBtn.style.display = "block";
     } else {
@@ -318,7 +315,7 @@ function updateUIForUser() {
     userInfoDiv.style.display = "none";
     adminActions.style.display = "none";
   }
-  drawRooms(); // redessiner pour mettre à jour les boutons dans les popups
+  drawRooms();
 }
 
 // ============ GESTION DES UTILISATEURS (admin uniquement) ============
@@ -334,7 +331,7 @@ function closeUserManagement() {
 }
 
 async function refreshUserList() {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from('profiles')
     .select('id, username, role');
   if (error) {
@@ -363,7 +360,7 @@ async function refreshUserList() {
 
 async function deleteUser(username) {
   if (!currentSession || currentSession.role !== 'admin') return;
-  const { error } = await supabase.rpc('delete_user_by_username', { username_to_delete: username });
+  const { error } = await supabaseClient.rpc('delete_user_by_username', { username_to_delete: username });
   if (error) {
     showToast("Erreur suppression : " + error.message, "error");
   } else {
@@ -380,7 +377,7 @@ async function createNewUser() {
     return;
   }
   try {
-    const { data, error } = await supabase.rpc('create_user_with_role', {
+    const { data, error } = await supabaseClient.rpc('create_user_with_role', {
       username: username,
       password: password,
       role: role
@@ -405,25 +402,24 @@ function showToast(msg, type = 'success') {
   setTimeout(() => toast.remove(), 3000);
 }
 
-// === CRUD Rooms (mêmes fonctions que précédemment mais on ajoute la vérification de session) ===
 const TABLE_NAME = 'rooms';
 const IMAGES_TABLE = 'room_images';
 const STORAGE_BUCKET = 'room-images';
 
 async function getAllRooms() {
-  const { data, error } = await supabase.from(TABLE_NAME).select('*').order('id', { ascending: true });
+  const { data, error } = await supabaseClient.from(TABLE_NAME).select('*').order('id', { ascending: true });
   if (error) throw error;
   return data || [];
 }
 
 async function addRoom(room) {
-  const { data, error } = await supabase.from(TABLE_NAME).insert([room]).select();
+  const { data, error } = await supabaseClient.from(TABLE_NAME).insert([room]).select();
   if (error) throw error;
   return data[0].id;
 }
 
 async function updateRoomInDB(room) {
-  const { error } = await supabase.from(TABLE_NAME).update({
+  const { error } = await supabaseClient.from(TABLE_NAME).update({
     categorie: room.categorie, name: room.name, matricule: room.matricule,
     x: room.x, y: room.y, last_activity: room.last_activity
   }).eq('id', room.id);
@@ -432,26 +428,25 @@ async function updateRoomInDB(room) {
 
 async function deleteRoomById(id) {
   await deleteAllRoomImages(id);
-  const { error } = await supabase.from(TABLE_NAME).delete().eq('id', id);
+  const { error } = await supabaseClient.from(TABLE_NAME).delete().eq('id', id);
   if (error) throw error;
 }
 
 async function isMatriculeUnique(matricule, excludeId = null) {
-  let query = supabase.from(TABLE_NAME).select('id').eq('matricule', matricule);
+  let query = supabaseClient.from(TABLE_NAME).select('id').eq('matricule', matricule);
   if (excludeId) query = query.neq('id', excludeId);
   const { data, error } = await query;
   if (error) throw error;
   return data.length === 0;
 }
 
-// Images
 async function uploadImage(file, roomId) {
   if (!file) return null;
   const ext = file.name.split('.').pop();
   const fileName = `${roomId}_${Date.now()}_${Math.random()}.${ext}`;
-  const { data, error } = await supabase.storage.from(STORAGE_BUCKET).upload(fileName, file, { cacheControl: '3600', contentType: file.type });
+  const { data, error } = await supabaseClient.storage.from(STORAGE_BUCKET).upload(fileName, file, { cacheControl: '3600', contentType: file.type });
   if (error) throw error;
-  const { data: publicUrlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
+  const { data: publicUrlData } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
   return publicUrlData.publicUrl;
 }
 
@@ -459,22 +454,22 @@ async function deleteImageFromStorage(imageUrl) {
   if (!imageUrl) return;
   const urlParts = imageUrl.split('/');
   const fileName = urlParts[urlParts.length - 1];
-  if (fileName) await supabase.storage.from(STORAGE_BUCKET).remove([fileName]);
+  if (fileName) await supabaseClient.storage.from(STORAGE_BUCKET).remove([fileName]);
 }
 
 async function addRoomImage(roomId, imageUrl) {
-  const { error } = await supabase.from(IMAGES_TABLE).insert({ room_id: roomId, image_url: imageUrl });
+  const { error } = await supabaseClient.from(IMAGES_TABLE).insert({ room_id: roomId, image_url: imageUrl });
   if (error) throw error;
 }
 
 async function getRoomImages(roomId) {
-  const { data, error } = await supabase.from(IMAGES_TABLE).select('*').eq('room_id', roomId).order('id', { ascending: true });
+  const { data, error } = await supabaseClient.from(IMAGES_TABLE).select('*').eq('room_id', roomId).order('id', { ascending: true });
   if (error) throw error;
   return data || [];
 }
 
 async function deleteRoomImage(imageId, imageUrl) {
-  await supabase.from(IMAGES_TABLE).delete().eq('id', imageId);
+  await supabaseClient.from(IMAGES_TABLE).delete().eq('id', imageId);
   await deleteImageFromStorage(imageUrl);
 }
 
@@ -483,12 +478,11 @@ async function deleteAllRoomImages(roomId) {
   for (const img of images) {
     await deleteImageFromStorage(img.image_url);
   }
-  await supabase.from(IMAGES_TABLE).delete().eq('room_id', roomId);
+  await supabaseClient.from(IMAGES_TABLE).delete().eq('room_id', roomId);
 }
 
-// Initialisation des données exemple si table vide
 async function initSampleData() {
-  const { count, error } = await supabase.from(TABLE_NAME).select('*', { count: 'exact', head: true });
+  const { count, error } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', head: true });
   if (error) throw error;
   if (count === 0) {
     const sampleRooms = [
@@ -499,12 +493,11 @@ async function initSampleData() {
       { categorie: 'rangement', name: 'Débarras', matricule: 'RAN-001', x: 800, y: 2200, last_activity: new Date().toLocaleString() },
       { categorie: 'chambre enfant', name: 'Chambre Enfant', matricule: 'ENF-001', x: 2200, y: 500, last_activity: new Date().toLocaleString() }
     ];
-    await supabase.from(TABLE_NAME).insert(sampleRooms);
+    await supabaseClient.from(TABLE_NAME).insert(sampleRooms);
     showToast("Données de démonstration ajoutées", "success");
   }
 }
 
-// ============ FONCTIONS DE LA CARTE ============
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
   let bounds = [[0, 0], [3000, 2669]];
@@ -734,7 +727,6 @@ function attachCategoryEvents() {
 
 function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-// ============ GESTION DES IMAGES DANS LE MODAL ============
 function setupImageInput() {
   const input = document.getElementById('imageInput');
   input.onchange = (e) => {
@@ -791,7 +783,6 @@ function clearImages() {
   document.getElementById('imagePreviewContainer').innerHTML = '';
 }
 
-// ============ MODALES ============
 function openModal(type) {
   if (!currentSession) {
     showToast("Vous devez être connecté pour ajouter/modifier", "error");
@@ -933,7 +924,6 @@ function deactivatePickMode() { picking=false; document.getElementById('map').cl
 function togglePanel() { const panel=document.getElementById('sidePanel'); const showBtn=document.getElementById('showPanelBtn'); panel.classList.toggle('collapsed'); const icon=panel.querySelector('.toggle-panel i'); if(panel.classList.contains('collapsed')) { icon.classList.remove('fa-chevron-left'); icon.classList.add('fa-chevron-right'); showBtn.style.display='flex'; } else { icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); showBtn.style.display='none'; } }
 function showPanel() { const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
 
-// Lightbox
 function openLightbox(imageUrls, startIndex) {
   if (!imageUrls || imageUrls.length === 0) return;
   currentGalleryImages = imageUrls;
@@ -953,7 +943,6 @@ function nextImage() { if (currentGalleryImages.length) { currentGalleryIndex = 
 function prevImage() { if (currentGalleryImages.length) { currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length; updateLightboxImage(); } }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); currentGalleryImages = []; }
 
-// ============ ÉVÉNEMENTS ============
 document.getElementById("loginBtn").addEventListener("click", () => { document.getElementById("loginModal").style.display = "flex"; });
 document.getElementById("doLoginBtn").addEventListener("click", async () => {
   const username = document.getElementById("loginUsername").value.trim();
@@ -989,14 +978,12 @@ document.getElementById("search").addEventListener("input", async (e) => {
   if(found) { map.setView([found.y, found.x], 2); const marker = currentMarkers.find(m => { const ll=m.getLatLng(); return Math.abs(ll.lat-found.y)<1 && Math.abs(ll.lng-found.x)<1; }); if(marker) marker.openPopup(); showToast(`Trouvé: ${found.name}`,"success"); } else { showToast("Aucune salle","error"); }
 });
 
-// ============ INITIALISATION ============
 (async function init() {
   await loadCurrentSession();
-  // Souscription aux changements en temps réel
-  supabase.channel('rooms-channel')
+  supabaseClient.channel('rooms-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => drawRooms())
     .subscribe();
-  supabase.channel('images-channel')
+  supabaseClient.channel('images-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'room_images' }, () => drawRooms())
     .subscribe();
   try {
@@ -1006,7 +993,6 @@ document.getElementById("search").addEventListener("input", async (e) => {
     await drawRooms();
     showToast("Système prêt - Authentification Supabase", "success");
 
-    // Lightbox events
     const lightbox = document.getElementById('lightbox');
     lightbox.querySelector('.close-lightbox').addEventListener('click', closeLightbox);
     lightbox.querySelector('.prev').addEventListener('click', prevImage);
