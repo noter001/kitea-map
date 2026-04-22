@@ -190,7 +190,6 @@
     <button id="doLoginBtn">Se connecter</button>
     <div id="loginError" class="error-msg"></div>
     <hr style="margin:15px 0;">
-    <p style="font-size:12px; color:#666;">Comptes pré-créés : admin001 / admin001 (admin), user01 / user01, user02 / user02, user03 / user03</p>
   </div>
 </div>
 
@@ -360,11 +359,18 @@ async function refreshUserList() {
 
 async function deleteUser(username) {
   if (!currentSession || currentSession.role !== 'admin') return;
-  const { error } = await supabaseClient.rpc('delete_user_by_username', { username_to_delete: username });
-  if (error) {
-    showToast("Erreur suppression : " + error.message, "error");
-  } else {
-    showToast(`Utilisateur ${username} supprimé`, "success");
+  if (!confirm(`Supprimer ${username} définitivement ?`)) return;
+
+  try {
+    // حذف السجل من جدول profiles فقط
+    const { error } = await supabaseClient
+      .from('profiles')
+      .delete()
+      .eq('username', username);
+    if (error) throw new Error(error.message);
+    showToast(`Utilisateur ${username} supprimé (compte auth.user ignoré)`, "success");
+  } catch (err) {
+    showToast("Erreur suppression : " + err.message, "error");
   }
 }
 
@@ -376,13 +382,25 @@ async function createNewUser() {
     document.getElementById("userMgmtError").innerText = "Veuillez remplir tous les champs.";
     return;
   }
+
+  const email = username + "@app.local";
+
   try {
-    const { data, error } = await supabaseClient.rpc('create_user_with_role', {
-      username: username,
+    // إنشاء المستخدم في auth.users (دون الحاجة إلى دوال SQL)
+    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
+      email: email,
       password: password,
-      role: role
+      options: { data: { username: username } }
     });
-    if (error) throw new Error(error.message);
+    if (signUpError) throw new Error(signUpError.message);
+    if (!signUpData.user) throw new Error("Échec de la création");
+
+    // إضافة سجل في جدول profiles
+    const { error: profileError } = await supabaseClient
+      .from('profiles')
+      .insert({ id: signUpData.user.id, username: username, role: role });
+    if (profileError) throw new Error(profileError.message);
+
     showToast(`Utilisateur ${username} créé avec succès`, "success");
     document.getElementById("newUsername").value = "";
     document.getElementById("newPassword").value = "";
