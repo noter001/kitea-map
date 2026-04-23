@@ -457,6 +457,16 @@ function initMap() {
       document.getElementById("coord").value = x + "," + y;
       deactivatePickMode();
       document.getElementById("modal").style.display = "flex";
+      // استعادة الطابق المحفوظ من localStorage
+const savedFloor = localStorage.getItem('selectedFloor');
+if (savedFloor && (savedFloor === '1' || savedFloor === 'rdc')) {
+  currentFloor = savedFloor;
+} else {
+  currentFloor = '1'; // القيمة الافتراضية
+}
+// تعيين القائمة المنسدلة لتطابق currentFloor
+const floorSelectBox = document.getElementById("floorSelectBox");
+if (floorSelectBox) floorSelectBox.value = currentFloor;
     }
   });
 }
@@ -474,6 +484,7 @@ function updateMapFloor(floor) {
 
 async function changeFloor(floor) {
   currentFloor = floor;
+  localStorage.setItem('selectedFloor', floor); // حفظ الاختيار
   updateMapFloor(floor);
   await drawRooms();
   const floorSelectBox = document.getElementById("floorSelectBox");
@@ -1103,10 +1114,46 @@ if (floorSelectBox) {
 
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
-  if(val === "") return;
-  const rooms = await getAllRooms(currentFloor);
-  const found = rooms.find(r => (r.name && r.name.toLowerCase().includes(val)) || (r.matricule && r.matricule.toLowerCase().includes(val)) || (r.categorie && r.categorie.toLowerCase().includes(val)));
-  if(found) { map.setView([found.y, found.x], 2); const marker = currentMarkers.find(m => { const ll=m.getLatLng(); return Math.abs(ll.lat-found.y)<1 && Math.abs(ll.lng-found.x)<1; }); if(marker) marker.openPopup(); showToast(`Trouvé: ${found.name}`,"success"); } else { showToast("Aucune salle","error"); }
+  if (val === "") return;
+
+  // جلب جميع الغرف من جميع الطوابق
+  const { data: allRooms, error } = await supabaseClient
+    .from('rooms')
+    .select('*')
+    .order('id', { ascending: true });
+
+  if (error) {
+    showToast("Erreur de recherche", "error");
+    return;
+  }
+
+  // البحث عن غرفة تطابق الاسم أو الماتريكول أو الفئة
+  const foundRoom = allRooms.find(r =>
+    (r.name && r.name.toLowerCase().includes(val)) ||
+    (r.matricule && r.matricule.toLowerCase().includes(val)) ||
+    (r.categorie && r.categorie.toLowerCase().includes(val))
+  );
+
+  if (!foundRoom) {
+    showToast("Aucune salle trouvée", "error");
+    return;
+  }
+
+  // الغرفة موجودة، نتحقق من طابقها
+  if (foundRoom.floor === currentFloor) {
+    // نفس الطابق: ننتقل إلى الموقع ونفتح popup
+    map.setView([foundRoom.y, foundRoom.x], 2);
+    const marker = currentMarkers.find(m => {
+      const latlng = m.getLatLng();
+      return Math.abs(latlng.lat - foundRoom.y) < 1 && Math.abs(latlng.lng - foundRoom.x) < 1;
+    });
+    if (marker) marker.openPopup();
+    showToast(`Trouvé: ${foundRoom.name} (${foundRoom.matricule})`, "success");
+  } else {
+    // طابق مختلف
+    const floorName = foundRoom.floor === '1' ? '1er étage' : 'Rez-de-chaussée';
+    showToast(`La salle "${foundRoom.name}" se trouve au ${floorName}. Changez d'étage pour la voir.`, "error");
+  }
 });
 
 // ============ INITIALISATION ============
