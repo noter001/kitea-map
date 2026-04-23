@@ -791,7 +791,15 @@ function attachCategoryEvents() {
 }
 
 function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
+function showToast(message, type = "success") {
+  const existingToast = document.querySelector('.toast');
+  if (existingToast) existingToast.remove();
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 3000);
+}
 // ============ GESTION DES IMAGES DANS LE MODAL (identique) ============
 function setupImageInput() {
   const input = document.getElementById('imageInput');
@@ -929,9 +937,19 @@ async function saveRoom() {
 
 async function editRoomById(id) {
   if (!currentSession) { showToast("Vous devez être connecté pour modifier", "error"); return; }
-  const rooms = await getAllRooms(currentFloor);
-  const room = rooms.find(r => String(r.id) === String(id));
-  if (!room) { showToast("Salle non trouvée", "error"); return; }
+  
+  // جلب الغرفة مباشرةً من قاعدة البيانات باستخدام id
+  const { data: room, error } = await supabaseClient
+    .from('rooms')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  if (error || !room) {
+    showToast("Salle non trouvée", "error");
+    return;
+  }
+  
   selectedRoom = room;
   openEditModal();
 }
