@@ -375,39 +375,64 @@ async function deleteUser(username) {
 }
 
 async function createNewUser() {
+  // 1. جلب القيم من حقول الإدخال
   const username = document.getElementById("newUsername").value.trim();
   const password = document.getElementById("newPassword").value.trim();
   const role = document.getElementById("newUserRole").value;
+
+  // 2. التحقق من الحقول الفارغة
   if (!username || !password) {
     document.getElementById("userMgmtError").innerText = "Veuillez remplir tous les champs.";
     return;
   }
 
-  const email = username + "@app.local";
-
   try {
-    // إنشاء المستخدم في auth.users (دون الحاجة إلى دوال SQL)
+    // 3. التحقق من أن اسم المستخدم غير موجود مسبقاً في جدول profiles
+    const { data: existingUser, error: checkError } = await supabaseClient
+      .from('profiles')
+      .select('username')
+      .eq('username', username)
+      .maybeSingle();
+
+    if (checkError) throw new Error(checkError.message);
+    if (existingUser) {
+      document.getElementById("userMgmtError").innerText = "Ce nom d'utilisateur existe déjà.";
+      return;
+    }
+
+    // 4. إنشاء البريد الإلكتروني الوهمي
+    const email = username + "@app.local";
+
+    // 5. إنشاء المستخدم في auth.users عبر signUp
     const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
       email: email,
       password: password,
       options: { data: { username: username } }
     });
-    if (signUpError) throw new Error(signUpError.message);
-    if (!signUpData.user) throw new Error("Échec de la création");
 
-    // إضافة سجل في جدول profiles
+    if (signUpError) throw new Error(signUpError.message);
+    if (!signUpData.user) throw new Error("Échec de la création de l'utilisateur");
+
+    // 6. إضافة سجل في جدول profiles
     const { error: profileError } = await supabaseClient
       .from('profiles')
       .insert({ id: signUpData.user.id, username: username, role: role });
+
     if (profileError) throw new Error(profileError.message);
 
+    // 7. نجاح العملية
     showToast(`Utilisateur ${username} créé avec succès`, "success");
     document.getElementById("newUsername").value = "";
     document.getElementById("newPassword").value = "";
     document.getElementById("userMgmtError").innerText = "";
     await refreshUserList();
+
   } catch (err) {
-    document.getElementById("userMgmtError").innerText = err.message;
+    console.error("Erreur complète:", err);
+    let errorMsg = err.message;
+    // محاولة استخراج رسالة أكثر تفصيلاً من الخطأ إذا وُجدت
+    if (err.details) errorMsg += " - " + err.details;
+    document.getElementById("userMgmtError").innerText = errorMsg;
   }
 }
 
