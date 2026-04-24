@@ -184,6 +184,87 @@
     padding: 8px 10px;
     font-size: 13px;
   }
+  /* ============================= */
+/* 🔥 FIX MAP CONTROLS (ZOOM + UI) */
+/* ============================= */
+
+#map {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Zoom controls ديال Leaflet */
+.leaflet-control-container {
+  z-index: 1500 !important;
+}
+
+.leaflet-control-zoom {
+  z-index: 1500 !important;
+  margin-top: 90px; /* باش مايتغطاش بالtoolbar */
+}
+
+/* ============================= */
+/* 🔥 SAFE UI LAYERS ORDER */
+/* ============================= */
+
+.top-toolbar,
+.action-group-right {
+  z-index: 1200;
+}
+
+.side-panel {
+  z-index: 1100;
+}
+
+/* ============================= */
+/* 📱 MOBILE FIX (مهم بزاف) */
+/* ============================= */
+
+@media (max-width: 780px) {
+
+  .top-toolbar {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    gap: 8px;
+  }
+
+  .search-box {
+    max-width: 100%;
+    flex: 1;
+  }
+
+  .stats-bar {
+    display: none;
+  }
+
+  .action-group-right {
+    top: 80px;
+    right: 10px;
+  }
+
+  .side-panel {
+    width: 260px;
+    top: 80px;
+  }
+
+  /* مهم: باش zoom مايتغطاش */
+  .leaflet-control-zoom {
+    margin-top: 110px;
+  }
+}
+
+/* ============================= */
+/* 👆 TOUCH FIX (مهم للموبايل) */
+/* ============================= */
+
+body {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
 
 }
 </style>
