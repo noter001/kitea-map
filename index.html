@@ -105,6 +105,145 @@
   font-weight: bold;
   cursor: pointer;
 }
+  /* تحسينات الشاشات الصغيرة (الهواتف) */
+@media (max-width: 780px) {
+  /* تكبير شريط الأدوات العلوي */
+  .top-toolbar {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    gap: 8px;
+  }
+  .left-area {
+    padding: 4px 10px;
+  }
+  .btn-login {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  .user-info {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  /* مربع البحث يأخذ عرضاً أكبر */
+  .search-box {
+    padding: 6px 12px;
+    max-width: none;
+    flex: 2;
+  }
+  .search-box input {
+    font-size: 12px;
+  }
+  /* إظهار الإحصائيات بشكل مضغوط في الأعلى لتكون مرئية */
+  .stats-bar {
+    display: flex !important;
+    background: rgba(0,0,0,0.75);
+    color: white;
+    padding: 4px 12px;
+    gap: 12px;
+    font-size: 11px;
+    border-radius: 30px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1001;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .stats-bar i {
+    font-size: 10px;
+  }
+  .stats-bar span {
+    color: #ff9999;
+  }
+  /* اللوحة الجانبية تصبح بعرض 85% و بارتفاع مناسب */
+  .side-panel {
+    width: 85%;
+    top: 70px;
+    bottom: 10px;
+    left: 10px;
+    border-radius: 16px;
+  }
+  .side-panel.collapsed {
+    transform: translateX(-95%);
+  }
+  .show-panel-btn {
+    top: 80px;
+    left: 0;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    border-radius: 0 18px 18px 0;
+  }
+  /* الأزرار في المجموعة اليمينية (العمود) */
+  .action-group-right {
+    top: auto;
+    bottom: 20px;
+    right: 10px;
+    left: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+    background: transparent;
+  }
+  .action-card {
+    border-radius: 40px;
+  }
+  .action-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    gap: 8px;
+  }
+  /* تكبير قائمة الطوابق */
+  #floorSelectBox {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  /* نافذة modal تناسب الشاشة */
+  .modal-box {
+    width: 90%;
+    padding: 20px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-box input, .modal-box select {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .coord-row button {
+    width: 44px;
+    padding: 8px;
+  }
+  /* Lightbox أزرار التنقل */
+  .lightbox .nav-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 24px;
+  }
+  /* زيادة مساحة النقر على عناصر القائمة */
+  .room-item {
+    padding: 10px 12px;
+    margin: 5px 8px;
+  }
+  .category-header {
+    padding: 10px 12px;
+  }
+  /* تحسين popup الخريطة */
+  .leaflet-popup-content {
+    font-size: 12px;
+    min-width: 180px;
+  }
+  .popup-gallery-img, .popup-gallery-more {
+    width: 50px !important;
+    height: 50px !important;
+  }
+  /* تحسين اللمس للأزرار على الهواتف */
+.action-btn, .btn-login, .btn-logout, .toggle-panel, .show-panel-btn, .room-item, .category-header, .coord-row button {
+  touch-action: manipulation;
+}
+.action-btn, .btn-login, .btn-logout {
+  min-height: 44px;
+}
 </style>
 </head>
 <body>
@@ -129,8 +268,6 @@
     <i class="fas fa-tags"></i> Catégories: <span id="categoryCount">0</span>
   </div>
 
-  <!-- فراغ (يمكن التحكم ب margin-bottom) -->
-  
   <!-- 2. قائمة الطوابق -->
   <div class="action-card" style="margin-bottom: 20px;">
     <div class="action-btn" style="background:linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%); color:white; justify-content:space-between; gap:8px;">
@@ -142,8 +279,6 @@
     </div>
   </div>
 
-  <!-- فراغ -->
-  
   <!-- 3. أزرار الإدارة (تظهر فقط عند تسجيل الدخول) -->
   <div id="adminActions" style="display:none;">
     <div class="action-card" style="margin-bottom: 20px;">
