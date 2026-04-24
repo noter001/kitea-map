@@ -97,11 +97,6 @@
 .user-list button { background: #eb3349; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; }
 
 /* تنسيق بطاقة الطوابق بلون أحمر متدرج */
-.action-group-right .action-card:first-child + .action-card {
-  background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%);
-  border-radius: 50px;
-  overflow: hidden;
-}
 #floorSelectBox {
   background: rgba(255,255,255,0.9);
   border: 1px solid #ff4d4d;
@@ -122,14 +117,13 @@
       <button id="logoutBtn" class="btn-logout">Logout</button>
     </div>
   </div>
-    <div class="stats-bar" style="gap:10px; background: rgba(255,255,255,0.95);">
-  <i class="fas fa-layer-group"></i>
-  <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:20px; padding:4px 12px; font-weight:bold; cursor:pointer;">
-    <option value="1">1er étage</option>
-    <option value="rdc">Rez-de-chaussée (RDC)</option>
-  </select>
-</div>
-
+  <div class="stats-bar" style="gap:10px; background: rgba(255,255,255,0.95);">
+    <i class="fas fa-layer-group"></i>
+    <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:20px; padding:4px 12px; font-weight:bold; cursor:pointer;">
+      <option value="1">1er étage</option>
+      <option value="rdc">Rez-de-chaussée (RDC)</option>
+    </select>
+  </div>
   <div class="search-box">
     <i class="fas fa-search"></i>
     <input id="search" placeholder="Rechercher par nom, matricule ou catégorie...">
@@ -145,16 +139,6 @@
     <button class="action-btn add-btn" onclick="openModal('add')">
       <i class="fas fa-plus-circle"></i> Ajouter
     </button>
-  </div>
-  <!-- قائمة الطوابق الجديدة -->
-  <div class="action-card">
-    <div class="action-btn" style="background:#f0f0f0; color:#333; justify-content:space-between; gap:8px;">
-      <span><i class="fas fa-layer-group"></i> Étage :</span>
-      <select id="floorSelectBox" style="background:white; border:1px solid #ccc; border-radius:20px; padding:6px 12px; font-weight:bold; cursor:pointer;">
-        <option value="1">1er étage</option>
-        <option value="rdc">Rez-de-chaussée (RDC)</option>
-      </select>
-    </div>
   </div>
   <div class="action-card" id="manageUsersBtn" style="display:none;">
     <button class="action-btn" style="background:linear-gradient(135deg,#555,#333);color:white;" onclick="openUserManagement()">
@@ -391,17 +375,16 @@ async function refreshUserList() {
   }
 }
 
+// ============ SUPPRESSION CORRECTE D'UN UTILISATEUR (auth.users + profiles) ============
 async function deleteUser(username) {
   if (!currentSession || currentSession.role !== 'admin') return;
   if (!confirm(`Supprimer ${username} définitivement ?`)) return;
-
   try {
-    const { error } = await supabaseClient
-      .from('profiles')
-      .delete()
-      .eq('username', username);
+    const { error } = await supabaseClient.rpc('delete_user_by_username', {
+      username_to_delete: username
+    });
     if (error) throw new Error(error.message);
-    showToast(`Utilisateur ${username} supprimé (compte auth.user ignoré)`, "success");
+    showToast(`Utilisateur ${username} supprimé avec succès`, "success");
   } catch (err) {
     showToast("Erreur suppression : " + err.message, "error");
   }
@@ -459,8 +442,6 @@ async function createNewUser() {
 // ============ FONCTIONS DE LA CARTE ET GESTION DES ÉTAGES ============
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
-  // Les dimensions de l'image sont approximativement 3000x2669 pour le plan actuel
-  // On suppose la même taille pour le RDC
   updateMapFloor(currentFloor);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   map.on("click", function(e) {
@@ -471,24 +452,12 @@ function initMap() {
       document.getElementById("coord").value = x + "," + y;
       deactivatePickMode();
       document.getElementById("modal").style.display = "flex";
-      // استعادة الطابق المحفوظ من localStorage
-const savedFloor = localStorage.getItem('selectedFloor');
-if (savedFloor && (savedFloor === '1' || savedFloor === 'rdc')) {
-  currentFloor = savedFloor;
-} else {
-  currentFloor = '1'; // القيمة الافتراضية
-}
-// تعيين القائمة المنسدلة لتطابق currentFloor
-const floorSelectBox = document.getElementById("floorSelectBox");
-if (floorSelectBox) {
-  floorSelectBox.addEventListener("change", (e) => changeFloor(e.target.value));
-}
+    }
   });
 }
 
 function updateMapFloor(floor) {
   if (!map) return;
-  // Supprimer l'ancien overlay s'il existe
   if (map.overlay) map.removeLayer(map.overlay);
   let imageUrl = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg';
   let bounds = [[0, 0], [3000, 2669]];
@@ -499,13 +468,14 @@ function updateMapFloor(floor) {
 
 async function changeFloor(floor) {
   currentFloor = floor;
-  localStorage.setItem('selectedFloor', floor); // حفظ الاختيار
+  localStorage.setItem('selectedFloor', floor);
   updateMapFloor(floor);
   await drawRooms();
   const floorSelectBox = document.getElementById("floorSelectBox");
   if (floorSelectBox) floorSelectBox.value = floor;
   showToast(`Changement d'étage : ${floor === '1' ? '1er étage' : 'Rez-de-chaussée'}`, 'success');
 }
+
 // ============ CRUD Rooms (avec gestion du floor) ============
 const TABLE_NAME = 'rooms';
 const IMAGES_TABLE = 'room_images';
@@ -549,7 +519,7 @@ async function isMatriculeUnique(matricule, floor, excludeId = null) {
   return data.length === 0;
 }
 
-// ============ GESTION DES IMAGES (identique) ============
+// ============ GESTION DES IMAGES ============
 async function uploadImage(file, roomId) {
   if (!file) return null;
   const ext = file.name.split('.').pop();
@@ -817,6 +787,7 @@ function attachCategoryEvents() {
 }
 
 function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
 function showToast(message, type = "success") {
   const existingToast = document.querySelector('.toast');
   if (existingToast) existingToast.remove();
@@ -826,7 +797,8 @@ function showToast(message, type = "success") {
   document.body.appendChild(toast);
   setTimeout(() => { toast.remove(); }, 3000);
 }
-// ============ GESTION DES IMAGES DANS LE MODAL (identique) ============
+
+// ============ GESTION DES IMAGES DANS LE MODAL ============
 function setupImageInput() {
   const input = document.getElementById('imageInput');
   input.onchange = (e) => {
@@ -895,7 +867,6 @@ function openModal(type) {
   const title = document.getElementById("title");
   const now = new Date().toLocaleString();
   
-  // Vérifier si le select floor existe, sinon l'ajouter dynamiquement
   let floorSelect = document.getElementById("floorSelect");
   if (!floorSelect) {
     const coordRow = document.querySelector(".coord-row");
@@ -917,7 +888,7 @@ function openModal(type) {
     selectedRoom = null; pickedX = null; pickedY = null;
     clearForm();
     clearImages();
-    document.getElementById("floorSelect").value = currentFloor; // présélectionner l'étage courant
+    document.getElementById("floorSelect").value = currentFloor;
   }
 }
 
@@ -963,19 +934,15 @@ async function saveRoom() {
 
 async function editRoomById(id) {
   if (!currentSession) { showToast("Vous devez être connecté pour modifier", "error"); return; }
-  
-  // جلب الغرفة مباشرةً من قاعدة البيانات باستخدام id
   const { data: room, error } = await supabaseClient
     .from('rooms')
     .select('*')
     .eq('id', id)
     .single();
-  
   if (error || !room) {
     showToast("Salle non trouvée", "error");
     return;
   }
-  
   selectedRoom = room;
   openEditModal();
 }
@@ -988,7 +955,6 @@ async function openEditModal() {
   currentImageFiles = [];
   imagesToDelete = [];
   updateImagePreview();
-  // Ajouter l'option floor si absent
   let floorSelect = document.getElementById("floorSelect");
   if (!floorSelect) {
     const coordRow = document.querySelector(".coord-row");
@@ -1003,7 +969,6 @@ async function openEditModal() {
     coordRow.parentNode.insertBefore(div, coordRow);
   }
   document.getElementById("floorSelect").value = selectedRoom.floor || '1';
-  
   document.getElementById("modal").style.display = "flex";
   document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
   document.getElementById("actions").innerHTML = `<button onclick="updateRoom()" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
@@ -1121,7 +1086,6 @@ window.onclick = function(event) {
 }
 document.getElementById("createUserBtn").addEventListener("click", createNewUser);
 
-// Gestion du changement d'étage via la liste déroulante
 const floorSelectBox = document.getElementById("floorSelectBox");
 if (floorSelectBox) {
   floorSelectBox.addEventListener("change", (e) => changeFloor(e.target.value));
@@ -1130,33 +1094,23 @@ if (floorSelectBox) {
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
   if (val === "") return;
-
-  // جلب جميع الغرف من جميع الطوابق
   const { data: allRooms, error } = await supabaseClient
     .from('rooms')
-    .select('*')
-    .order('id', { ascending: true });
-
+    .select('*');
   if (error) {
     showToast("Erreur de recherche", "error");
     return;
   }
-
-  // البحث عن غرفة تطابق الاسم أو الماتريكول أو الفئة
   const foundRoom = allRooms.find(r =>
     (r.name && r.name.toLowerCase().includes(val)) ||
     (r.matricule && r.matricule.toLowerCase().includes(val)) ||
     (r.categorie && r.categorie.toLowerCase().includes(val))
   );
-
   if (!foundRoom) {
     showToast("Aucune salle trouvée", "error");
     return;
   }
-
-  // الغرفة موجودة، نتحقق من طابقها
   if (foundRoom.floor === currentFloor) {
-    // نفس الطابق: ننتقل إلى الموقع ونفتح popup
     map.setView([foundRoom.y, foundRoom.x], 2);
     const marker = currentMarkers.find(m => {
       const latlng = m.getLatLng();
@@ -1165,7 +1119,6 @@ document.getElementById("search").addEventListener("input", async (e) => {
     if (marker) marker.openPopup();
     showToast(`Trouvé: ${foundRoom.name} (${foundRoom.matricule})`, "success");
   } else {
-    // طابق مختلف
     const floorName = foundRoom.floor === '1' ? '1er étage' : 'Rez-de-chaussée';
     showToast(`La salle "${foundRoom.name}" se trouve au ${floorName}. Changez d'étage pour la voir.`, "error");
   }
@@ -1173,6 +1126,16 @@ document.getElementById("search").addEventListener("input", async (e) => {
 
 // ============ INITIALISATION ============
 (async function init() {
+  // Restaurer l'étage sauvegardé
+  const savedFloor = localStorage.getItem('selectedFloor');
+  if (savedFloor && (savedFloor === '1' || savedFloor === 'rdc')) {
+    currentFloor = savedFloor;
+  } else {
+    currentFloor = '1';
+  }
+  const floorSelectBoxInit = document.getElementById("floorSelectBox");
+  if (floorSelectBoxInit) floorSelectBoxInit.value = currentFloor;
+
   await loadCurrentSession();
   supabaseClient.channel('rooms-channel')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => drawRooms())
