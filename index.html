@@ -1,182 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
 <meta charset="utf-8" />
-<title>Indoor Map PRO - Full Optimized</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Indoor Map PRO SaaS</title>
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
 <style>
-body{margin:0;font-family:Arial}
-#map{height:100vh}
-.topbar{position:absolute;top:10px;left:10px;right:10px;z-index:1000;display:flex;gap:10px}
-input{padding:8px;border-radius:8px;border:1px solid #ccc}
-button{padding:8px 14px;border:none;border-radius:8px;background:#ff4d4d;color:white;cursor:pointer}
-.panel{position:absolute;left:10px;top:60px;width:260px;background:white;border-radius:12px;padding:10px;z-index:1000;max-height:80vh;overflow:auto}
-.room-item{padding:8px;border-bottom:1px solid #eee;cursor:pointer}
+body{margin:0;font-family:Arial;background:#0f172a;color:#fff}
+#map{height:100vh;width:100%}
+.panel{position:absolute;top:10px;left:10px;background:#111827;padding:15px;border-radius:12px;width:320px;max-height:90vh;overflow:auto}
+input,select,button{width:100%;margin-top:8px;padding:8px;border-radius:6px;border:none}
+button{background:#2563eb;color:#fff;cursor:pointer}
+.room-item{padding:8px;border-bottom:1px solid #1f2937;cursor:pointer}
+.room-item:hover{background:#1f2937}
+.gallery{display:flex;gap:6px;overflow:auto}
+.gallery img{width:80px;height:80px;object-fit:cover;border-radius:6px;cursor:pointer}
+.lightbox{position:fixed;top:0;left:0;width:100%;height:100%;background:#000c;display:none;align-items:center;justify-content:center}
+.lightbox img{max-width:90%;max-height:90%}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <input id="search" placeholder="Search room...">
-  <button onclick="openAdd()">+ Add</button>
-</div>
-
-<div class="panel" id="roomList"></div>
 <div id="map"></div>
 
+<div class="panel" id="panel">
+<h3>Dashboard</h3>
+<input id="search" placeholder="Search room...">
+<div id="roomList"></div>
+
+<hr>
+
+<div id="adminSection" style="display:none">
+<h4>Add Room</h4>
+<input id="name" placeholder="Name">
+<input id="category" placeholder="Category">
+<input id="x" placeholder="X">
+<input id="y" placeholder="Y">
+<input type="file" id="images" multiple>
+<button onclick="addRoom()">Add</button>
+
+<h4>Users</h4>
+<input id="newUser" placeholder="Username">
+<input id="newPass" placeholder="Password">
+<select id="role">
+<option value="user">User</option>
+<option value="admin">Admin</option>
+</select>
+<button onclick="createUser()">Create User</button>
+<div id="userList"></div>
+</div>
+
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="this.style.display='none'"><img id="lightImg"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
 <script>
-const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = supabase.createClient("YOUR_URL","YOUR_KEY");
+let user=null;
+let cacheRooms=[];
+let markers=[];
 
-let map;
-let markers = [];
-let cacheRooms = [];
-let currentFloor = '1';
+const map=L.map('map').setView([0,0],2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-// ================= MAP =================
-function initMap(){
-  map = L.map('map',{crs:L.CRS.Simple});
-  loadFloor();
+async function init(){
+let session=await supabase.auth.getSession();
+user=session.data.session?.user;
+if(!user) return location.reload();
+
+let role=await getRole();
+if(role==='admin') document.getElementById('adminSection').style.display='block';
+
+loadRooms();
+loadUsers();
 }
 
-function loadFloor(){
-  if(map.overlay) map.removeLayer(map.overlay);
-  const img = currentFloor==='1'?'floor1.jpg':'floor_rdc.jpg';
-  const bounds=[[0,0],[3000,2669]];
-  map.overlay=L.imageOverlay(img,bounds).addTo(map);
-  map.fitBounds(bounds);
+async function getRole(){
+let {data}=await supabase.from('users').select('role').eq('id',user.id).single();
+return data?.role||'user';
 }
 
-// ================= FETCH OPTIMIZED =================
-async function fetchRooms(){
-  const {data,error}=await supabaseClient
-    .from('rooms')
-    .select(`*, room_images(*)`)
-    .eq('floor',currentFloor);
-  if(error) throw error;
-  cacheRooms=data;
+async function loadRooms(){
+let {data}=await supabase.from('rooms').select('*');
+cacheRooms=data;
+renderRooms(data);
+renderMap(data);
 }
 
-// ================= DRAW =================
-function draw(){
-  markers.forEach(m=>{m.off();map.removeLayer(m)});
-  markers=[];
-
-  cacheRooms.forEach(r=>{
-    if(!r.x||!r.y) return;
-
-    const marker=L.circle([r.y,r.x],{radius:10,color:'#ff4d4d'}).addTo(map);
-
-    const imgs=r.room_images||[];
-
-    marker.bindPopup(`
-      <b>${r.name}</b><br>
-      ${r.matricule}<br>
-      Images:${imgs.length}
-      <br><button onclick="deleteRoom('${r.id}')">Delete</button>
-    `);
-
-    markers.push(marker);
-  });
-
-  renderList();
+function renderRooms(list){
+let el=document.getElementById('roomList');
+el.innerHTML='';
+list.forEach(r=>{
+let div=document.createElement('div');
+div.className='room-item';
+div.innerHTML=`${r.name}<br><small>${r.category}</small>`;
+div.onclick=()=>focusRoom(r);
+el.appendChild(div);
+});
 }
 
-// ================= LIST =================
-function renderList(){
-  const el=document.getElementById('roomList');
-  el.innerHTML='';
-
-  cacheRooms.forEach(r=>{
-    const div=document.createElement('div');
-    div.className='room-item';
-    div.innerText=r.name;
-    div.onclick=()=>{
-      map.setView([r.y,r.x],2);
-    }
-    el.appendChild(div);
-  });
+function renderMap(list){
+markers.forEach(m=>map.removeLayer(m));
+markers=[];
+list.forEach(r=>{
+let m=L.marker([r.x,r.y]).addTo(map).bindPopup(r.name);
+markers.push(m);
+});
 }
 
-// ================= SEARCH =================
-let timeout;
-document.getElementById('search').addEventListener('input',e=>{
-  clearTimeout(timeout);
-  timeout=setTimeout(()=>search(e.target.value),300);
+function focusRoom(r){
+map.setView([r.x,r.y],18);
+loadGallery(r.id);
+}
+
+async function addRoom(){
+let name=document.getElementById('name').value;
+let category=document.getElementById('category').value;
+let x=document.getElementById('x').value;
+let y=document.getElementById('y').value;
+
+let {data,error}=await supabase.from('rooms').insert({name,category,x,y}).select().single();
+if(error)return alert(error.message);
+
+let files=document.getElementById('images').files;
+for(let f of files){
+let path=`${data.id}/${Date.now()}_${f.name}`;
+await supabase.storage.from('images').upload(path,f);
+await supabase.from('images').insert({room_id:data.id,url:path});
+}
+
+loadRooms();
+}
+
+async function loadGallery(room_id){
+let {data}=await supabase.from('images').select('*').eq('room_id',room_id);
+let panel=document.getElementById('panel');
+let g=document.createElement('div');
+g.className='gallery';
+
+data.forEach(img=>{
+let url=supabase.storage.from('images').getPublicUrl(img.url).data.publicUrl;
+let i=document.createElement('img');
+i.src=url;
+i.onclick=()=>openLight(url);
+g.appendChild(i);
 });
 
-async function search(val){
-  if(!val) return draw();
-
-  const {data}=await supabaseClient
-    .from('rooms')
-    .select('*')
-    .or(`name.ilike.%${val}%,matricule.ilike.%${val}%`)
-    .limit(10);
-
-  cacheRooms=data;
-  draw();
+panel.appendChild(g);
 }
 
-// ================= ADD =================
-function openAdd(){
-  const name=prompt('Name');
-  const mat=prompt('Matricule');
-  if(!name||!mat) return;
-
-  map.once('click',async e=>{
-    const x=Math.round(e.latlng.lng);
-    const y=Math.round(e.latlng.lat);
-
-    await supabaseClient.from('rooms').insert({
-      name, matricule:mat, x, y, floor:currentFloor
-    });
-
-    await reload();
-  });
+function openLight(src){
+let lb=document.getElementById('lightbox');
+document.getElementById('lightImg').src=src;
+lb.style.display='flex';
 }
 
-// ================= DELETE =================
-async function deleteRoom(id){
-  if(!confirm('Delete?')) return;
-  await supabaseClient.from('rooms').delete().eq('id',id);
-  await reload();
+async function createUser(){
+let u=document.getElementById('newUser').value;
+let p=document.getElementById('newPass').value;
+let role=document.getElementById('role').value;
+
+let {data,error}=await supabase.auth.signUp({email:u+"@app.com",password:p});
+if(error)return alert(error.message);
+
+await supabase.from('users').insert({id:data.user.id,role});
+loadUsers();
 }
 
-// ================= IMAGE COMPRESS =================
-async function compressImage(file){
-  const bitmap=await createImageBitmap(file);
-  const canvas=document.createElement('canvas');
-  const ctx=canvas.getContext('2d');
+async function loadUsers(){
+let {data}=await supabase.from('users').select('*');
+let el=document.getElementById('userList');
+el.innerHTML='';
 
-  canvas.width=800;
-  canvas.height=(bitmap.height/bitmap.width)*800;
-
-  ctx.drawImage(bitmap,0,0,canvas.width,canvas.height);
-
-  return new Promise(r=>canvas.toBlob(r,'image/jpeg',0.7));
+data.forEach(u=>{
+let d=document.createElement('div');
+d.className='room-item';
+d.innerHTML=`${u.id} - ${u.role}`;
+el.appendChild(d);
+});
 }
 
-// ================= RELOAD =================
-async function reload(){
-  await fetchRooms();
-  draw();
+async function logout(){
+await supabase.auth.signOut();
+location.reload();
 }
 
-// ================= REALTIME =================
-supabaseClient.channel('rooms')
-  .on('postgres_changes',{event:'*',schema:'public',table:'rooms'},reload)
-  .subscribe();
-
-// ================= INIT =================
-(async()=>{
-  initMap();
-  await reload();
-})();
-
+init();
 </script>
+
 </body>
 </html>
