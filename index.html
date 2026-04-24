@@ -7,8 +7,427 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* جميع الأنماط كما هي (نفس الأنماط السابقة) */
-*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}.user-info i{color:#ff4d4d}.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
+/* الأنماط الأساسية (للكمبيوتر) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+#map {
+  height: 100vh;
+  width: 100%;
+  cursor: default;
+}
+.top-toolbar {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.left-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.95);
+  padding: 5px 15px;
+  border-radius: 40px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.btn-login {
+  background: linear-gradient(135deg,#b30000 0%,#800000 100%);
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg,#990000 0%,#660000 100%);
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.9);
+  padding: 5px 12px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.user-info i {
+  color: #ff4d4d;
+}
+.btn-logout {
+  background: #333;
+  border: none;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.search-box {
+  background: white;
+  padding: 8px 20px;
+  border-radius: 40px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  max-width: 450px;
+  min-width: 200px;
+  background: rgba(255,255,255,0.95);
+}
+.search-box i {
+  color: #ff4d4d;
+  font-size: 16px;
+}
+.search-box input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  background: transparent;
+}
+.stats-bar {
+  background: rgba(255,255,255,0.95);
+  padding: 8px 20px;
+  border-radius: 40px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  display: flex;
+  gap: 25px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.stats-bar span {
+  color: #ff4d4d;
+  font-weight: bold;
+  margin-left: 5px;
+}
+.action-group-right {
+  position: absolute;
+  top: 100px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.action-card {
+  background: white;
+  border-radius: 50px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.action-card:hover {
+  transform: translateX(-3px);
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 15px;
+  width: 100%;
+}
+.action-btn.add-btn {
+  background: linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);
+  color: white;
+}
+.side-panel {
+  position: absolute;
+  left: 20px;
+  top: 95px;
+  bottom: 20px;
+  width: 320px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.2);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  background: rgba(255,255,255,0.98);
+}
+.side-panel.collapsed {
+  transform: translateX(-360px);
+}
+.panel-header {
+  background: linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);
+  color: white;
+  padding: 15px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.panel-header h4 {
+  margin: 0;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toggle-panel {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+}
+.categories-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+}
+.category-group {
+  margin-bottom: 16px;
+  border-radius: 14px;
+  background: #f8f9ff;
+  overflow: hidden;
+}
+.category-header {
+  background: linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  border-left: 5px solid #ff4d4d;
+}
+.category-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.category-count {
+  background: #ff4d4d;
+  color: white;
+  padding: 2px 10px;
+  border-radius: 30px;
+  font-size: 11px;
+}
+.toggle-icon {
+  transition: transform 0.2s;
+}
+.toggle-icon.rotated {
+  transform: rotate(90deg);
+}
+.category-rooms {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+.category-rooms.expanded {
+  max-height: 550px;
+  overflow-y: auto;
+}
+.room-item {
+  padding: 12px 16px;
+  margin: 6px 12px;
+  background: white;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid #ff4d4d;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.room-item:hover {
+  background: #ffe6e6;
+  transform: translateX(6px);
+}
+.room-name {
+  font-weight: bold;
+  color: #1e293b;
+  font-size: 14px;
+}
+.room-mat {
+  font-size: 11px;
+  color: #475569;
+  margin-top: 5px;
+}
+.show-panel-btn {
+  position: absolute;
+  left: 20px;
+  top: 120px;
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);
+  color: white;
+  border: none;
+  border-radius: 0 20px 20px 0;
+  cursor: pointer;
+  z-index: 901;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+#modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.75);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+}
+.modal-box {
+  background: white;
+  padding: 28px;
+  border-radius: 28px;
+  width: 540px;
+  max-width: 92%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 30px 50px rgba(0,0,0,0.4);
+  animation: slideIn 0.25s ease;
+}
+@keyframes slideIn {
+  from { transform: translateY(-30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-box h3 {
+  color: #1e293b;
+  border-left: 5px solid #ff4d4d;
+  padding-left: 15px;
+}
+.modal-box input, .modal-box select {
+  padding: 12px 15px;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 14px;
+}
+.coord-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.coord-row button {
+  width: 48px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  padding: 10px;
+}
+.image-preview-list {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.image-item {
+  position: relative;
+  display: inline-block;
+}
+.image-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+.image-item .delete-img-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #eb3349;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+#actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  min-width: 100px;
+}
+#actions button:first-child {
+  background: linear-gradient(135deg,#ff4d4d,#cc0000);
+  color: white;
+}
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 60px;
+  z-index: 10001;
+  animation: fadeInOut 3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast.success {
+  background: linear-gradient(135deg,#11998e,#38ef7d);
+}
+.toast.error {
+  background: linear-gradient(135deg,#eb3349,#f45c43);
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+.picking-mode {
+  cursor: crosshair !important;
+}
+.leaflet-container.picking-mode {
+  cursor: crosshair !important;
+}
 
 .lightbox {
   display: none;
@@ -66,7 +485,7 @@
   font-size: 14px;
 }
 @media (max-width: 768px) {
-  .lightbox .nav-btn { width: 40px; height: 40px; font-size: 24px; }
+  .lightbox .nav-btn { width: 44px; height: 44px; font-size: 24px; }
 }
 
 .modal-login, .modal-user-management {
@@ -97,7 +516,6 @@
 .user-list div { padding: 8px; border-bottom: 1px solid #eee; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
 .user-list button { background: #eb3349; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; }
 
-/* تنسيق بطاقة الطوابق بلون أحمر متدرج */
 #floorSelectBox {
   background: rgba(255,255,255,0.9);
   border: 1px solid #ff4d4d;
@@ -106,9 +524,9 @@
   font-weight: bold;
   cursor: pointer;
 }
-  /* تحسينات الشاشات الصغيرة (الهواتف) */
+
+/* ======= تحسينات الهواتف ======= */
 @media (max-width: 780px) {
-  /* تكبير شريط الأدوات العلوي */
   .top-toolbar {
     top: 10px;
     left: 10px;
@@ -119,44 +537,42 @@
     padding: 4px 10px;
   }
   .btn-login {
-    padding: 6px 12px;
-    font-size: 12px;
+    padding: 8px 14px;
+    font-size: 13px;
   }
   .user-info {
-    font-size: 11px;
+    font-size: 12px;
     padding: 4px 8px;
   }
-  /* مربع البحث يأخذ عرضاً أكبر */
   .search-box {
     padding: 6px 12px;
     max-width: none;
     flex: 2;
   }
   .search-box input {
-    font-size: 12px;
+    font-size: 13px;
   }
-  /* إظهار الإحصائيات بشكل مضغوط في الأعلى لتكون مرئية */
+  /* نقل الإحصائيات إلى الأعلى بشكل مضغوط */
   .stats-bar {
     display: flex !important;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.8);
     color: white;
-    padding: 4px 12px;
+    padding: 6px 12px;
     gap: 12px;
-    font-size: 11px;
+    font-size: 12px;
     border-radius: 30px;
     position: absolute;
     top: 10px;
     right: 10px;
     z-index: 1001;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
   }
   .stats-bar i {
-    font-size: 10px;
+    font-size: 11px;
   }
   .stats-bar span {
     color: #ff9999;
   }
-  /* اللوحة الجانبية تصبح بعرض 85% و بارتفاع مناسب */
   .side-panel {
     width: 85%;
     top: 70px;
@@ -175,7 +591,7 @@
     font-size: 16px;
     border-radius: 0 18px 18px 0;
   }
-  /* الأزرار في المجموعة اليمينية (العمود) */
+  /* الأزرار اليمينية تصبح في أسفل الشاشة أفقياً */
   .action-group-right {
     top: auto;
     bottom: 20px;
@@ -184,23 +600,21 @@
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 10px;
     background: transparent;
   }
   .action-card {
     border-radius: 40px;
   }
   .action-btn {
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: 10px 18px;
+    font-size: 14px;
     gap: 8px;
   }
-  /* تكبير قائمة الطوابق */
   #floorSelectBox {
-    padding: 6px 10px;
-    font-size: 13px;
+    padding: 6px 12px;
+    font-size: 14px;
   }
-  /* نافذة modal تناسب الشاشة */
   .modal-box {
     width: 90%;
     padding: 20px;
@@ -208,46 +622,38 @@
     overflow-y: auto;
   }
   .modal-box input, .modal-box select {
-    padding: 10px 12px;
-    font-size: 13px;
+    padding: 12px;
+    font-size: 14px;
   }
   .coord-row button {
-    width: 44px;
-    padding: 8px;
+    width: 48px;
+    padding: 10px;
   }
-  /* Lightbox أزرار التنقل */
-  .lightbox .nav-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 24px;
-  }
-  /* زيادة مساحة النقر على عناصر القائمة */
   .room-item {
-    padding: 10px 12px;
-    margin: 5px 8px;
+    padding: 12px;
+    margin: 6px 8px;
   }
-  .category-er {
-    padding: 10px 12px;
+  .category-header {
+    padding: 12px;
   }
-  /* تحسين popup الخريطة */
   .leaflet-popup-content {
-    font-size: 12px;
-    min-width: 180px;
+    font-size: 13px;
+    min-width: 200px;
   }
   .popup-gallery-img, .popup-gallery-more {
-    width: 50px !important;
-    height: 50px !important;
+    width: 55px !important;
+    height: 55px !important;
   }
-  /* تحسين اللمس للأزرار على الهواتف */
-.action-btn, .btn-login, .btn-logout, .toggle-panel, .show-panel-btn, .room-item, .category-er, .coord-row button {
-  touch-action: manipulation;
-}
-.action-btn, .btn-login, .btn-logout {
-  min-height: 44px;
+  /* تحسين اللمس */
+  .action-btn, .btn-login, .btn-logout, .toggle-panel, .show-panel-btn, .room-item, .category-header, .coord-row button {
+    touch-action: manipulation;
+  }
+  .action-btn, .btn-login, .btn-logout {
+    min-height: 44px;
+  }
 }
 </style>
 </head>
-</>
 <body>
 <div class="top-toolbar">
   <div class="left-area">
@@ -264,12 +670,11 @@
 </div>
 
 <div class="action-group-right">
-  <!-- 1. الإحصائيات (في الأعلى) -->
+  <!-- 1. الإحصائيات -->
   <div class="stats-bar" style="margin-bottom: 20px;">
     <i class="fas fa-building"></i> Salles: <span id="roomCount">0</span>
     <i class="fas fa-tags"></i> Catégories: <span id="categoryCount">0</span>
   </div>
-
   <!-- 2. قائمة الطوابق -->
   <div class="action-card" style="margin-bottom: 20px;">
     <div class="action-btn" style="background:linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%); color:white; justify-content:space-between; gap:8px;">
@@ -280,8 +685,7 @@
       </select>
     </div>
   </div>
-
-  <!-- 3. أزرار الإدارة (تظهر فقط عند تسجيل الدخول) -->
+  <!-- 3. أزرار الإدارة -->
   <div id="adminActions" style="display:none;">
     <div class="action-card" style="margin-bottom: 20px;">
       <button class="action-btn add-btn" onclick="openModal('add')">
@@ -295,8 +699,9 @@
     </div>
   </div>
 </div>
+
 <div class="side-panel" id="sidePanel">
-  <div class="panel-er">
+  <div class="panel-header">
     <h4><i class="fas fa-folder-tree"></i> Catégories de salles</h4>
     <button class="toggle-panel" onclick="togglePanel()">
       <i class="fas fa-chevron-left"></i>
@@ -358,7 +763,7 @@
   </div>
 </div>
 
-<!-- User Management Modal (admin only) -->
+<!-- User Management Modal -->
 <div id="userMgmtModal" class="modal-user-management">
   <div class="modal-box">
     <h3><i class="fas fa-users"></i> Gestion des utilisateurs</h3>
@@ -384,7 +789,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ============ VARIABLES GLOBALES ============
-let currentSession = null;     // { user, role, username }
+let currentSession = null;
 let map = null;
 let picking = false;
 let pickedX = null, pickedY = null;
@@ -395,7 +800,7 @@ let existingImages = [];
 let imagesToDelete = [];
 let currentGalleryImages = [];
 let currentGalleryIndex = 0;
-let currentFloor = '1'; // '1' pour floor1, 'rdc' pour floor_rdc
+let currentFloor = '1';
 
 const CATEGORIES = [
   { value: 'salon et séjour', label: 'salon et séjour', icon: '🏠', color: '#ff4d4d' },
@@ -408,13 +813,10 @@ const CATEGORIES = [
   { value: 'accessoire', label: 'accessoire', icon: '🔧', color: '#9e9e9e' }
 ];
 
-// ============ FONCTIONS AUTHENTIFICATION ============
+// ============ AUTHENTIFICATION ============
 async function login(username, password) {
   const email = username + "@app.local";
-  const { data, error } = await supabaseClient.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if (error) throw new Error(error.message);
   const { data: profile, error: profileError } = await supabaseClient
     .from('profiles')
@@ -445,11 +847,7 @@ async function loadCurrentSession() {
     .eq('id', session.user.id)
     .single();
   if (profile) {
-    currentSession = {
-      user: session.user,
-      username: profile.username,
-      role: profile.role
-    };
+    currentSession = { user: session.user, username: profile.username, role: profile.role };
   } else {
     currentSession = null;
   }
@@ -470,11 +868,7 @@ function updateUIForUser() {
     userNameSpan.textContent = currentSession.username;
     userRoleSpan.textContent = currentSession.role === 'admin' ? 'Admin' : 'User';
     adminActions.style.display = "flex";
-    if (currentSession.role === 'admin') {
-      manageUsersBtn.style.display = "block";
-    } else {
-      manageUsersBtn.style.display = "none";
-    }
+    manageUsersBtn.style.display = currentSession.role === 'admin' ? "block" : "none";
   } else {
     loginBtn.style.display = "flex";
     userInfoDiv.style.display = "none";
@@ -483,26 +877,19 @@ function updateUIForUser() {
   drawRooms();
 }
 
-// ============ GESTION DES UTILISATEURS (admin uniquement) ============
+// ============ GESTION UTILISATEURS ============
 async function openUserManagement() {
   if (!currentSession || currentSession.role !== 'admin') return;
   document.getElementById("userMgmtModal").style.display = "flex";
   await refreshUserList();
 }
-
 function closeUserManagement() {
   document.getElementById("userMgmtModal").style.display = "none";
   document.getElementById("userMgmtError").innerText = "";
 }
-
 async function refreshUserList() {
-  const { data, error } = await supabaseClient
-    .from('profiles')
-    .select('id, username, role');
-  if (error) {
-    showToast("Erreur chargement utilisateurs", "error");
-    return;
-  }
+  const { data, error } = await supabaseClient.from('profiles').select('id, username, role');
+  if (error) { showToast("Erreur chargement utilisateurs", "error"); return; }
   const container = document.getElementById("userList");
   container.innerHTML = "";
   for (const user of data) {
@@ -522,88 +909,59 @@ async function refreshUserList() {
     container.appendChild(div);
   }
 }
-
-// ============ SUPPRESSION CORRECTE D'UN UTILISATEUR (auth.users + profiles) ============
 async function deleteUser(username) {
   if (!currentSession || currentSession.role !== 'admin') return;
   if (!confirm(`Supprimer ${username} définitivement ?`)) return;
   try {
-    const { error } = await supabaseClient.rpc('delete_user_by_username', {
-      username_to_delete: username
-    });
+    const { error } = await supabaseClient.rpc('delete_user_by_username', { username_to_delete: username });
     if (error) throw new Error(error.message);
     showToast(`Utilisateur ${username} supprimé avec succès`, "success");
   } catch (err) {
     showToast("Erreur suppression : " + err.message, "error");
   }
 }
-
 async function createNewUser() {
   const username = document.getElementById("newUsername").value.trim();
   const password = document.getElementById("newPassword").value.trim();
   const role = document.getElementById("newUserRole").value;
-
   if (!username || !password) {
     document.getElementById("userMgmtError").innerText = "Veuillez remplir tous les champs.";
     return;
   }
-
   try {
-    const { data: existingUser, error: checkError } = await supabaseClient
-      .from('profiles')
-      .select('username')
-      .eq('username', username)
-      .maybeSingle();
-    if (checkError) throw new Error(checkError.message);
-    if (existingUser) {
-      document.getElementById("userMgmtError").innerText = "Ce nom d'utilisateur existe déjà.";
-      return;
-    }
-
+    const { data: existingUser } = await supabaseClient.from('profiles').select('username').eq('username', username).maybeSingle();
+    if (existingUser) { document.getElementById("userMgmtError").innerText = "Nom déjà existant."; return; }
     const email = username + "@app.local";
-    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({
-      email: email,
-      password: password,
-      options: { data: { username: username } }
-    });
+    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password, options: { data: { username } } });
     if (signUpError) throw new Error(signUpError.message);
-    if (!signUpData.user) throw new Error("Échec de la création de l'utilisateur");
-
-    const { error: profileError } = await supabaseClient
-      .from('profiles')
-      .insert({ id: signUpData.user.id, username: username, role: role });
+    if (!signUpData.user) throw new Error("Échec création");
+    const { error: profileError } = await supabaseClient.from('profiles').insert({ id: signUpData.user.id, username, role });
     if (profileError) throw new Error(profileError.message);
-
-    showToast(`Utilisateur ${username} créé avec succès`, "success");
+    showToast(`Utilisateur ${username} créé`, "success");
     document.getElementById("newUsername").value = "";
     document.getElementById("newPassword").value = "";
     document.getElementById("userMgmtError").innerText = "";
     await refreshUserList();
   } catch (err) {
-    console.error("Erreur complète:", err);
-    let errorMsg = err.message;
-    if (err.details) errorMsg += " - " + err.details;
-    document.getElementById("userMgmtError").innerText = errorMsg;
+    document.getElementById("userMgmtError").innerText = err.message;
   }
 }
 
-// ============ FONCTIONS DE LA CARTE ET GESTION DES ÉTAGES ============
+// ============ CARTE & ETAGES ============
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
   updateMapFloor(currentFloor);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   map.on("click", function(e) {
-    let x = Math.round(e.latlng.lng);
-    let y = Math.round(e.latlng.lat);
-    if (picking === true) {
-      pickedX = x; pickedY = y;
-      document.getElementById("coord").value = x + "," + y;
+    if (picking) {
+      pickedX = Math.round(e.latlng.lng);
+      pickedY = Math.round(e.latlng.lat);
+      document.getElementById("coord").value = pickedX + "," + pickedY;
       deactivatePickMode();
       document.getElementById("modal").style.display = "flex";
     }
   });
 }
-
 function updateMapFloor(floor) {
   if (!map) return;
   if (map.overlay) map.removeLayer(map.overlay);
@@ -613,7 +971,6 @@ function updateMapFloor(floor) {
   map.overlay = overlay;
   map.fitBounds(bounds);
 }
-
 async function changeFloor(floor) {
   currentFloor = floor;
   localStorage.setItem('selectedFloor', floor);
@@ -621,30 +978,24 @@ async function changeFloor(floor) {
   await drawRooms();
   const floorSelectBox = document.getElementById("floorSelectBox");
   if (floorSelectBox) floorSelectBox.value = floor;
-  showToast(`Changement d'étage : ${floor === '1' ? '1er étage' : 'Rez-de-chaussée'}`, 'success');
+  showToast(`Étage : ${floor === '1' ? '1er' : 'RDC'}`, 'success');
 }
 
-// ============ CRUD Rooms (avec gestion du floor) ============
+// ============ CRUD ROOMS ============
 const TABLE_NAME = 'rooms';
 const IMAGES_TABLE = 'room_images';
 const STORAGE_BUCKET = 'room-images';
 
 async function getAllRooms(floor = currentFloor) {
-  const { data, error } = await supabaseClient
-    .from(TABLE_NAME)
-    .select('*')
-    .eq('floor', floor)
-    .order('id', { ascending: true });
+  const { data, error } = await supabaseClient.from(TABLE_NAME).select('*').eq('floor', floor).order('id');
   if (error) throw error;
   return data || [];
 }
-
 async function addRoom(room) {
   const { data, error } = await supabaseClient.from(TABLE_NAME).insert([room]).select();
   if (error) throw error;
   return data[0].id;
 }
-
 async function updateRoomInDB(room) {
   const { error } = await supabaseClient.from(TABLE_NAME).update({
     categorie: room.categorie, name: room.name, matricule: room.matricule,
@@ -652,13 +1003,11 @@ async function updateRoomInDB(room) {
   }).eq('id', room.id);
   if (error) throw error;
 }
-
 async function deleteRoomById(id) {
   await deleteAllRoomImages(id);
   const { error } = await supabaseClient.from(TABLE_NAME).delete().eq('id', id);
   if (error) throw error;
 }
-
 async function isMatriculeUnique(matricule, floor, excludeId = null) {
   let query = supabaseClient.from(TABLE_NAME).select('id').eq('matricule', matricule).eq('floor', floor);
   if (excludeId) query = query.neq('id', excludeId);
@@ -667,50 +1016,40 @@ async function isMatriculeUnique(matricule, floor, excludeId = null) {
   return data.length === 0;
 }
 
-// ============ GESTION DES IMAGES ============
+// ============ IMAGES ============
 async function uploadImage(file, roomId) {
   if (!file) return null;
   const ext = file.name.split('.').pop();
   const fileName = `${roomId}_${Date.now()}_${Math.random()}.${ext}`;
-  const { data, error } = await supabaseClient.storage.from(STORAGE_BUCKET).upload(fileName, file, { cacheControl: '3600', contentType: file.type });
+  const { error } = await supabaseClient.storage.from(STORAGE_BUCKET).upload(fileName, file);
   if (error) throw error;
   const { data: publicUrlData } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(fileName);
   return publicUrlData.publicUrl;
 }
-
 async function deleteImageFromStorage(imageUrl) {
   if (!imageUrl) return;
-  const urlParts = imageUrl.split('/');
-  const fileName = urlParts[urlParts.length - 1];
+  const fileName = imageUrl.split('/').pop();
   if (fileName) await supabaseClient.storage.from(STORAGE_BUCKET).remove([fileName]);
 }
-
 async function addRoomImage(roomId, imageUrl) {
-  const { error } = await supabaseClient.from(IMAGES_TABLE).insert({ room_id: roomId, image_url: imageUrl });
-  if (error) throw error;
+  await supabaseClient.from(IMAGES_TABLE).insert({ room_id: roomId, image_url: imageUrl });
 }
-
 async function getRoomImages(roomId) {
-  const { data, error } = await supabaseClient.from(IMAGES_TABLE).select('*').eq('room_id', roomId).order('id', { ascending: true });
+  const { data, error } = await supabaseClient.from(IMAGES_TABLE).select('*').eq('room_id', roomId).order('id');
   if (error) throw error;
   return data || [];
 }
-
 async function deleteRoomImage(imageId, imageUrl) {
   await supabaseClient.from(IMAGES_TABLE).delete().eq('id', imageId);
   await deleteImageFromStorage(imageUrl);
 }
-
 async function deleteAllRoomImages(roomId) {
   const images = await getRoomImages(roomId);
-  for (const img of images) {
-    await deleteImageFromStorage(img.image_url);
-  }
+  for (const img of images) await deleteImageFromStorage(img.image_url);
   await supabaseClient.from(IMAGES_TABLE).delete().eq('room_id', roomId);
 }
-
 async function initSampleData() {
-  const { count, error } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', : true });
+  const { count, error } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', head: true });
   if (error) throw error;
   if (count === 0) {
     const sampleRooms = [
@@ -722,67 +1061,50 @@ async function initSampleData() {
       { categorie: 'chambre enfant', name: 'Chambre Enfant', matricule: 'ENF-001', x: 2200, y: 500, last_activity: new Date().toLocaleString(), floor: '1' }
     ];
     await supabaseClient.from(TABLE_NAME).insert(sampleRooms);
-    showToast("Données de démonstration ajoutées pour le 1er étage", "success");
+    showToast("Données démo ajoutées", "success");
   }
 }
 
-// ============ FONCTIONS D'AFFICHAGE CARTE ============
+// ============ AFFICHAGE CARTE & UI ============
 async function deleteFromPopup(roomId) {
-  if (!currentSession) {
-    showToast("Vous devez être connecté pour supprimer", "error");
-    return;
-  }
-  if (!confirm("Êtes-vous sûr de vouloir supprimer cette salle ?")) return;
+  if (!currentSession) { showToast("Connectez-vous", "error"); return; }
+  if (!confirm("Supprimer cette salle ?")) return;
   try {
     await deleteRoomById(roomId);
-    showToast("Salle supprimée avec succès", "success");
+    showToast("Salle supprimée", "success");
     if (map) map.closePopup();
     await drawRooms();
-  } catch(e) {
-    showToast("Erreur lors de la suppression : " + e.message, "error");
-  }
+  } catch(e) { showToast("Erreur: "+e.message, "error"); }
 }
-
 function createPopupContent(room, catInfo, images) {
   let imagesHtml = '';
-  if (images && images.length > 0) {
+  if (images && images.length) {
     const imageUrls = images.map(img => img.image_url);
-    const displayImages = images.slice(0, 3);
-    const moreCount = images.length - 3;
-    imagesHtml = `<div style="display:flex; gap:5px; margin-bottom:8px; flex-wrap:wrap;">`;
-    displayImages.forEach((img, idx) => {
-      imagesHtml += `<img src="${img.image_url}" class="popup-gallery-img" data-image-urls='${JSON.stringify(imageUrls)}' data-index="${idx}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid #ddd; cursor:pointer;">`;
+    const displayImages = images.slice(0,3);
+    const moreCount = images.length-3;
+    imagesHtml = `<div style="display:flex; gap:5px; flex-wrap:wrap;">`;
+    displayImages.forEach((img,idx) => {
+      imagesHtml += `<img src="${img.image_url}" class="popup-gallery-img" data-image-urls='${JSON.stringify(imageUrls)}' data-index="${idx}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer;">`;
     });
-    if (moreCount > 0) {
-      imagesHtml += `<div class="popup-gallery-more" data-image-urls='${JSON.stringify(imageUrls)}' data-index="3" style="width:60px; height:60px; background:#eee; display:flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer;">+${moreCount}</div>`;
-    }
+    if(moreCount>0) imagesHtml += `<div class="popup-gallery-more" data-image-urls='${JSON.stringify(imageUrls)}' data-index="3" style="width:60px;height:60px;background:#eee;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;">+${moreCount}</div>`;
     imagesHtml += `</div>`;
   }
   let buttonsHtml = '';
   if (currentSession) {
-    buttonsHtml = `
-      <hr style="margin:10px 0">
-      <button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;margin-bottom:8px;">
-        ✏️ Modifier
-      </button>
-      <button class="delete-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">
-        🗑️ Supprimer
-      </button>
-    `;
+    buttonsHtml = `<hr style="margin:10px 0"><button class="edit-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;margin-bottom:8px;">✏️ Modifier</button>
+      <button class="delete-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#eb3349,#f45c43);color:white;border:none;border-radius:40px;padding:8px;width:100%;cursor:pointer;">🗑️ Supprimer</button>`;
   }
   return `<div style="min-width:200px;">
     ${imagesHtml}
     <div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color};display:flex;gap:8px;align-items:center;padding-bottom:6px;">
-      <span>${catInfo.icon}</span>
-      <strong>${escapeHtml(room.categorie || 'Sans catégorie')}</strong>
+      <span>${catInfo.icon}</span><strong>${escapeHtml(room.categorie||'Sans catégorie')}</strong>
     </div>
     <div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div>
     <div><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div>
-    <div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity || '')}</div>
+    <div><i class="fas fa-clock"></i> <strong>Activité:</strong> ${escapeHtml(room.last_activity||'')}</div>
     ${buttonsHtml}
   </div>`;
 }
-
 async function drawRooms() {
   if (!map) return;
   currentMarkers.forEach(m => map.removeLayer(m));
@@ -790,33 +1112,27 @@ async function drawRooms() {
   const rooms = await getAllRooms(currentFloor);
   for (const room of rooms) {
     if (room.x && room.y) {
-      const catInfo = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#ff4d4d' };
+      const catInfo = CATEGORIES.find(c=>c.value===room.categorie) || { icon:'📍', color:'#ff4d4d' };
       const images = await getRoomImages(room.id);
-      const marker = L.circle([room.y, room.x], {
-        radius: 12,
-        color: catInfo.color,
-        fillColor: catInfo.color,
-        fillOpacity: 0.8,
-        weight: 3
-      }).addTo(map);
-      marker.bindPopup(createPopupContent(room, catInfo, images), { maxWidth: 260 });
-      marker.on("click", () => { selectedRoom = room; });
+      const marker = L.circle([room.y, room.x], { radius:12, color:catInfo.color, fillColor:catInfo.color, fillOpacity:0.8, weight:3 }).addTo(map);
+      marker.bindPopup(createPopupContent(room, catInfo, images), { maxWidth:260 });
+      marker.on("click",()=>{ selectedRoom=room; });
       marker.on("popupopen", (e) => {
         const popup = e.popup.getElement();
         const galleryImgs = popup.querySelectorAll('.popup-gallery-img, .popup-gallery-more');
         galleryImgs.forEach(el => {
           el.addEventListener('click', (event) => {
             event.stopPropagation();
-            const imageUrls = JSON.parse(el.getAttribute('data-image-urls'));
-            const index = parseInt(el.getAttribute('data-index')) || 0;
-            openLightbox(imageUrls, index);
+            const urls = JSON.parse(el.getAttribute('data-image-urls'));
+            const idx = parseInt(el.getAttribute('data-index')) || 0;
+            openLightbox(urls, idx);
           });
         });
-        if (currentSession) {
+        if(currentSession){
           const editBtn = popup.querySelector(".edit-btn");
-          if (editBtn) editBtn.addEventListener("click", () => editRoomById(editBtn.getAttribute("data-id")));
-          const deleteBtn = popup.querySelector(".delete-popup-btn");
-          if (deleteBtn) deleteBtn.addEventListener("click", () => deleteFromPopup(deleteBtn.getAttribute("data-id")));
+          if(editBtn) editBtn.addEventListener("click", ()=>editRoomById(editBtn.getAttribute("data-id")));
+          const delBtn = popup.querySelector(".delete-popup-btn");
+          if(delBtn) delBtn.addEventListener("click", ()=>deleteFromPopup(delBtn.getAttribute("data-id")));
         }
       });
       currentMarkers.push(marker);
@@ -825,493 +1141,369 @@ async function drawRooms() {
   updateStats(rooms);
   updateCategoriesList(rooms);
 }
-
 async function updateStats(rooms) {
-  const cats = new Set(rooms.map(r => r.categorie).filter(c => c));
+  const cats = new Set(rooms.map(r=>r.categorie).filter(c=>c));
   document.getElementById('roomCount').innerText = rooms.length;
   document.getElementById('categoryCount').innerText = cats.size;
 }
-
 let expandedCategories = new Set();
 function updateCategoriesList(rooms) {
   const container = document.getElementById('categoriesList');
-  if (!rooms.length) { container.innerHTML = '<div style="padding:20px;text-align:center;">Aucune salle pour cet étage</div>'; return; }
+  if(!rooms.length){ container.innerHTML='<div style="padding:20px;text-align:center;">Aucune salle</div>'; return; }
   const byCat = new Map();
-  rooms.forEach(room => {
+  rooms.forEach(room=>{
     const cat = room.categorie || 'sans-categorie';
-    if (!byCat.has(cat)) byCat.set(cat, []);
+    if(!byCat.has(cat)) byCat.set(cat,[]);
     byCat.get(cat).push(room);
   });
-  const sortedCategories = Array.from(byCat.keys()).sort();
-  let html = '';
-  for (let cat of sortedCategories) {
-    const roomsList = byCat.get(cat);
-    const catInfo = CATEGORIES.find(c => c.value === cat) || { value: cat, label: cat, icon: '🏷️', color: '#9e9e9e' };
-    const isExpanded = expandedCategories.has(cat);
-    html += generateCatHTML(cat, catInfo.icon, catInfo.label, roomsList, isExpanded, cat === 'sans-categorie');
+  let html='';
+  for(let cat of Array.from(byCat.keys()).sort()){
+    const list = byCat.get(cat);
+    const info = CATEGORIES.find(c=>c.value===cat) || { icon:'🏷️', label:cat };
+    const expanded = expandedCategories.has(cat);
+    html += `<div class="category-group" data-cat="${cat}">
+      <div class="category-header">
+        <div class="category-name"><i class="fas fa-folder"></i> <span>${info.icon} ${escapeHtml(info.label)}</span> <span class="category-count">${list.length}</span></div>
+        <i class="fas fa-chevron-right toggle-icon ${expanded?'rotated':''}"></i>
+      </div>
+      <div class="category-rooms ${expanded?'expanded':''}">
+        ${list.map(room=>`<div class="room-item" data-room-id="${room.id}" data-room-x="${room.x}" data-room-y="${room.y}" data-room-name="${escapeHtml(room.name)}" data-room-mat="${escapeHtml(room.matricule)}">
+          <div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div>
+          <div class="room-mat">${escapeHtml(room.matricule)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
   }
   container.innerHTML = html;
   attachCategoryEvents();
 }
-
-function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncategorized = false) {
-  const expandedClass = isExpanded ? 'expanded' : '';
-  const rotatedClass = isExpanded ? 'rotated' : '';
-  const displayLabel = isUncategorized ? 'Sans catégorie' : label;
-  const displayIcon = isUncategorized ? '📋' : icon;
-  return `<div class="category-group" data-cat="${catValue}">
-    <div class="category-er">
-      <div class="category-name">
-        <i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i>
-        <span>${displayIcon} ${escapeHtml(displayLabel)}</span>
-        <span class="category-count">${roomsList.length}</span>
-      </div>
-      <i class="fas fa-chevron-right toggle-icon ${rotatedClass}"></i>
-    </div>
-    <div class="category-rooms ${expandedClass}">
-      ${roomsList.map(room => `
-        <div class="room-item" data-room-id="${room.id}" data-room-x="${room.x}" data-room-y="${room.y}" data-room-name="${escapeHtml(room.name)}" data-room-mat="${escapeHtml(room.matricule)}">
-          <div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div>
-          <div class="room-mat">${escapeHtml(room.matricule)}</div>
-          <div class="room-cat">${room.last_activity ? new Date(room.last_activity).toLocaleDateString() : ''}</div>
-        </div>
-      `).join('')}
-    </div>
-  </div>`;
-}
-
-function attachRoomItemEvents() {
-  document.querySelectorAll('.room-item').forEach(item => {
+function attachRoomItemEvents(){
+  document.querySelectorAll('.room-item').forEach(item=>{
     item.removeEventListener('click', item._clickHandler);
-    const handler = (e) => {
+    const handler = (e)=>{
       e.stopPropagation();
-      const roomId = parseInt(item.getAttribute('data-room-id'));
       const x = parseFloat(item.getAttribute('data-room-x'));
       const y = parseFloat(item.getAttribute('data-room-y'));
       const name = item.getAttribute('data-room-name');
-      if (isNaN(x) || isNaN(y)) { showToast("Cette salle n'a pas de position valide", "error"); return; }
-      if (map) {
-        map.flyTo([y, x], 2, { duration: 0.8 });
-        setTimeout(() => {
-          const marker = currentMarkers.find(m => {
-            const latlng = m.getLatLng();
-            return Math.abs(latlng.lat - y) < 5 && Math.abs(latlng.lng - x) < 5;
-          });
-          if (marker) marker.openPopup();
-          showToast(`📍 ${name}`, 'success');
-        }, 800);
+      if(isNaN(x)||isNaN(y)){ showToast("Position invalide","error"); return; }
+      if(map){
+        map.flyTo([y,x],2);
+        setTimeout(()=>{
+          const marker = currentMarkers.find(m=>Math.abs(m.getLatLng().lat-y)<5 && Math.abs(m.getLatLng().lng-x)<5);
+          if(marker) marker.openPopup();
+          showToast(`📍 ${name}`,'success');
+        },800);
       }
-      selectedRoom = { id: roomId, x, y, name };
     };
-    item.addEventListener('click', handler);
+    item.addEventListener('click',handler);
     item._clickHandler = handler;
   });
 }
-
-function attachCategoryEvents() {
-  document.querySelectorAll('.category-group').forEach(group => {
-    const er = group.querySelector('.category-er');
-    if (!er) return;
-    const newer = er.cloneNode(true);
+function attachCategoryEvents(){
+  document.querySelectorAll('.category-group').forEach(group=>{
+    const header = group.querySelector('.category-header');
+    if(!header) return;
+    const newHeader = header.cloneNode(true);
     header.parentNode.replaceChild(newHeader, header);
-    const finalHeader = newHeader;
-    finalHeader.addEventListener('click', (e) => {
-      const catValue = group.getAttribute('data-cat');
+    newHeader.addEventListener('click', ()=>{
+      const cat = group.getAttribute('data-cat');
       const roomsDiv = group.querySelector('.category-rooms');
-      const icon = finalHeader.querySelector('.toggle-icon');
-      if (roomsDiv.classList.contains('expanded')) {
+      const icon = newHeader.querySelector('.toggle-icon');
+      if(roomsDiv.classList.contains('expanded')){
         roomsDiv.classList.remove('expanded');
         icon.classList.remove('rotated');
-        expandedCategories.delete(catValue);
+        expandedCategories.delete(cat);
       } else {
         roomsDiv.classList.add('expanded');
         icon.classList.add('rotated');
-        expandedCategories.add(catValue);
+        expandedCategories.add(cat);
       }
-      setTimeout(() => attachRoomItemEvents(), 50);
+      setTimeout(()=>attachRoomItemEvents(),50);
     });
   });
   attachRoomItemEvents();
 }
-
-function escapeHtml(t) { if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
-
-function showToast(message, type = "success") {
-  const existingToast = document.querySelector('.toast');
-  if (existingToast) existingToast.remove();
-  const toast = document.createElement("div");
+function escapeHtml(t){ if(!t) return ''; return t.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+function showToast(msg,type="success"){
+  const existing = document.querySelector('.toast');
+  if(existing) existing.remove();
+  const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${message}`;
+  toast.innerHTML = `<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}"></i> ${msg}`;
   document.body.appendChild(toast);
-  setTimeout(() => { toast.remove(); }, 3000);
+  setTimeout(()=>toast.remove(),3000);
 }
 
-// ============ GESTION DES IMAGES DANS LE MODAL ============
-function setupImageInput() {
-  const input = document.getElementById('imageInput');
-  input.onchange = (e) => {
+// ============ GESTION IMAGES DANS MODAL ============
+function setupImageInput(){
+  document.getElementById('imageInput').onchange = (e)=>{
     const files = Array.from(e.target.files);
-    if (files.length) {
-      currentImageFiles.push(...files);
-      updateImagePreview();
-    }
-    input.value = '';
+    if(files.length) { currentImageFiles.push(...files); updateImagePreview(); }
+    e.target.value='';
   };
 }
-
-function updateImagePreview() {
+function updateImagePreview(){
   const container = document.getElementById('imagePreviewContainer');
-  container.innerHTML = '';
-  currentImageFiles.forEach((file, index) => {
+  container.innerHTML='';
+  currentImageFiles.forEach((file,idx)=>{
     const reader = new FileReader();
-    reader.onload = (ev) => {
+    reader.onload = (ev)=>{
       const div = document.createElement('div');
-      div.className = 'image-item';
-      div.innerHTML = `<img src="${ev.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;"><button type="button" class="delete-img-btn" data-index="${index}">🗑️</button>`;
-      div.querySelector('.delete-img-btn').addEventListener('click', (e) => {
-        e.stopPropagation();
-        currentImageFiles.splice(index, 1);
-        updateImagePreview();
-      });
+      div.className='image-item';
+      div.innerHTML = `<img src="${ev.target.result}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;"><button type="button" class="delete-img-btn" data-index="${idx}">🗑️</button>`;
+      div.querySelector('.delete-img-btn').addEventListener('click',()=>{ currentImageFiles.splice(idx,1); updateImagePreview(); });
       container.appendChild(div);
     };
     reader.readAsDataURL(file);
   });
-  if (existingImages.length > 0) {
-    existingImages.forEach((img, idx) => {
-      const div = document.createElement('div');
-      div.className = 'image-item';
-      div.innerHTML = `<img src="${img.image_url}" style="width:80px; height:80px; object-fit:cover; border-radius:8px;"><button type="button" class="delete-existing-img-btn" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`;
-      div.querySelector('.delete-existing-img-btn').addEventListener('click', async (e) => {
-        e.stopPropagation();
-        const imageId = parseInt(e.target.getAttribute('data-id'));
-        const imageUrl = e.target.getAttribute('data-url');
-        imagesToDelete.push({ id: imageId, url: imageUrl });
-        existingImages = existingImages.filter(img => img.id !== imageId);
-        updateImagePreview();
-      });
-      container.appendChild(div);
+  existingImages.forEach((img,idx)=>{
+    const div = document.createElement('div');
+    div.className='image-item';
+    div.innerHTML = `<img src="${img.image_url}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;"><button type="button" class="delete-existing-img-btn" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`;
+    div.querySelector('.delete-existing-img-btn').addEventListener('click',async (e)=>{
+      const id = parseInt(e.target.getAttribute('data-id'));
+      const url = e.target.getAttribute('data-url');
+      imagesToDelete.push({id,url});
+      existingImages = existingImages.filter(i=>i.id!==id);
+      updateImagePreview();
     });
-  }
+    container.appendChild(div);
+  });
 }
+function clearImages(){ currentImageFiles=[]; existingImages=[]; imagesToDelete=[]; document.getElementById('imageInput').value=''; document.getElementById('imagePreviewContainer').innerHTML=''; }
 
-function clearImages() {
-  currentImageFiles = [];
-  existingImages = [];
-  imagesToDelete = [];
-  document.getElementById('imageInput').value = '';
-  document.getElementById('imagePreviewContainer').innerHTML = '';
-}
-
-// ============ MODALES (ajout d'un champ floor) ============
-function openModal(type) {
-  if (!currentSession) {
-    showToast("Vous devez être connecté pour ajouter/modifier", "error");
-    return;
-  }
+// ============ MODALES ============
+function openModal(type){
+  if(!currentSession){ showToast("Connectez-vous","error"); return; }
   deactivatePickMode();
-  document.getElementById("modal").style.display = "flex";
-  const actions = document.getElementById("actions");
-  const title = document.getElementById("title");
+  document.getElementById("modal").style.display="flex";
   const now = new Date().toLocaleString();
-  
-  let floorSelect = document.getElementById("floorSelect");
-  if (!floorSelect) {
+  if(!document.getElementById("floorSelect")){
     const coordRow = document.querySelector(".coord-row");
     const div = document.createElement("div");
-    div.innerHTML = `
-      <label style="font-weight:bold; display:block; margin-bottom:6px;"><i class="fas fa-building"></i> Étage :</label>
+    div.innerHTML = `<label style="font-weight:bold; display:block; margin-bottom:6px;">Étage :</label>
       <select id="floorSelect" style="width:100%; padding:12px; border-radius:16px; border:2px solid #e2e8f0;">
         <option value="1">1er étage</option>
         <option value="rdc">Rez-de-chaussée (RDC)</option>
-      </select>
-    `;
+      </select>`;
     coordRow.parentNode.insertBefore(div, coordRow);
   }
-  
-  if (type === "add") {
-    title.innerHTML = '<i class="fas fa-plus"></i> Ajouter une salle';
-    actions.innerHTML = `<button onclick="saveRoom()"><i class="fas fa-save"></i> Enregistrer</button><button onclick="closeModal()">Annuler</button>`;
+  if(type==="add"){
+    document.getElementById("title").innerHTML = '<i class="fas fa-plus"></i> Ajouter une salle';
+    document.getElementById("actions").innerHTML = `<button onclick="saveRoom()">Enregistrer</button><button onclick="closeModal()">Annuler</button>`;
     document.getElementById("last_activity").value = now;
-    selectedRoom = null; pickedX = null; pickedY = null;
-    clearForm();
-    clearImages();
+    selectedRoom = null; pickedX=null; pickedY=null;
+    clearForm(); clearImages();
     document.getElementById("floorSelect").value = currentFloor;
   }
 }
-
-function validateFormFields() {
-  if(!document.getElementById("categorie").value) { showToast("Choisissez une catégorie","error"); return false; }
-  if(!document.getElementById("name").value.trim()) { showToast("Nom requis","error"); return false; }
-  if(!document.getElementById("mat").value.trim()) { showToast("Matricule requis","error"); return false; }
-  if(!document.getElementById("coord").value) { showToast("Position sur la carte requise","error"); return false; }
+function validateFormFields(){
+  if(!document.getElementById("categorie").value){ showToast("Choisissez catégorie","error"); return false; }
+  if(!document.getElementById("name").value.trim()){ showToast("Nom requis","error"); return false; }
+  if(!document.getElementById("mat").value.trim()){ showToast("Matricule requis","error"); return false; }
+  if(!document.getElementById("coord").value){ showToast("Position requise","error"); return false; }
   return true;
 }
-
-async function saveRoom() {
+async function saveRoom(){
   if(!validateFormFields()) return;
-  if(pickedX === null || pickedY === null) { showToast("Sélectionnez un emplacement","error"); return; }
+  if(pickedX===null || pickedY===null){ showToast("Sélectionnez emplacement","error"); return; }
   const newMat = document.getElementById("mat").value.trim();
   const floor = document.getElementById("floorSelect").value;
-  if(!await isMatriculeUnique(newMat, floor)) { showToast("Matricule existe déjà pour cet étage","error"); return; }
+  if(!await isMatriculeUnique(newMat, floor)){ showToast("Matricule existe déjà","error"); return; }
   const newRoom = {
     categorie: document.getElementById("categorie").value,
     name: document.getElementById("name").value.trim(),
     matricule: newMat,
-    x: pickedX,
-    y: pickedY,
+    x: pickedX, y: pickedY,
     last_activity: new Date().toLocaleString(),
     floor: floor
   };
-  try {
+  try{
     const roomId = await addRoom(newRoom);
-    for (const file of currentImageFiles) {
-      const imageUrl = await uploadImage(file, roomId);
-      await addRoomImage(roomId, imageUrl);
+    for(const file of currentImageFiles){
+      const url = await uploadImage(file, roomId);
+      await addRoomImage(roomId, url);
     }
-    showToast("Salle ajoutée avec succès","success");
+    showToast("Salle ajoutée","success");
     closeModal();
     await drawRooms();
     clearForm();
-    pickedX = null; pickedY = null;
+    pickedX=null; pickedY=null;
     clearImages();
-  } catch(e) {
-    showToast("Erreur: " + e.message,"error");
-  }
+  } catch(e){ showToast("Erreur: "+e.message,"error"); }
 }
-
-async function editRoomById(id) {
-  if (!currentSession) { showToast("Vous devez être connecté pour modifier", "error"); return; }
-  const { data: room, error } = await supabaseClient
-    .from('rooms')
-    .select('*')
-    .eq('id', id)
-    .single();
-  if (error || !room) {
-    showToast("Salle non trouvée", "error");
-    return;
-  }
+async function editRoomById(id){
+  if(!currentSession){ showToast("Connectez-vous","error"); return; }
+  const { data:room, error } = await supabaseClient.from('rooms').select('*').eq('id',id).single();
+  if(error || !room){ showToast("Salle non trouvée","error"); return; }
   selectedRoom = room;
   openEditModal();
 }
-
-async function openEditModal() {
+async function openEditModal(){
   deactivatePickMode();
-  if (!selectedRoom) { showToast("Erreur: aucune salle sélectionnée", "error"); return; }
+  if(!selectedRoom){ showToast("Erreur","error"); return; }
   fillForm(selectedRoom);
   existingImages = await getRoomImages(selectedRoom.id);
   currentImageFiles = [];
   imagesToDelete = [];
   updateImagePreview();
-  let floorSelect = document.getElementById("floorSelect");
-  if (!floorSelect) {
+  if(!document.getElementById("floorSelect")){
     const coordRow = document.querySelector(".coord-row");
     const div = document.createElement("div");
-    div.innerHTML = `
-      <label style="font-weight:bold; display:block; margin-bottom:6px;"><i class="fas fa-building"></i> Étage :</label>
+    div.innerHTML = `<label style="font-weight:bold; display:block; margin-bottom:6px;">Étage :</label>
       <select id="floorSelect" style="width:100%; padding:12px; border-radius:16px; border:2px solid #e2e8f0;">
         <option value="1">1er étage</option>
         <option value="rdc">Rez-de-chaussée (RDC)</option>
-      </select>
-    `;
+      </select>`;
     coordRow.parentNode.insertBefore(div, coordRow);
   }
   document.getElementById("floorSelect").value = selectedRoom.floor || '1';
   document.getElementById("modal").style.display = "flex";
   document.getElementById("title").innerHTML = '<i class="fas fa-edit"></i> Modifier la salle';
-  document.getElementById("actions").innerHTML = `<button onclick="updateRoom()" style="background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
+  document.getElementById("actions").innerHTML = `<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`;
   pickedX = selectedRoom.x;
   pickedY = selectedRoom.y;
 }
-
-async function updateRoom() {
-  if (!selectedRoom) return;
-  if (!validateFormFields()) return;
+async function updateRoom(){
+  if(!selectedRoom) return;
+  if(!validateFormFields()) return;
   const newMat = document.getElementById("mat").value.trim();
   const newFloor = document.getElementById("floorSelect").value;
-  if ((selectedRoom.matricule !== newMat || selectedRoom.floor !== newFloor) && !await isMatriculeUnique(newMat, newFloor, selectedRoom.id)) {
-    showToast("Matricule déjà utilisé pour cet étage", "error");
-    return;
+  if((selectedRoom.matricule!==newMat || selectedRoom.floor!==newFloor) && !await isMatriculeUnique(newMat, newFloor, selectedRoom.id)){
+    showToast("Matricule déjà utilisé","error"); return;
   }
   selectedRoom.categorie = document.getElementById("categorie").value;
   selectedRoom.name = document.getElementById("name").value.trim();
   selectedRoom.matricule = newMat;
   selectedRoom.floor = newFloor;
-  if (pickedX !== null && pickedY !== null) { selectedRoom.x = pickedX; selectedRoom.y = pickedY; }
+  if(pickedX!==null && pickedY!==null) { selectedRoom.x = pickedX; selectedRoom.y = pickedY; }
   selectedRoom.last_activity = new Date().toLocaleString();
-  try {
+  try{
     await updateRoomInDB(selectedRoom);
-    for (const img of imagesToDelete) { await deleteRoomImage(img.id, img.url); }
-    for (const file of currentImageFiles) {
-      const imageUrl = await uploadImage(file, selectedRoom.id);
-      await addRoomImage(selectedRoom.id, imageUrl);
+    for(const img of imagesToDelete) await deleteRoomImage(img.id, img.url);
+    for(const file of currentImageFiles){
+      const url = await uploadImage(file, selectedRoom.id);
+      await addRoomImage(selectedRoom.id, url);
     }
     showToast("Mise à jour réussie","success");
     closeModal();
     selectedRoom = null;
     await drawRooms();
-  } catch(e) {
-    showToast("Erreur: " + e.message,"error");
-  }
+  } catch(e){ showToast("Erreur: "+e.message,"error"); }
 }
-
-function fillForm(room) {
-  if (!room) return;
+function fillForm(room){
+  if(!room) return;
   document.getElementById("categorie").value = room.categorie || "";
   document.getElementById("name").value = room.name || "";
   document.getElementById("mat").value = room.matricule || "";
-  document.getElementById("coord").value = (room.x && room.y) ? room.x + "," + room.y : "";
+  document.getElementById("coord").value = (room.x && room.y) ? room.x+","+room.y : "";
   document.getElementById("last_activity").value = room.last_activity || "";
   pickedX = room.x; pickedY = room.y;
-  if (document.getElementById("floorSelect")) document.getElementById("floorSelect").value = room.floor || '1';
+  if(document.getElementById("floorSelect")) document.getElementById("floorSelect").value = room.floor || '1';
 }
-
-function clearForm() {
-  document.getElementById("categorie").value = "";
-  document.getElementById("name").value = "";
-  document.getElementById("mat").value = "";
-  document.getElementById("coord").value = "";
-  document.getElementById("last_activity").value = "";
+function clearForm(){
+  document.getElementById("categorie").value="";
+  document.getElementById("name").value="";
+  document.getElementById("mat").value="";
+  document.getElementById("coord").value="";
+  document.getElementById("last_activity").value="";
 }
-
-function closeModal() { 
-  document.getElementById("modal").style.display="none"; 
-  deactivatePickMode(); 
-  pickedX=null; pickedY=null;
-  clearImages();
-}
-function startPick() { closeModal(); activatePickMode(); showToast("Cliquez sur la carte", "success"); }
-function activatePickMode() { picking=true; document.getElementById('map').classList.add('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor='crosshair'; }
-function deactivatePickMode() { picking=false; document.getElementById('map').classList.remove('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor=''; }
-function togglePanel() { const panel=document.getElementById('sidePanel'); const showBtn=document.getElementById('showPanelBtn'); panel.classList.toggle('collapsed'); const icon=panel.querySelector('.toggle-panel i'); if(panel.classList.contains('collapsed')) { icon.classList.remove('fa-chevron-left'); icon.classList.add('fa-chevron-right'); showBtn.style.display='flex'; } else { icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); showBtn.style.display='none'; } }
-function showPanel() { const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
+function closeModal(){ document.getElementById("modal").style.display="none"; deactivatePickMode(); pickedX=null; pickedY=null; clearImages(); }
+function startPick(){ closeModal(); activatePickMode(); showToast("Cliquez sur la carte","success"); }
+function activatePickMode(){ picking=true; document.getElementById('map').classList.add('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor='crosshair'; }
+function deactivatePickMode(){ picking=false; document.getElementById('map').classList.remove('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor=''; }
+function togglePanel(){ const panel=document.getElementById('sidePanel'); const btn=document.getElementById('showPanelBtn'); panel.classList.toggle('collapsed'); const icon=panel.querySelector('.toggle-panel i'); if(panel.classList.contains('collapsed')){ icon.classList.remove('fa-chevron-left'); icon.classList.add('fa-chevron-right'); btn.style.display='flex'; } else { icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); btn.style.display='none'; } }
+function showPanel(){ const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
 
 // Lightbox
-function openLightbox(imageUrls, startIndex) {
-  if (!imageUrls || imageUrls.length === 0) return;
-  currentGalleryImages = imageUrls;
-  currentGalleryIndex = startIndex;
-  updateLightboxImage();
+function openLightbox(urls, idx){
+  if(!urls.length) return;
+  currentGalleryImages = urls;
+  currentGalleryIndex = idx;
+  document.getElementById('lightbox-img').src = urls[idx];
+  document.getElementById('lightbox-counter').innerText = `${idx+1}/${urls.length}`;
   document.getElementById('lightbox').classList.add('active');
 }
-function updateLightboxImage() {
-  const imgElement = document.getElementById('lightbox-img');
-  const counter = document.getElementById('lightbox-counter');
-  if (currentGalleryImages.length > 0) {
-    imgElement.src = currentGalleryImages[currentGalleryIndex];
-    counter.textContent = `${currentGalleryIndex+1} / ${currentGalleryImages.length}`;
-  }
-}
-function nextImage() { if (currentGalleryImages.length) { currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length; updateLightboxImage(); } }
-function prevImage() { if (currentGalleryImages.length) { currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length; updateLightboxImage(); } }
-function closeLightbox() { document.getElementById('lightbox').classList.remove('active'); currentGalleryImages = []; }
+function nextImage(){ if(currentGalleryImages.length){ currentGalleryIndex = (currentGalleryIndex+1)%currentGalleryImages.length; document.getElementById('lightbox-img').src = currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText = `${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
+function prevImage(){ if(currentGalleryImages.length){ currentGalleryIndex = (currentGalleryIndex-1+currentGalleryImages.length)%currentGalleryImages.length; document.getElementById('lightbox-img').src = currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText = `${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('active'); currentGalleryImages=[]; }
 
-// ============ ÉVÉNEMENTS ============
-document.getElementById("loginBtn").addEventListener("click", () => { document.getElementById("loginModal").style.display = "flex"; });
-document.getElementById("doLoginBtn").addEventListener("click", async () => {
+// ============ EVENEMENTS ============
+document.getElementById("loginBtn").onclick = () => document.getElementById("loginModal").style.display="flex";
+document.getElementById("doLoginBtn").onclick = async () => {
   const username = document.getElementById("loginUsername").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
-  try {
+  try{
     const session = await login(username, password);
     currentSession = session;
     updateUIForUser();
-    document.getElementById("loginModal").style.display = "none";
-    document.getElementById("loginError").innerText = "";
-    document.getElementById("loginUsername").value = "";
-    document.getElementById("loginPassword").value = "";
-    showToast(`Bienvenue ${session.username} (${session.role})`, "success");
-  } catch (err) {
-    document.getElementById("loginError").innerText = err.message;
-  }
-});
-document.getElementById("logoutBtn").addEventListener("click", () => { logout(); showToast("Déconnecté", "success"); });
+    document.getElementById("loginModal").style.display="none";
+    document.getElementById("loginError").innerText="";
+    document.getElementById("loginUsername").value="";
+    document.getElementById("loginPassword").value="";
+    showToast(`Bienvenue ${session.username}`,"success");
+  } catch(err){ document.getElementById("loginError").innerText = err.message; }
+};
+document.getElementById("logoutBtn").onclick = () => { logout(); showToast("Déconnecté","success"); };
+window.onclick = (e) => {
+  if(e.target === document.getElementById("loginModal")) document.getElementById("loginModal").style.display="none";
+  if(e.target === document.getElementById("userMgmtModal")) document.getElementById("userMgmtModal").style.display="none";
+};
+document.getElementById("createUserBtn").onclick = createNewUser;
 
-window.onclick = function(event) {
-  const loginModal = document.getElementById("loginModal");
-  const userMgmtModal = document.getElementById("userMgmtModal");
-  if (event.target === loginModal) loginModal.style.display = "none";
-  if (event.target === userMgmtModal) userMgmtModal.style.display = "none";
-}
-document.getElementById("createUserBtn").addEventListener("click", createNewUser);
-
-const floorSelectBox = document.getElementById("floorSelectBox");
-if (floorSelectBox) {
-  floorSelectBox.addEventListener("change", (e) => changeFloor(e.target.value));
-}
+const floorSelect = document.getElementById("floorSelectBox");
+if(floorSelect) floorSelect.addEventListener("change", (e) => changeFloor(e.target.value));
 
 document.getElementById("search").addEventListener("input", async (e) => {
   const val = e.target.value.toLowerCase().trim();
-  if (val === "") return;
-  const { data: allRooms, error } = await supabaseClient
-    .from('rooms')
-    .select('*');
-  if (error) {
-    showToast("Erreur de recherche", "error");
-    return;
-  }
-  const foundRoom = allRooms.find(r =>
-    (r.name && r.name.toLowerCase().includes(val)) ||
-    (r.matricule && r.matricule.toLowerCase().includes(val)) ||
-    (r.categorie && r.categorie.toLowerCase().includes(val))
-  );
-  if (!foundRoom) {
-    showToast("Aucune salle trouvée", "error");
-    return;
-  }
-  if (foundRoom.floor === currentFloor) {
-    map.setView([foundRoom.y, foundRoom.x], 2);
-    const marker = currentMarkers.find(m => {
-      const latlng = m.getLatLng();
-      return Math.abs(latlng.lat - foundRoom.y) < 1 && Math.abs(latlng.lng - foundRoom.x) < 1;
-    });
-    if (marker) marker.openPopup();
-    showToast(`Trouvé: ${foundRoom.name} (${foundRoom.matricule})`, "success");
+  if(val==="") return;
+  const { data:allRooms, error } = await supabaseClient.from('rooms').select('*');
+  if(error){ showToast("Erreur recherche","error"); return; }
+  const found = allRooms.find(r => (r.name && r.name.toLowerCase().includes(val)) || (r.matricule && r.matricule.toLowerCase().includes(val)) || (r.categorie && r.categorie.toLowerCase().includes(val)));
+  if(!found){ showToast("Aucune salle trouvée","error"); return; }
+  if(found.floor === currentFloor){
+    map.setView([found.y, found.x], 2);
+    const marker = currentMarkers.find(m => Math.abs(m.getLatLng().lat - found.y) < 1 && Math.abs(m.getLatLng().lng - found.x) < 1);
+    if(marker) marker.openPopup();
+    showToast(`Trouvé: ${found.name}`,"success");
   } else {
-    const floorName = foundRoom.floor === '1' ? '1er étage' : 'Rez-de-chaussée';
-    showToast(`La salle "${foundRoom.name}" se trouve au ${floorName}. Changez d'étage pour la voir.`, "error");
+    const floorName = found.floor === '1' ? '1er étage' : 'Rez-de-chaussée';
+    showToast(`La salle "${found.name}" se trouve au ${floorName}. Changez d'étage.`,"error");
   }
 });
 
 // ============ INITIALISATION ============
 (async function init() {
-  // Restaurer l'étage sauvegardé
   const savedFloor = localStorage.getItem('selectedFloor');
-  if (savedFloor && (savedFloor === '1' || savedFloor === 'rdc')) {
-    currentFloor = savedFloor;
-  } else {
-    currentFloor = '1';
-  }
-  const floorSelectBoxInit = document.getElementById("floorSelectBox");
-  if (floorSelectBoxInit) floorSelectBoxInit.value = currentFloor;
+  if(savedFloor && (savedFloor==='1' || savedFloor==='rdc')) currentFloor = savedFloor;
+  else currentFloor = '1';
+  const floorInit = document.getElementById("floorSelectBox");
+  if(floorInit) floorInit.value = currentFloor;
 
   await loadCurrentSession();
-  supabaseClient.channel('rooms-channel')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'rooms' }, () => drawRooms())
-    .subscribe();
-  supabaseClient.channel('images-channel')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'room_images' }, () => drawRooms())
-    .subscribe();
-  try {
+  supabaseClient.channel('rooms-channel').on('postgres_changes', { event:'*', schema:'public', table:'rooms' }, ()=>drawRooms()).subscribe();
+  supabaseClient.channel('images-channel').on('postgres_changes', { event:'*', schema:'public', table:'room_images' }, ()=>drawRooms()).subscribe();
+  try{
     await initSampleData();
     initMap();
     setupImageInput();
     await drawRooms();
-    showToast("Système prêt - Gestion multi-étages", "success");
+    showToast("Système prêt - Gestion multi-étages","success");
 
-    const lightbox = document.getElementById('lightbox');
-    lightbox.querySelector('.close-lightbox').addEventListener('click', closeLightbox);
-    lightbox.querySelector('.prev').addEventListener('click', prevImage);
-    lightbox.querySelector('.next').addEventListener('click', nextImage);
-    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-    document.addEventListener('keydown', (e) => {
-      if (!lightbox.classList.contains('active')) return;
-      if (e.key === 'ArrowLeft') prevImage();
-      if (e.key === 'ArrowRight') nextImage();
-      if (e.key === 'Escape') closeLightbox();
-    });
-  } catch (error) {
+    const lb = document.getElementById('lightbox');
+    lb.querySelector('.close-lightbox').onclick = closeLightbox;
+    lb.querySelector('.prev').onclick = prevImage;
+    lb.querySelector('.next').onclick = nextImage;
+    lb.onclick = (e) => { if(e.target===lb) closeLightbox(); };
+    document.onkeydown = (e) => {
+      if(!lb.classList.contains('active')) return;
+      if(e.key === 'ArrowLeft') prevImage();
+      if(e.key === 'ArrowRight') nextImage();
+      if(e.key === 'Escape') closeLightbox();
+    };
+  } catch(error){
     console.error(error);
-    showToast("Erreur de connexion à Supabase", "error");
+    showToast("Erreur de connexion à Supabase","error");
   }
 })();
 </script>
