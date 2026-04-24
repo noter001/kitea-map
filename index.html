@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
 <title>Indoor Map - Gestion des salles (Supabase Auth)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -225,7 +226,7 @@
     padding: 10px 12px;
     margin: 5px 8px;
   }
-  .category-header {
+  .category-er {
     padding: 10px 12px;
   }
   /* تحسين popup الخريطة */
@@ -238,7 +239,7 @@
     height: 50px !important;
   }
   /* تحسين اللمس للأزرار على الهواتف */
-.action-btn, .btn-login, .btn-logout, .toggle-panel, .show-panel-btn, .room-item, .category-header, .coord-row button {
+.action-btn, .btn-login, .btn-logout, .toggle-panel, .show-panel-btn, .room-item, .category-er, .coord-row button {
   touch-action: manipulation;
 }
 .action-btn, .btn-login, .btn-logout {
@@ -246,6 +247,7 @@
 }
 </style>
 </head>
+</>
 <body>
 <div class="top-toolbar">
   <div class="left-area">
@@ -294,7 +296,7 @@
   </div>
 </div>
 <div class="side-panel" id="sidePanel">
-  <div class="panel-header">
+  <div class="panel-er">
     <h4><i class="fas fa-folder-tree"></i> Catégories de salles</h4>
     <button class="toggle-panel" onclick="togglePanel()">
       <i class="fas fa-chevron-left"></i>
@@ -708,7 +710,7 @@ async function deleteAllRoomImages(roomId) {
 }
 
 async function initSampleData() {
-  const { count, error } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', head: true });
+  const { count, error } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', : true });
   if (error) throw error;
   if (count === 0) {
     const sampleRooms = [
@@ -858,7 +860,7 @@ function generateCatHTML(catValue, icon, label, roomsList, isExpanded, isUncateg
   const displayLabel = isUncategorized ? 'Sans catégorie' : label;
   const displayIcon = isUncategorized ? '📋' : icon;
   return `<div class="category-group" data-cat="${catValue}">
-    <div class="category-header">
+    <div class="category-er">
       <div class="category-name">
         <i class="fas ${isUncategorized ? 'fa-folder-open' : 'fa-folder'}"></i>
         <span>${displayIcon} ${escapeHtml(displayLabel)}</span>
@@ -908,9 +910,9 @@ function attachRoomItemEvents() {
 
 function attachCategoryEvents() {
   document.querySelectorAll('.category-group').forEach(group => {
-    const header = group.querySelector('.category-header');
-    if (!header) return;
-    const newHeader = header.cloneNode(true);
+    const er = group.querySelector('.category-er');
+    if (!er) return;
+    const newer = er.cloneNode(true);
     header.parentNode.replaceChild(newHeader, header);
     const finalHeader = newHeader;
     finalHeader.addEventListener('click', (e) => {
