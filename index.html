@@ -102,7 +102,14 @@
   border-radius: 50px;
   overflow: hidden;
 }
-
+#floorSelectBox {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #ff4d4d;
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -115,7 +122,14 @@
       <button id="logoutBtn" class="btn-logout">Logout</button>
     </div>
   </div>
-  
+    <div class="stats-bar" style="gap:10px; background: rgba(255,255,255,0.95);">
+  <i class="fas fa-layer-group"></i>
+  <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:20px; padding:4px 12px; font-weight:bold; cursor:pointer;">
+    <option value="1">1er étage</option>
+    <option value="rdc">Rez-de-chaussée (RDC)</option>
+  </select>
+</div>
+
   <div class="search-box">
     <i class="fas fa-search"></i>
     <input id="search" placeholder="Rechercher par nom, matricule ou catégorie...">
@@ -466,8 +480,9 @@ if (savedFloor && (savedFloor === '1' || savedFloor === 'rdc')) {
 }
 // تعيين القائمة المنسدلة لتطابق currentFloor
 const floorSelectBox = document.getElementById("floorSelectBox");
-if (floorSelectBox) floorSelectBox.value = currentFloor;
-    }
+if (floorSelectBox) {
+  floorSelectBox.addEventListener("change", (e) => changeFloor(e.target.value));
+}
   });
 }
 
