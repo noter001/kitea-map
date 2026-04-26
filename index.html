@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
 /* جميع الأنماط كما هي (نفس الأنماط السابقة) */
-
 *{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif}#map{height:100vh;width:100%;cursor:default}.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:14px;box-shadow:0 2px 6px rgba(0,0,0,0.2)}.btn-login:hover{transform:translateY(-2px);background:linear-gradient(135deg,#990000 0%,#660000 100%)}.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}.user-info i{color:#ff4d4d}.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px;background:rgba(255,255,255,0.95)}.search-box i{color:#ff4d4d;font-size:16px}.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;gap:25px;font-size:14px;font-weight:500}.stats-bar span{color:#ff4d4d;font-weight:bold;margin-left:5px}.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden;transition:transform 0.2s}.action-card:hover{transform:translateX(-3px)}.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease;background:rgba(255,255,255,0.98)}.side-panel.collapsed{transform:translateX(-360px)}.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}.panel-header h4{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}.categories-list{flex:1;overflow-y:auto;padding:12px}.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}.category-name{display:flex;align-items:center;gap:10px;font-size:14px}.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}.toggle-icon{transition:transform 0.2s}.toggle-icon.rotated{transform:rotate(90deg)}.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}.category-rooms.expanded{max-height:550px;overflow-y:auto}.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d;box-shadow:0 2px 6px rgba(0,0,0,0.05)}.room-item:hover{background:#ffe6e6;transform:translateX(6px)}.room-name{font-weight:bold;color:#1e293b;font-size:14px}.room-mat{font-size:11px;color:#475569;margin-top:5px}.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}.coord-row{display:flex;gap:10px;align-items:center}.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}.image-item{position:relative;display:inline-block}.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}.picking-mode{cursor:crosshair!important}.leaflet-container.picking-mode{cursor:crosshair!important}@media (max-width:780px){.side-panel{width:280px;top:85px}.stats-bar{display:none}.action-group-right{top:90px}}
 
 .lightbox {
@@ -106,166 +105,28 @@
   font-weight: bold;
   cursor: pointer;
 }
-  /* ===================== MOBILE FIX ===================== */
-@media (max-width: 768px) {
 
-  .top-toolbar {
-    flex-direction: column;
-    gap: 8px;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-  }
-
-  .search-box {
-    width: 100%;
-    max-width: 100%;
-    padding: 8px 12px;
-  }
-
-  .stats-bar {
-    width: 100%;
-    justify-content: space-between;
-    font-size: 12px;
-    padding: 6px 10px;
-  }
-
-  /* Side panel يتحول drawer */
-  .side-panel {
-    width: 85%;
-    left: -100%;
-    top: 0;
-    height: 100%;
-    border-radius: 0;
-    transition: 0.3s ease;
-    z-index: 2000;
-  }
-
-  .side-panel:not(.collapsed) {
-    left: 0;
-  }
-
-  .show-panel-btn {
-    top: auto;
-    bottom: 20px;
-    left: 10px;
-    border-radius: 50%;
-  }
-
-  /* Action buttons */
-  .action-group-right {
-    top: auto;
-    bottom: 80px;
-    right: 10px;
-    flex-direction: row;
-  }
-
-  .action-btn {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-
-  /* Modal full screen */
-  .modal-box {
-    width: 95%;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  /* Lightbox تحسين */
-  .lightbox .nav-btn {
-    width: 45px;
-    height: 45px;
-    font-size: 20px;
-  }
-
-  /* Room items أصغر */
-  .room-item {
-    padding: 8px 10px;
-    font-size: 13px;
-  }
-  /* ============================= */
-/* 🔥 FIX MAP CONTROLS (ZOOM + UI) */
-/* ============================= */
-
-#map {
-  height: 100vh;
-  width: 100%;
-  position: relative;
-  z-index: 1;
+/* تنسيق زر Full Extent (إضافة جديدة) */
+.custom-extent-control {
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  transition: background 0.2s;
 }
-
-/* Zoom controls ديال Leaflet */
-.leaflet-control-container {
-  z-index: 1500 !important;
+.custom-extent-control:hover {
+  background: #f4f4f4;
 }
-
-.leaflet-control-zoom {
-  z-index: 1500 !important;
-  margin-top: 90px; /* باش مايتغطاش بالtoolbar */
-}
-
-/* ============================= */
-/* 🔥 SAFE UI LAYERS ORDER */
-/* ============================= */
-
-.top-toolbar,
-.action-group-right {
-  z-index: 1200;
-}
-
-.side-panel {
-  z-index: 1100;
-}
-
-/* ============================= */
-/* 📱 MOBILE FIX (مهم بزاف) */
-/* ============================= */
-
-@media (max-width: 780px) {
-
-  .top-toolbar {
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    gap: 8px;
-  }
-
-  .search-box {
-    max-width: 100%;
-    flex: 1;
-  }
-
-  .stats-bar {
-    display: none;
-  }
-
-  .action-group-right {
-    top: 80px;
-    right: 10px;
-  }
-
-  .side-panel {
-    width: 260px;
-    top: 80px;
-  }
-
-  /* مهم: باش zoom مايتغطاش */
-  .leaflet-control-zoom {
-    margin-top: 110px;
-  }
-}
-
-/* ============================= */
-/* 👆 TOUCH FIX (مهم للموبايل) */
-/* ============================= */
-
-body {
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-
+.custom-extent-control i {
+  line-height: 30px;
+  color: #333;
 }
 </style>
 </head>
@@ -410,6 +271,7 @@ let imagesToDelete = [];
 let currentGalleryImages = [];
 let currentGalleryIndex = 0;
 let currentFloor = '1'; // '1' pour floor1, 'rdc' pour floor_rdc
+let currentMapBounds = [[0, 0], [3000, 2669]]; // bounds par défaut pour chaque étage
 
 const CATEGORIES = [
   { value: 'salon et séjour', label: 'salon et séjour', icon: '🏠', color: '#ff4d4d' },
@@ -537,7 +399,6 @@ async function refreshUserList() {
   }
 }
 
-// ============ SUPPRESSION CORRECTE D'UN UTILISATEUR (auth.users + profiles) ============
 async function deleteUser(username) {
   if (!currentSession || currentSession.role !== 'admin') return;
   if (!confirm(`Supprimer ${username} définitivement ?`)) return;
@@ -605,7 +466,10 @@ async function createNewUser() {
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
   updateMapFloor(currentFloor);
+  // Ajout des contrôles: zoom (+/-) par défaut
   L.control.zoom({ position: 'bottomright' }).addTo(map);
+  // Ajout du contrôle personnalisé "Full Extent"
+  addFullExtentControl();
   map.on("click", function(e) {
     let x = Math.round(e.latlng.lng);
     let y = Math.round(e.latlng.lat);
@@ -618,6 +482,37 @@ function initMap() {
   });
 }
 
+// Fonction pour ajouter un bouton Full Extent (vue complète de l'image)
+function addFullExtentControl() {
+  const ExtentControl = L.Control.extend({
+    options: { position: 'bottomright' },
+    onAdd: function(map) {
+      const container = L.DomUtil.create('div', 'custom-extent-control');
+      container.innerHTML = '<i class="fas fa-expand-alt"></i>';
+      container.title = "Afficher toute la carte (Full Extent)";
+      container.onclick = function() {
+        resetToFullExtent();
+      };
+      return container;
+    }
+  });
+  map.addControl(new ExtentControl());
+}
+
+// Réinitialiser la vue aux limites exactes de l'image de l'étage courant
+function resetToFullExtent() {
+  if (!map) return;
+  // Définir les bounds exactes selon l'étage (même que dans updateMapFloor)
+  let bounds;
+  if (currentFloor === '1') {
+    bounds = [[0, 0], [3000, 2669]];
+  } else {
+    bounds = [[0, 0], [3000, 2669]]; // RDC également 3000x2669 (par souci de cohérence)
+  }
+  map.fitBounds(bounds);
+  showToast("Affichage complet de l'étage", "success");
+}
+
 function updateMapFloor(floor) {
   if (!map) return;
   if (map.overlay) map.removeLayer(map.overlay);
@@ -625,6 +520,8 @@ function updateMapFloor(floor) {
   let bounds = [[0, 0], [3000, 2669]];
   let overlay = L.imageOverlay(imageUrl, bounds).addTo(map);
   map.overlay = overlay;
+  currentMapBounds = bounds;
+  // Réinitialiser la vue aux nouvelles limites
   map.fitBounds(bounds);
 }
 
