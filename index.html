@@ -7,805 +7,105 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  -webkit-tap-highlight-color: transparent;
-}
-#map {
-  height: 100vh;
-  width: 100%;
-  cursor: default;
-}
-
-/* ===== تحسينات للهواتف ===== */
-:root {
-  --touch-target: 44px;     /* حجم مناسب للنقر */
-  --border-radius-lg: 24px;
-  --font-size-base: 14px;
-  --font-size-mobile: 16px; /* منع التكبير التلقائي في iOS */
-}
-
-@media (max-width: 768px) {
-  .top-toolbar {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    right: 12px;
-    gap: 10px;
-    flex-wrap: wrap;
-    z-index: 1100;
-  }
-  .left-area {
-    background: rgba(255,255,255,0.98);
-    padding: 4px 12px;
-    gap: 8px;
-    border-radius: 40px;
-    width: auto;
-  }
-  .btn-login {
-    padding: 10px 16px;
-    font-size: 14px;
-  }
-  .user-info {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-  .search-box {
-    max-width: 100%;
-    flex: 1 1 100%;
-    background: rgba(255,255,255,0.98);
-    padding: 10px 20px;
-    margin-top: 0;
-  }
-  .search-box i {
-    font-size: 18px;
-  }
-  .search-box input {
-    font-size: 16px; /* لمنع التكبير التلقائي في iOS */
-    padding: 4px 0;
-  }
-  .stats-bar {
-    display: none; /* إخفاء الإحصائيات لتوفير مساحة */
-  }
-  /* إظهار عدد الغرف والتصنيفات في مكان آخر؟ يمكن إضافتها في شريط سفلي لكن نبقيها مخفية لضيق الشاشة */
-  .action-group-right {
-    top: auto;
-    bottom: 20px;
-    right: 12px;
-    flex-direction: row;
-    gap: 10px;
-    z-index: 1100;
-  }
-  .action-card {
-    border-radius: 50px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
-  }
-  .action-btn {
-    padding: 10px 18px;
-    font-size: 14px;
-    gap: 8px;
-  }
-  .side-panel {
-    width: 85%;
-    max-width: 300px;
-    left: 0;
-    top: 75px;
-    bottom: 10px;
-    border-radius: 20px 20px 20px 20px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.3);
-  }
-  .side-panel.collapsed {
-    transform: translateX(-95%);
-  }
-  .show-panel-btn {
-    left: 0;
-    top: 100px;
-    width: 38px;
-    height: 48px;
-    border-radius: 0 20px 20px 0;
-    font-size: 20px;
-  }
-  .category-name {
-    font-size: 15px;
-  }
-  .room-item {
-    padding: 12px;
-    margin: 8px 8px;
-  }
-  .room-name {
-    font-size: 15px;
-  }
-  .room-mat {
-    font-size: 12px;
-  }
-  /* تحسين المودال */
-  .modal-box {
-    width: 92%;
-    padding: 20px;
-    border-radius: 28px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .modal-box input, .modal-box select {
-    padding: 14px 16px;
-    font-size: 16px;
-  }
-  .coord-row button {
-    width: 52px;
-    padding: 12px;
-  }
-  #actions button {
-    padding: 14px;
-    font-size: 16px;
-    min-width: auto;
-  }
-  /* toasts */
-  .toast {
-    font-size: 14px;
-    padding: 12px 20px;
-    bottom: 20px;
-    white-space: nowrap;
-  }
-  /* popup leaflet على الهاتف */
-  .leaflet-popup-content {
-    min-width: 220px !important;
-    font-size: 14px;
-  }
-  .leaflet-popup-content img {
-    width: 55px !important;
-    height: 55px !important;
-  }
-  /* زر full extent */
-  .custom-extent-control {
-    width: 38px;
-    height: 38px;
-    line-height: 38px;
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  .leaflet-control-zoom a {
-    width: 38px !important;
-    height: 38px !important;
-    line-height: 38px !important;
-    font-size: 20px !important;
-  }
-  /* plan selector */
-  #floorSelectBox {
-    font-size: 14px;
-    padding: 6px 12px;
-  }
-}
-
-/* تحسينات عامة للهواتف جداً (أقل من 480) */
-@media (max-width: 480px) {
-  .left-area {
-    padding: 2px 10px;
-  }
-  .btn-login {
-    padding: 8px 14px;
-    font-size: 12px;
-  }
-  .search-box {
-    padding: 8px 16px;
-  }
-  .action-btn {
-    padding: 8px 14px;
-    font-size: 12px;
-  }
-}
-
-/* باقي الأنماط الأساسية (نفس السابق مع تحسينات) */
-.top-toolbar {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  flex-wrap: wrap;
-}
-.left-area {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255,255,255,0.95);
-  padding: 5px 15px;
-  border-radius: 40px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.btn-login {
-  background: linear-gradient(135deg,#b30000 0%,#800000 100%);
-  border: none;
-  color: white;
-  padding: 8px 18px;
-  border-radius: 30px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.btn-login:hover {
-  transform: translateY(-2px);
-}
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255,255,255,0.9);
-  padding: 5px 12px;
-  border-radius: 30px;
-  font-size: 13px;
-  font-weight: 500;
-}
-.user-info i {
-  color: #ff4d4d;
-}
-.btn-logout {
-  background: #333;
-  border: none;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 12px;
-}
-.search-box {
-  background: white;
-  padding: 8px 20px;
-  border-radius: 40px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  max-width: 450px;
-  min-width: 200px;
-  background: rgba(255,255,255,0.95);
-}
-.search-box i {
-  color: #ff4d4d;
-  font-size: 16px;
-}
-.search-box input {
-  border: none;
-  outline: none;
-  flex: 1;
-  font-size: 14px;
-  background: transparent;
-}
-.stats-bar {
-  background: rgba(255,255,255,0.95);
-  padding: 8px 20px;
-  border-radius: 40px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  display: flex;
-  gap: 25px;
-  font-size: 14px;
-  font-weight: 500;
-}
-.stats-bar span {
-  color: #ff4d4d;
-  font-weight: bold;
-  margin-left: 5px;
-}
-.action-group-right {
-  position: absolute;
-  top: 100px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.action-card {
-  background: white;
-  border-radius: 50px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-  overflow: hidden;
-  transition: transform 0.2s;
-}
-.action-card:hover {
-  transform: translateX(-3px);
-}
-.action-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 15px;
-  width: 100%;
-}
-.action-btn.add-btn {
-  background: linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);
-  color: white;
-}
-.side-panel {
-  position: absolute;
-  left: 20px;
-  top: 95px;
-  bottom: 20px;
-  width: 320px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.2);
-  z-index: 900;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transition: transform 0.3s ease;
-  background: rgba(255,255,255,0.98);
-}
-.side-panel.collapsed {
-  transform: translateX(-360px);
-}
-.panel-header {
-  background: linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);
-  color: white;
-  padding: 15px 18px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-.panel-header h4 {
-  margin: 0;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.toggle-panel {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 18px;
-}
-.categories-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px;
-}
-.category-group {
-  margin-bottom: 16px;
-  border-radius: 14px;
-  background: #f8f9ff;
-  overflow: hidden;
-}
-.category-header {
-  background: linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);
-  padding: 12px 16px;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  border-left: 5px solid #ff4d4d;
-}
-.category-name {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-}
-.category-count {
-  background: #ff4d4d;
-  color: white;
-  padding: 2px 10px;
-  border-radius: 30px;
-  font-size: 11px;
-}
-.toggle-icon {
-  transition: transform 0.2s;
-}
-.toggle-icon.rotated {
-  transform: rotate(90deg);
-}
-.category-rooms {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.35s ease;
-}
-.category-rooms.expanded {
-  max-height: 550px;
-  overflow-y: auto;
-}
-.room-item {
-  padding: 12px 16px;
-  margin: 6px 12px;
-  background: white;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-left: 3px solid #ff4d4d;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-.room-item:hover {
-  background: #ffe6e6;
-  transform: translateX(6px);
-}
-.room-name {
-  font-weight: bold;
-  color: #1e293b;
-  font-size: 14px;
-}
-.room-mat {
-  font-size: 11px;
-  color: #475569;
-  margin-top: 5px;
-}
-.show-panel-btn {
-  position: absolute;
-  left: 20px;
-  top: 120px;
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);
-  color: white;
-  border: none;
-  border-radius: 0 20px 20px 0;
-  cursor: pointer;
-  z-index: 901;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-#modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.75);
-  z-index: 10000;
-  justify-content: center;
-  align-items: center;
-  backdrop-filter: blur(8px);
-}
-.modal-box {
-  background: white;
-  padding: 28px;
-  border-radius: 28px;
-  width: 540px;
-  max-width: 92%;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  box-shadow: 0 30px 50px rgba(0,0,0,0.4);
-  animation: slideIn 0.25s ease;
-}
-@keyframes slideIn {
-  from {
-    transform: translateY(-30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-.modal-box h3 {
-  color: #1e293b;
-  border-left: 5px solid #ff4d4d;
-  padding-left: 15px;
-}
-.modal-box input, .modal-box select {
-  padding: 12px 15px;
-  border: 2px solid #e2e8f0;
-  border-radius: 16px;
-  font-size: 14px;
-}
-.coord-row {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.coord-row button {
-  width: 48px;
-  background: #f1f5f9;
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  padding: 10px;
-}
-.image-preview-list {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-.image-item {
-  position: relative;
-  display: inline-block;
-}
-.image-item img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-}
-.image-item .delete-img-btn {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #eb3349;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 22px;
-  height: 22px;
-  font-size: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-#actions {
-  display: flex;
-  gap: 12px;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-#actions button {
-  flex: 1;
-  padding: 12px;
-  border-radius: 40px;
-  font-weight: bold;
-  cursor: pointer;
-  border: none;
-  min-width: 100px;
-}
-#actions button:first-child {
-  background: linear-gradient(135deg,#ff4d4d,#cc0000);
-  color: white;
-}
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1e293b;
-  color: white;
-  padding: 12px 28px;
-  border-radius: 60px;
-  z-index: 10001;
-  animation: fadeInOut 3s ease;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.toast.success {
-  background: linear-gradient(135deg,#11998e,#38ef7d);
-}
-.toast.error {
-  background: linear-gradient(135deg,#eb3349,#f45c43);
-}
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(20px);
-  }
-  15% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  85% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-}
-.picking-mode {
-  cursor: crosshair !important;
-}
-.leaflet-container.picking-mode {
-  cursor: crosshair !important;
-}
-
-/* Lightbox */
-.lightbox {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.95);
-  z-index: 20000;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-.lightbox.active {
-  display: flex;
-}
-.lightbox img {
-  max-width: 90%;
-  max-height: 90%;
-  object-fit: contain;
-  border-radius: 8px;
-}
-.lightbox .nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0,0,0,0.6);
-  color: white;
-  border: none;
-  font-size: 40px;
-  padding: 15px 20px;
-  cursor: pointer;
-  border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.lightbox .nav-btn:hover {
-  background: rgba(0,0,0,0.9);
-}
-.lightbox .prev {
-  left: 20px;
-}
-.lightbox .next {
-  right: 20px;
-}
-.lightbox .close-lightbox {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 40px;
-  color: white;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-.lightbox .counter {
-  position: absolute;
-  bottom: 20px;
-  text-align: center;
-  color: white;
-  background: rgba(0,0,0,0.6);
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 14px;
-}
-@media (max-width: 768px) {
-  .lightbox .nav-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 24px;
-    padding: 0;
-  }
-}
-
-/* modals login */
-.modal-login, .modal-user-management {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.8);
-  z-index: 30000;
-  justify-content: center;
-  align-items: center;
-}
-.modal-login .modal-box, .modal-user-management .modal-box {
-  background: white;
-  padding: 28px;
-  border-radius: 28px;
-  width: 380px;
-  max-width: 90%;
-  text-align: center;
-}
-.modal-login h3, .modal-user-management h3 {
-  color: #cc0000;
-  margin-bottom: 20px;
-}
-.modal-login input, .modal-user-management input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 2px solid #e2e8f0;
-  border-radius: 16px;
-  font-size: 16px;
-}
-.modal-login button, .modal-user-management button {
-  width: 100%;
-  padding: 14px;
-  background: linear-gradient(135deg,#ff4d4d,#cc0000);
-  color: white;
-  border: none;
-  border-radius: 40px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  font-size: 16px;
-}
-.error-msg {
-  color: red;
-  font-size: 12px;
-  margin-top: 8px;
-}
-.user-list {
-  max-height: 200px;
-  overflow-y: auto;
-  margin: 15px 0;
-  text-align: left;
-}
-.user-list div {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.user-list button {
-  background: #eb3349;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  padding: 4px 12px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-#floorSelectBox {
-  background: rgba(255,255,255,0.9);
-  border: 1px solid #ff4d4d;
-  border-radius: 20px;
-  padding: 4px 12px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.custom-extent-control {
-  background: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 5px rgba(0,0,0,0.4);
-  width: 30px;
-  height: 30px;
-  line-height: 30px;
-  text-align: center;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  transition: background 0.2s;
-}
-.custom-extent-control:hover {
-  background: #f4f4f4;
-}
-.custom-extent-control i {
-  line-height: 30px;
-  color: #333;
-}
+*{margin:0;padding:0;box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;-webkit-tap-highlight-color:transparent}#map{height:100vh;width:100%;cursor:default}
+:root{--touch-target:44px;--border-radius-lg:24px;--font-size-base:14px}
+@media (max-width:768px){
+.top-toolbar{top:12px;left:12px;right:12px;gap:10px;flex-wrap:wrap}
+.left-area{padding:4px 12px;gap:8px}
+.btn-login{padding:10px 16px;font-size:14px}
+.user-info{padding:6px 12px;font-size:12px}
+.search-box{max-width:100%;flex:1 1 100%;padding:10px 20px}
+.search-box input{font-size:16px}
+.stats-bar{display:none}
+.action-group-right{top:auto;bottom:20px;right:12px;flex-direction:row;gap:10px}
+.action-btn{padding:10px 18px;font-size:14px}
+.side-panel{width:85%;max-width:300px;left:0;top:75px;bottom:10px;border-radius:20px}
+.side-panel.collapsed{transform:translateX(-95%)}
+.show-panel-btn{left:0;top:100px;width:38px;height:48px;border-radius:0 20px 20px 0}
+.category-name{font-size:15px}
+.room-item{padding:12px;margin:8px}
+.room-name{font-size:15px}
+.modal-box{width:92%;padding:20px;max-height:90vh;overflow-y:auto}
+.modal-box input,.modal-box select{padding:14px 16px;font-size:16px}
+.coord-row button{width:52px;padding:12px}
+#actions button{padding:14px;font-size:16px}
+.toast{font-size:14px;padding:12px 20px;bottom:20px}
+.custom-extent-control{width:38px;height:38px;line-height:38px;font-size:20px;margin-bottom:10px}
+.leaflet-control-zoom a{width:38px!important;height:38px!important;line-height:38px!important;font-size:20px!important}
+#floorSelectBox{font-size:14px;padding:6px 12px}
+.leaflet-popup-content{min-width:220px!important;font-size:14px}
+}
+.top-toolbar{position:absolute;top:20px;left:20px;right:20px;z-index:1000;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+.left-area{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.95);padding:5px 15px;border-radius:40px;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.btn-login{background:linear-gradient(135deg,#b30000 0%,#800000 100%);border:none;color:white;padding:8px 18px;border-radius:30px;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:14px}
+.user-info{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.9);padding:5px 12px;border-radius:30px;font-size:13px;font-weight:500}
+.btn-logout{background:#333;border:none;color:white;padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px}
+.search-box{background:white;padding:8px 20px;border-radius:40px;box-shadow:0 4px 15px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;flex:1;max-width:450px;min-width:200px}
+.search-box i{color:#ff4d4d}
+.search-box input{border:none;outline:none;flex:1;font-size:14px;background:transparent}
+.stats-bar{background:rgba(255,255,255,0.95);padding:8px 20px;border-radius:40px;display:flex;gap:25px;font-size:14px;font-weight:500}
+.action-group-right{position:absolute;top:100px;right:20px;z-index:1000;display:flex;flex-direction:column;gap:12px}
+.action-card{background:white;border-radius:50px;box-shadow:0 6px 18px rgba(0,0,0,0.2);overflow:hidden}
+.action-btn{display:flex;align-items:center;gap:12px;padding:12px 24px;border:none;cursor:pointer;font-weight:bold;font-size:15px;width:100%}
+.action-btn.add-btn{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white}
+.side-panel{position:absolute;left:20px;top:95px;bottom:20px;width:320px;background:white;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,0.2);z-index:900;display:flex;flex-direction:column;overflow:hidden;transition:transform 0.3s ease}
+.side-panel.collapsed{transform:translateX(-360px)}
+.panel-header{background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.toggle-panel{background:none;border:none;color:white;cursor:pointer;font-size:18px}
+.categories-list{flex:1;overflow-y:auto;padding:12px}
+.category-group{margin-bottom:16px;border-radius:14px;background:#f8f9ff;overflow:hidden}
+.category-header{background:linear-gradient(135deg,#ff4d4d10 0%,#cc000010 100%);padding:12px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:bold;border-left:5px solid #ff4d4d}
+.category-name{display:flex;align-items:center;gap:10px;font-size:14px}
+.category-count{background:#ff4d4d;color:white;padding:2px 10px;border-radius:30px;font-size:11px}
+.toggle-icon{transition:transform 0.2s}
+.toggle-icon.rotated{transform:rotate(90deg)}
+.category-rooms{max-height:0;overflow:hidden;transition:max-height 0.35s ease}
+.category-rooms.expanded{max-height:550px;overflow-y:auto}
+.room-item{padding:12px 16px;margin:6px 12px;background:white;border-radius:12px;cursor:pointer;transition:all 0.2s;border-left:3px solid #ff4d4d}
+.room-name{font-weight:bold;color:#1e293b;font-size:14px}
+.room-mat{font-size:11px;color:#475569;margin-top:5px}
+.show-panel-btn{position:absolute;left:20px;top:120px;width:42px;height:42px;background:linear-gradient(135deg,#ff4d4d 0%,#cc0000 100%);color:white;border:none;border-radius:0 20px 20px 0;cursor:pointer;z-index:901;display:none;align-items:center;justify-content:center;font-size:18px}
+#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}
+.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;animation:slideIn 0.25s ease}
+@keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}
+.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}
+.coord-row{display:flex;gap:10px;align-items:center}
+.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}
+.image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.image-item{position:relative;display:inline-block}
+.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}
+.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#actions{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+#actions button{flex:1;padding:12px;border-radius:40px;font-weight:bold;cursor:pointer;border:none;min-width:100px}
+#actions button:first-child{background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}
+.toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}
+.toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}
+@keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}
+.picking-mode{cursor:crosshair!important}
+.leaflet-container.picking-mode{cursor:crosshair!important}
+.lightbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:20000;justify-content:center;align-items:center;cursor:pointer}
+.lightbox.active{display:flex}
+.lightbox img{max-width:90%;max-height:90%;object-fit:contain;border-radius:8px}
+.lightbox .nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:white;border:none;font-size:40px;padding:15px 20px;cursor:pointer;border-radius:50%;width:70px;height:70px;display:flex;align-items:center;justify-content:center}
+.lightbox .prev{left:20px}
+.lightbox .next{right:20px}
+.lightbox .close-lightbox{position:absolute;top:20px;right:30px;font-size:40px;color:white;background:none;border:none;cursor:pointer}
+.lightbox .counter{position:absolute;bottom:20px;text-align:center;color:white;background:rgba(0,0,0,0.6);padding:8px 16px;border-radius:30px;font-size:14px}
+@media (max-width:768px){.lightbox .nav-btn{width:44px;height:44px;font-size:24px;padding:0}}
+.modal-login,.modal-user-management{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:30000;justify-content:center;align-items:center}
+.modal-login .modal-box,.modal-user-management .modal-box{background:white;padding:28px;border-radius:28px;width:380px;max-width:90%;text-align:center}
+.modal-login h3,.modal-user-management h3{color:#cc0000;margin-bottom:20px}
+.modal-login input,.modal-user-management input{width:100%;padding:12px;margin:10px 0;border:2px solid #e2e8f0;border-radius:16px;font-size:16px}
+.modal-login button,.modal-user-management button{width:100%;padding:14px;background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:40px;font-weight:bold;cursor:pointer;margin-top:10px}
+.error-msg{color:red;font-size:12px;margin-top:8px}
+.user-list{max-height:200px;overflow-y:auto;margin:15px 0;text-align:left}
+.user-list div{padding:8px;border-bottom:1px solid #eee;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+.user-list button{background:#eb3349;color:white;border:none;border-radius:20px;padding:4px 12px;cursor:pointer;font-size:12px}
+#floorSelectBox{background:rgba(255,255,255,0.9);border:1px solid #ff4d4d;border-radius:20px;padding:4px 12px;font-weight:bold;cursor:pointer}
+.custom-extent-control{background:white;border-radius:4px;box-shadow:0 1px 5px rgba(0,0,0,0.4);width:30px;height:30px;line-height:30px;text-align:center;cursor:pointer;font-size:18px;margin-bottom:8px}
+.custom-extent-control i{line-height:30px;color:#333}
 </style>
 </head>
 <body>
@@ -818,16 +118,16 @@ body {
       <button id="logoutBtn" class="btn-logout">Logout</button>
     </div>
   </div>
-  <div class="stats-bar" style="gap:10px; background: rgba(255,255,255,0.95);">
+  <div class="stats-bar" style="gap:10px;">
     <i class="fas fa-layer-group"></i>
-    <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:20px; padding:4px 12px; font-weight:bold; cursor:pointer;">
+    <select id="floorSelectBox">
       <option value="1">1er étage</option>
       <option value="rdc">Rez-de-chaussée (RDC)</option>
     </select>
   </div>
   <div class="search-box">
     <i class="fas fa-search"></i>
-    <input id="search" placeholder="Rechercher par nom, matricule ou catégorie...">
+    <input id="search" placeholder="Rechercher...">
   </div>
   <div class="stats-bar">
     <i class="fas fa-building"></i> Salles: <span id="roomCount">0</span>
@@ -837,23 +137,17 @@ body {
 
 <div class="action-group-right" id="adminActions" style="display:none;">
   <div class="action-card">
-    <button class="action-btn add-btn" onclick="openModal('add')">
-      <i class="fas fa-plus-circle"></i> Ajouter
-    </button>
+    <button class="action-btn add-btn" onclick="openModal('add')"><i class="fas fa-plus-circle"></i> Ajouter</button>
   </div>
   <div class="action-card" id="manageUsersBtn" style="display:none;">
-    <button class="action-btn" style="background:linear-gradient(135deg,#555,#333);color:white;" onclick="openUserManagement()">
-      <i class="fas fa-users-cog"></i> Gérer
-    </button>
+    <button class="action-btn" style="background:linear-gradient(135deg,#555,#333);color:white;" onclick="openUserManagement()"><i class="fas fa-users-cog"></i> Gérer</button>
   </div>
 </div>
 
 <div class="side-panel" id="sidePanel">
   <div class="panel-header">
-    <h4><i class="fas fa-folder-tree"></i> Catégories de salles</h4>
-    <button class="toggle-panel" onclick="togglePanel()">
-      <i class="fas fa-chevron-left"></i>
-    </button>
+    <h4><i class="fas fa-folder-tree"></i> Catégories</h4>
+    <button class="toggle-panel" onclick="togglePanel()"><i class="fas fa-chevron-left"></i></button>
   </div>
   <div class="categories-list" id="categoriesList"></div>
 </div>
@@ -865,7 +159,7 @@ body {
 <div class="modal-box">
 <h3 id="title">Action</h3>
 <select id="categorie">
-  <option value="">-- Sélectionnez une catégorie --</option>
+  <option value="">-- Catégorie --</option>
   <option value="salon et séjour">🏠 salon et séjour</option>
   <option value="salle à manger">🍽️ salle à manger</option>
   <option value="chambre adulte">🛏️ chambre adulte</option>
@@ -882,9 +176,9 @@ body {
   <button onclick="startPick()"><i class="fas fa-crosshairs"></i></button>
 </div>
 <div>
-  <label style="font-weight:bold; display:block; margin-bottom:6px;"><i class="fas fa-images"></i> Images de la salle</label>
-  <input type="file" id="imageInput" accept="image/*" multiple style="padding:6px;">
-  <div id="imagePreviewContainer" class="image-preview-list" style="margin-top:8px;"></div>
+  <label><i class="fas fa-images"></i> Images</label>
+  <input type="file" id="imageInput" accept="image/*" multiple>
+  <div id="imagePreviewContainer" class="image-preview-list"></div>
 </div>
 <input id="last_activity" readonly placeholder="Dernière activité">
 <div id="actions"></div>
@@ -902,8 +196,8 @@ body {
 <div id="loginModal" class="modal-login">
   <div class="modal-box">
     <h3><i class="fas fa-lock"></i> Connexion</h3>
-    <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" autocomplete="username">
-    <input type="password" id="loginPassword" placeholder="Mot de passe" autocomplete="current-password">
+    <input type="text" id="loginUsername" placeholder="Nom d'utilisateur">
+    <input type="password" id="loginPassword" placeholder="Mot de passe">
     <button id="doLoginBtn">Se connecter</button>
     <div id="loginError" class="error-msg"></div>
   </div>
@@ -911,14 +205,11 @@ body {
 
 <div id="userMgmtModal" class="modal-user-management">
   <div class="modal-box">
-    <h3><i class="fas fa-users"></i> Gestion des utilisateurs</h3>
+    <h3><i class="fas fa-users"></i> Gestion utilisateurs</h3>
     <div id="userList" class="user-list"></div>
     <input type="text" id="newUsername" placeholder="Nouveau nom">
     <input type="password" id="newPassword" placeholder="Mot de passe">
-    <select id="newUserRole">
-      <option value="user">Utilisateur standard</option>
-      <option value="admin">Admin</option>
-    </select>
+    <select id="newUserRole"><option value="user">Utilisateur</option><option value="admin">Admin</option></select>
     <button id="createUserBtn">Créer</button>
     <button onclick="closeUserManagement()" style="background:#666;">Fermer</button>
     <div id="userMgmtError" class="error-msg"></div>
@@ -928,31 +219,15 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// كل الكود الأصلي للجافاسكريبت يبقى كما هو (لن تغيير فيه) باستثناء إضافة دالة resetToFullExtent الموجودة مسبقاً.
-// تم تضمين إصدار سابق كامل، لكن هنا سأضيف نفس الكود الذي كان يعمل مع إضافة التحكم في Full Extent
-// من أجل الاختصار، سأضع نفس الكود الذي تم إرساله في الرد السابق بالكامل لأنه يعمل بشكل ممتاز.
-// لكن بما أن الرد السابق كان كاملاً، سأعيد استخدامه مع إضافة تحسينات CSS فقط.
-// من أجل الحفاظ على الطول مناسب، سأدرج الكود الكامل مرة أخرى مع تعديلات CSS المذكورة أعلاه
-// (ملاحظة: هذا الرد يهدف إلى تقديم HTML نهائي متكامل مع جميع التحسينات)
-// للتأكد من عدم حذف الوظائف الأساسية، سأضمن أن جميع دوال الجافاسكريبت موجودة كما في الإصدار السابق.
-
-// ============ CONFIGURATION SUPABASE ============
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let currentSession = null;
-let map = null;
-let picking = false;
-let pickedX = null, pickedY = null;
-let selectedRoom = null;
-let currentMarkers = [];
-let currentImageFiles = [];
-let existingImages = [];
-let imagesToDelete = [];
-let currentGalleryImages = [];
-let currentGalleryIndex = 0;
-let currentFloor = '1';
+let currentSession = null, map = null, picking = false, pickedX = null, pickedY = null, selectedRoom = null;
+let currentMarkers = [], currentImageFiles = [], existingImages = [], imagesToDelete = [];
+let currentGalleryImages = [], currentGalleryIndex = 0, currentFloor = '1';
+let expandedCategories = new Set();
+
 const CATEGORIES = [
   { value: 'salon et séjour', label: 'salon et séjour', icon: '🏠', color: '#ff4d4d' },
   { value: 'salle à manger', label: 'salle à manger', icon: '🍽️', color: '#4caf50' },
@@ -964,11 +239,148 @@ const CATEGORIES = [
   { value: 'accessoire', label: 'accessoire', icon: '🔧', color: '#9e9e9e' }
 ];
 
-// دوال تسجيل الدخول وإدارة المستخدمين والغرف (نفس السابق)
-// سنضع اختصاراً للكود الأساسي لأنه طويل، لكنه موجود ويعمل. سأضمن تكامل الكود.
-// بما أن المسموح به في الإجابة محدود، سأعتمد على أن الكود السابق يعمل، وسأضيف فقط تحسينات CSS الحالية.
-// لكن لضمان عدم خلل، سأقوم بنسخ الكود الكامل الوظيفي من الرد السابق (مع إضافة تحسينات CSS الحالية).
-// نظراً لطول الكود، سأرسل الإجابة النهائية كاملة مع جميع التعديلات.
+async function login(username, password) {
+  const email = username + "@app.local";
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  if (error) throw new Error(error.message);
+  const { data: profile } = await supabaseClient.from('profiles').select('username, role').eq('id', data.user.id).single();
+  if (!profile) throw new Error("Profil introuvable");
+  return { user: data.user, username: profile.username, role: profile.role };
+}
+async function logout() { await supabaseClient.auth.signOut(); currentSession = null; updateUIForUser(); drawRooms(); }
+async function loadCurrentSession() {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) { currentSession = null; updateUIForUser(); return; }
+  const { data: profile } = await supabaseClient.from('profiles').select('username, role').eq('id', session.user.id).single();
+  currentSession = profile ? { user: session.user, username: profile.username, role: profile.role } : null;
+  updateUIForUser();
+}
+function updateUIForUser() {
+  const loginBtn = document.getElementById("loginBtn"), userInfoDiv = document.getElementById("userInfo");
+  const userNameSpan = document.getElementById("userName"), userRoleSpan = document.getElementById("userRole");
+  const adminActions = document.getElementById("adminActions"), manageUsersBtn = document.getElementById("manageUsersBtn");
+  if (currentSession) {
+    loginBtn.style.display = "none"; userInfoDiv.style.display = "flex";
+    userNameSpan.textContent = currentSession.username; userRoleSpan.textContent = currentSession.role === 'admin' ? 'Admin' : 'User';
+    adminActions.style.display = "flex"; manageUsersBtn.style.display = currentSession.role === 'admin' ? "block" : "none";
+  } else {
+    loginBtn.style.display = "flex"; userInfoDiv.style.display = "none"; adminActions.style.display = "none";
+  }
+  drawRooms();
+}
+async function openUserManagement() { if (currentSession?.role === 'admin') { document.getElementById("userMgmtModal").style.display = "flex"; await refreshUserList(); } }
+function closeUserManagement() { document.getElementById("userMgmtModal").style.display = "none"; document.getElementById("userMgmtError").innerText = ""; }
+async function refreshUserList() {
+  const { data } = await supabaseClient.from('profiles').select('id, username, role');
+  const container = document.getElementById("userList"); container.innerHTML = "";
+  for (const user of data) {
+    const div = document.createElement("div");
+    div.innerHTML = `<strong>${escapeHtml(user.username)}</strong> (${user.role === 'admin' ? 'Admin' : 'User'})`;
+    if (user.username !== currentSession?.username) {
+      const btn = document.createElement("button"); btn.textContent = "Supprimer";
+      btn.onclick = async () => { if (confirm(`Supprimer ${user.username} ?`)) await deleteUser(user.username); await refreshUserList(); };
+      div.appendChild(btn);
+    }
+    container.appendChild(div);
+  }
+}
+async function deleteUser(username) {
+  if (!currentSession || currentSession.role !== 'admin') return;
+  await supabaseClient.rpc('delete_user_by_username', { username_to_delete: username });
+  showToast(`Utilisateur ${username} supprimé`, "success");
+}
+async function createNewUser() {
+  const username = document.getElementById("newUsername").value.trim();
+  const password = document.getElementById("newPassword").value.trim();
+  const role = document.getElementById("newUserRole").value;
+  if (!username || !password) { document.getElementById("userMgmtError").innerText = "Champs requis"; return; }
+  try {
+    const email = username + "@app.local";
+    const { data: signUpData, error: signUpError } = await supabaseClient.auth.signUp({ email, password, options: { data: { username } } });
+    if (signUpError) throw signUpError;
+    await supabaseClient.from('profiles').insert({ id: signUpData.user.id, username, role });
+    showToast(`Utilisateur ${username} créé`, "success");
+    document.getElementById("newUsername").value = ""; document.getElementById("newPassword").value = "";
+    await refreshUserList();
+  } catch(err) { document.getElementById("userMgmtError").innerText = err.message; }
+}
+function initMap() {
+  map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
+  updateMapFloor(currentFloor);
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
+  const ExtentControl = L.Control.extend({ options: { position: 'bottomright' }, onAdd: function() { const div = L.DomUtil.create('div', 'custom-extent-control'); div.innerHTML = '<i class="fas fa-expand-alt"></i>'; div.title = "Vue complète"; div.onclick = () => resetToFullExtent(); return div; } });
+  map.addControl(new ExtentControl());
+  map.on("click", function(e) {
+    let x = Math.round(e.latlng.lng), y = Math.round(e.latlng.lat);
+    if (picking) { pickedX = x; pickedY = y; document.getElementById("coord").value = x+","+y; deactivatePickMode(); document.getElementById("modal").style.display = "flex"; }
+  });
+}
+function resetToFullExtent() { if (map) map.fitBounds([[0,0],[3000,2669]]); showToast("Affichage complet", "success"); }
+function updateMapFloor(floor) {
+  if (!map) return;
+  if (map.overlay) map.removeLayer(map.overlay);
+  let imageUrl = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg';
+  let bounds = [[0,0],[3000,2669]];
+  let overlay = L.imageOverlay(imageUrl, bounds).addTo(map);
+  map.overlay = overlay;
+  map.fitBounds(bounds);
+}
+async function changeFloor(floor) { currentFloor = floor; localStorage.setItem('selectedFloor', floor); updateMapFloor(floor); await drawRooms(); document.getElementById("floorSelectBox").value = floor; showToast(`Étage : ${floor === '1' ? '1er' : 'RDC'}`, 'success'); }
+const TABLE_NAME = 'rooms', IMAGES_TABLE = 'room_images', STORAGE_BUCKET = 'room-images';
+async function getAllRooms(floor = currentFloor) { const { data, error } = await supabaseClient.from(TABLE_NAME).select('*').eq('floor', floor); if (error) throw error; return data || []; }
+async function addRoom(room) { const { data, error } = await supabaseClient.from(TABLE_NAME).insert([room]).select(); if (error) throw error; return data[0].id; }
+async function updateRoomInDB(room) { const { error } = await supabaseClient.from(TABLE_NAME).update({ categorie: room.categorie, name: room.name, matricule: room.matricule, x: room.x, y: room.y, last_activity: room.last_activity, floor: room.floor }).eq('id', room.id); if (error) throw error; }
+async function deleteRoomById(id) { await deleteAllRoomImages(id); await supabaseClient.from(TABLE_NAME).delete().eq('id', id); }
+async function isMatriculeUnique(matricule, floor, excludeId = null) { let q = supabaseClient.from(TABLE_NAME).select('id').eq('matricule', matricule).eq('floor', floor); if (excludeId) q = q.neq('id', excludeId); const { data } = await q; return data.length === 0; }
+async function uploadImage(file, roomId) { const ext = file.name.split('.').pop(); const fileName = `${roomId}_${Date.now()}_${Math.random()}.${ext}`; await supabaseClient.storage.from(STORAGE_BUCKET).upload(fileName, file); const { data } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(fileName); return data.publicUrl; }
+async function addRoomImage(roomId, imageUrl) { await supabaseClient.from(IMAGES_TABLE).insert({ room_id: roomId, image_url: imageUrl }); }
+async function getRoomImages(roomId) { const { data } = await supabaseClient.from(IMAGES_TABLE).select('*').eq('room_id', roomId); return data || []; }
+async function deleteRoomImage(imageId, imageUrl) { await supabaseClient.from(IMAGES_TABLE).delete().eq('id', imageId); const fileName = imageUrl.split('/').pop(); if (fileName) await supabaseClient.storage.from(STORAGE_BUCKET).remove([fileName]); }
+async function deleteAllRoomImages(roomId) { const images = await getRoomImages(roomId); for (const img of images) await deleteRoomImage(img.id, img.image_url); }
+async function initSampleData() { const { count } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', head: true }); if (count === 0) { await supabaseClient.from(TABLE_NAME).insert([ { categorie: 'salon et séjour', name: 'Salon Principal', matricule: 'SAL-001', x: 1334, y: 1500, last_activity: new Date().toLocaleString(), floor: '1' }, { categorie: 'chambre adulte', name: 'Chambre Master', matricule: 'CHM-001', x: 2000, y: 800, last_activity: new Date().toLocaleString(), floor: '1' }, { categorie: 'bureautique', name: 'Bureau', matricule: 'BUR-001', x: 500, y: 2000, last_activity: new Date().toLocaleString(), floor: '1' }, { categorie: 'salle à manger', name: 'Salle à Manger', matricule: 'SAM-001', x: 1000, y: 1000, last_activity: new Date().toLocaleString(), floor: '1' }, { categorie: 'rangement', name: 'Débarras', matricule: 'RAN-001', x: 800, y: 2200, last_activity: new Date().toLocaleString(), floor: '1' }, { categorie: 'chambre enfant', name: 'Chambre Enfant', matricule: 'ENF-001', x: 2200, y: 500, last_activity: new Date().toLocaleString(), floor: '1' } ]); showToast("Données démo ajoutées", "success"); } }
+async function deleteFromPopup(roomId) { if (!currentSession) { showToast("Connectez-vous", "error"); return; } if (confirm("Supprimer ?")) { await deleteRoomById(roomId); showToast("Supprimée", "success"); map.closePopup(); await drawRooms(); } }
+function createPopupContent(room, catInfo, images) {
+  let imagesHtml = '';
+  if (images.length) { const urls = images.map(i=>i.image_url); const first3 = images.slice(0,3); imagesHtml = `<div style="display:flex; gap:5px; margin-bottom:8px;">`; first3.forEach((img,idx)=>{ imagesHtml += `<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(urls)}' data-idx="${idx}" style="width:55px;height:55px;object-fit:cover;border-radius:6px;cursor:pointer;">`; }); if(images.length>3) imagesHtml+=`<div class="popup-gallery-more" data-urls='${JSON.stringify(urls)}' data-idx="3" style="width:55px;height:55px;background:#eee;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;">+${images.length-3}</div>`; imagesHtml+=`</div>`; }
+  let btns = ''; if (currentSession) btns = `<hr><button class="edit-btn" data-id="${room.id}" style="background:#ff4d4d;color:white;border:none;border-radius:40px;padding:8px;width:100%;margin-bottom:8px;">✏️ Modifier</button><button class="delete-popup-btn" data-id="${room.id}" style="background:#eb3349;color:white;border:none;border-radius:40px;padding:8px;width:100%;">🗑️ Supprimer</button>`;
+  return `<div>${imagesHtml}<div style="border-bottom:2px solid ${catInfo.color};color:${catInfo.color}"><span>${catInfo.icon}</span> <strong>${escapeHtml(room.categorie)}</strong></div><div><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div><div><i class="fas fa-id-card"></i> <strong>Mat:</strong> ${escapeHtml(room.matricule)}</div><div><i class="fas fa-clock"></i> ${escapeHtml(room.last_activity||'')}</div>${btns}</div>`;
+}
+async function drawRooms() { if (!map) return; currentMarkers.forEach(m=>map.removeLayer(m)); currentMarkers=[]; const rooms = await getAllRooms(currentFloor); for (const room of rooms) { const catInfo = CATEGORIES.find(c=>c.value===room.categorie)||{icon:'📍',color:'#ff4d4d'}; const images = await getRoomImages(room.id); const marker = L.circle([room.y, room.x], { radius: 12, color: catInfo.color, fillColor: catInfo.color, fillOpacity: 0.8, weight: 3 }).addTo(map); marker.bindPopup(createPopupContent(room, catInfo, images), { maxWidth: 260 }); marker.on("popupopen", (e) => { const el = e.popup.getElement(); el.querySelectorAll('.popup-gallery-img, .popup-gallery-more').forEach(img=>{ img.addEventListener('click',(ev)=>{ ev.stopPropagation(); const urls = JSON.parse(img.getAttribute('data-urls')); const idx = parseInt(img.getAttribute('data-idx'))||0; openLightbox(urls, idx); }); }); if(currentSession){ el.querySelector(".edit-btn")?.addEventListener("click",()=>editRoomById(room.id)); el.querySelector(".delete-popup-btn")?.addEventListener("click",()=>deleteFromPopup(room.id)); } }); currentMarkers.push(marker); } updateStats(rooms); updateCategoriesList(rooms); }
+async function updateStats(rooms) { document.getElementById('roomCount').innerText = rooms.length; document.getElementById('categoryCount').innerText = new Set(rooms.map(r=>r.categorie)).size; }
+function updateCategoriesList(rooms) { const container = document.getElementById('categoriesList'); if(!rooms.length){ container.innerHTML='<div style="padding:20px;text-align:center;">Aucune salle</div>'; return; } const byCat = new Map(); rooms.forEach(r=>{ const cat=r.categorie||'sans-categorie'; if(!byCat.has(cat)) byCat.set(cat,[]); byCat.get(cat).push(r); }); let html=''; for(let [cat,list] of byCat){ const info = CATEGORIES.find(c=>c.value===cat)||{icon:'🏷️',label:cat}; const exp = expandedCategories.has(cat); html+=`<div class="category-group" data-cat="${cat}"><div class="category-header"><div class="category-name"><i class="fas fa-folder"></i> <span>${info.icon} ${escapeHtml(info.label)}</span><span class="category-count">${list.length}</span></div><i class="fas fa-chevron-right toggle-icon ${exp?'rotated':''}"></i></div><div class="category-rooms ${exp?'expanded':''}">${list.map(room=>`<div class="room-item" data-room-id="${room.id}" data-room-x="${room.x}" data-room-y="${room.y}" data-room-name="${escapeHtml(room.name)}"><div class="room-name"><i class="fas fa-door-open"></i> ${escapeHtml(room.name)}</div><div class="room-mat">${escapeHtml(room.matricule)}</div></div>`).join('')}</div></div>`; } container.innerHTML=html; attachCategoryEvents(); }
+function attachCategoryEvents() { document.querySelectorAll('.category-group').forEach(group=>{ const header = group.querySelector('.category-header'); const newH = header.cloneNode(true); header.parentNode.replaceChild(newH, header); newH.addEventListener('click',()=>{ const cat=group.getAttribute('data-cat'); const roomsDiv=group.querySelector('.category-rooms'); const icon=newH.querySelector('.toggle-icon'); if(roomsDiv.classList.contains('expanded')){ roomsDiv.classList.remove('expanded'); icon.classList.remove('rotated'); expandedCategories.delete(cat); }else{ roomsDiv.classList.add('expanded'); icon.classList.add('rotated'); expandedCategories.add(cat); } attachRoomItemEvents(); }); }); attachRoomItemEvents(); }
+function attachRoomItemEvents() { document.querySelectorAll('.room-item').forEach(item=>{ const handler = (e)=>{ const x=parseFloat(item.getAttribute('data-room-x')), y=parseFloat(item.getAttribute('data-room-y')); if(!isNaN(x)&&!isNaN(y)){ map.flyTo([y,x],2,{duration:0.8}); setTimeout(()=>{ const marker=currentMarkers.find(m=>Math.abs(m.getLatLng().lat-y)<5&&Math.abs(m.getLatLng().lng-x)<5); if(marker) marker.openPopup(); showToast(`📍 ${item.getAttribute('data-room-name')}`,'success'); },800); } }; item.removeEventListener('click', item._clickHandler); item.addEventListener('click', handler); item._clickHandler = handler; }); }
+function escapeHtml(t){ if(!t) return ''; return t.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+function showToast(m,t="success"){ const tst=document.querySelector('.toast'); if(tst) tst.remove(); const toast=document.createElement("div"); toast.className=`toast ${t}`; toast.innerHTML=`<i class="fas ${t==='success'?'fa-check-circle':'fa-exclamation-circle'}"></i> ${m}`; document.body.appendChild(toast); setTimeout(()=>toast.remove(),3000); }
+function setupImageInput(){ document.getElementById('imageInput').onchange=(e)=>{ const files=Array.from(e.target.files); if(files.length){ currentImageFiles.push(...files); updateImagePreview(); } e.target.value=''; }; }
+function updateImagePreview(){ const container=document.getElementById('imagePreviewContainer'); container.innerHTML=''; currentImageFiles.forEach((file,idx)=>{ const reader=new FileReader(); reader.onload=(ev)=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${ev.target.result}" style="width:80px;height:80px;"><button type="button" class="delete-img-btn" data-index="${idx}">🗑️</button>`; div.querySelector('.delete-img-btn').addEventListener('click',()=>{ currentImageFiles.splice(idx,1); updateImagePreview(); }); container.appendChild(div); }; reader.readAsDataURL(file); }); existingImages.forEach((img,idx)=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${img.image_url}" style="width:80px;height:80px;"><button type="button" class="delete-existing-img-btn" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; div.querySelector('.delete-existing-img-btn').addEventListener('click',async(e)=>{ imagesToDelete.push({id:img.id,url:img.image_url}); existingImages=existingImages.filter(i=>i.id!==img.id); updateImagePreview(); }); container.appendChild(div); }); }
+function clearImages(){ currentImageFiles=[]; existingImages=[]; imagesToDelete=[]; document.getElementById('imageInput').value=''; document.getElementById('imagePreviewContainer').innerHTML=''; }
+function openModal(type){ if(!currentSession){ showToast("Connectez-vous","error"); return; } deactivatePickMode(); document.getElementById("modal").style.display="flex"; const now=new Date().toLocaleString(); if(!document.getElementById("floorSelect")){ const coordRow=document.querySelector(".coord-row"); const div=document.createElement("div"); div.innerHTML=`<label><i class="fas fa-building"></i> Étage :</label><select id="floorSelect" style="width:100%; padding:12px; border-radius:16px;"><option value="1">1er étage</option><option value="rdc">Rez-de-chaussée</option></select>`; coordRow.parentNode.insertBefore(div, coordRow); } if(type==="add"){ document.getElementById("title").innerHTML='<i class="fas fa-plus"></i> Ajouter'; document.getElementById("actions").innerHTML=`<button onclick="saveRoom()">Enregistrer</button><button onclick="closeModal()">Annuler</button>`; document.getElementById("last_activity").value=now; selectedRoom=null; pickedX=pickedY=null; clearForm(); clearImages(); document.getElementById("floorSelect").value=currentFloor; } }
+function validateFormFields(){ if(!document.getElementById("categorie").value){ showToast("Catégorie requise","error"); return false; } if(!document.getElementById("name").value.trim()){ showToast("Nom requis","error"); return false; } if(!document.getElementById("mat").value.trim()){ showToast("Matricule requis","error"); return false; } if(!document.getElementById("coord").value){ showToast("Position requise","error"); return false; } return true; }
+async function saveRoom(){ if(!validateFormFields()) return; if(pickedX===null||pickedY===null){ showToast("Sélectionnez un emplacement","error"); return; } const newMat=document.getElementById("mat").value.trim(); const floor=document.getElementById("floorSelect").value; if(!await isMatriculeUnique(newMat,floor)){ showToast("Matricule existe","error"); return; } const newRoom={ categorie:document.getElementById("categorie").value, name:document.getElementById("name").value.trim(), matricule:newMat, x:pickedX, y:pickedY, last_activity:new Date().toLocaleString(), floor }; const roomId=await addRoom(newRoom); for(const file of currentImageFiles){ const url=await uploadImage(file,roomId); await addRoomImage(roomId,url); } showToast("Ajoutée","success"); closeModal(); await drawRooms(); clearForm(); pickedX=pickedY=null; clearImages(); }
+async function editRoomById(id){ if(!currentSession){ showToast("Connectez-vous","error"); return; } const {data:room}=await supabaseClient.from('rooms').select('*').eq('id',id).single(); if(!room){ showToast("Non trouvée","error"); return; } selectedRoom=room; openEditModal(); }
+async function openEditModal(){ deactivatePickMode(); if(!selectedRoom) return; fillForm(selectedRoom); existingImages=await getRoomImages(selectedRoom.id); currentImageFiles=[]; imagesToDelete=[]; updateImagePreview(); if(!document.getElementById("floorSelect")){ const coordRow=document.querySelector(".coord-row"); const div=document.createElement("div"); div.innerHTML=`<label><i class="fas fa-building"></i> Étage :</label><select id="floorSelect" style="width:100%; padding:12px; border-radius:16px;"><option value="1">1er étage</option><option value="rdc">Rez-de-chaussée</option></select>`; coordRow.parentNode.insertBefore(div, coordRow); } document.getElementById("floorSelect").value=selectedRoom.floor||'1'; document.getElementById("modal").style.display="flex"; document.getElementById("title").innerHTML='<i class="fas fa-edit"></i> Modifier'; document.getElementById("actions").innerHTML=`<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`; pickedX=selectedRoom.x; pickedY=selectedRoom.y; }
+async function updateRoom(){ if(!selectedRoom) return; if(!validateFormFields()) return; const newMat=document.getElementById("mat").value.trim(); const newFloor=document.getElementById("floorSelect").value; if((selectedRoom.matricule!==newMat||selectedRoom.floor!==newFloor)&&!await isMatriculeUnique(newMat,newFloor,selectedRoom.id)){ showToast("Matricule existe","error"); return; } selectedRoom.categorie=document.getElementById("categorie").value; selectedRoom.name=document.getElementById("name").value.trim(); selectedRoom.matricule=newMat; selectedRoom.floor=newFloor; if(pickedX!==null&&pickedY!==null){ selectedRoom.x=pickedX; selectedRoom.y=pickedY; } selectedRoom.last_activity=new Date().toLocaleString(); await updateRoomInDB(selectedRoom); for(const img of imagesToDelete) await deleteRoomImage(img.id,img.url); for(const file of currentImageFiles){ const url=await uploadImage(file,selectedRoom.id); await addRoomImage(selectedRoom.id,url); } showToast("Mise à jour","success"); closeModal(); selectedRoom=null; await drawRooms(); }
+function fillForm(room){ if(!room) return; document.getElementById("categorie").value=room.categorie||""; document.getElementById("name").value=room.name||""; document.getElementById("mat").value=room.matricule||""; document.getElementById("coord").value=(room.x&&room.y)?room.x+","+room.y:""; document.getElementById("last_activity").value=room.last_activity||""; pickedX=room.x; pickedY=room.y; if(document.getElementById("floorSelect")) document.getElementById("floorSelect").value=room.floor||'1'; }
+function clearForm(){ document.getElementById("categorie").value=""; document.getElementById("name").value=""; document.getElementById("mat").value=""; document.getElementById("coord").value=""; document.getElementById("last_activity").value=""; }
+function closeModal(){ document.getElementById("modal").style.display="none"; deactivatePickMode(); pickedX=pickedY=null; clearImages(); }
+function startPick(){ closeModal(); activatePickMode(); showToast("Cliquez sur la carte","success"); }
+function activatePickMode(){ picking=true; document.getElementById('map').classList.add('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor='crosshair'; }
+function deactivatePickMode(){ picking=false; document.getElementById('map').classList.remove('picking-mode'); const lc=document.querySelector('.leaflet-container'); if(lc) lc.style.cursor=''; }
+function togglePanel(){ const panel=document.getElementById('sidePanel'); const btn=document.getElementById('showPanelBtn'); panel.classList.toggle('collapsed'); const icon=panel.querySelector('.toggle-panel i'); if(panel.classList.contains('collapsed')){ icon.classList.remove('fa-chevron-left'); icon.classList.add('fa-chevron-right'); btn.style.display='flex'; }else{ icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); btn.style.display='none'; } }
+function showPanel(){ const panel=document.getElementById('sidePanel'); panel.classList.remove('collapsed'); const icon=panel.querySelector('.toggle-panel i'); icon.classList.remove('fa-chevron-right'); icon.classList.add('fa-chevron-left'); document.getElementById('showPanelBtn').style.display='none'; }
+function openLightbox(urls, idx){ currentGalleryImages=urls; currentGalleryIndex=idx; document.getElementById('lightbox-img').src=urls[idx]; document.getElementById('lightbox-counter').innerText=`${idx+1}/${urls.length}`; document.getElementById('lightbox').classList.add('active'); }
+function nextImage(){ if(currentGalleryImages.length){ currentGalleryIndex=(currentGalleryIndex+1)%currentGalleryImages.length; document.getElementById('lightbox-img').src=currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText=`${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
+function prevImage(){ if(currentGalleryImages.length){ currentGalleryIndex=(currentGalleryIndex-1+currentGalleryImages.length)%currentGalleryImages.length; document.getElementById('lightbox-img').src=currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText=`${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('active'); currentGalleryImages=[]; }
+document.getElementById("loginBtn").addEventListener("click",()=>document.getElementById("loginModal").style.display="flex");
+document.getElementById("doLoginBtn").addEventListener("click",async()=>{ const username=document.getElementById("loginUsername").value.trim(); const pwd=document.getElementById("loginPassword").value.trim(); try{ const s=await login(username,pwd); currentSession=s; updateUIForUser(); document.getElementById("loginModal").style.display="none"; document.getElementById("loginError").innerText=""; showToast(`Bienvenue ${s.username}`,"success"); }catch(err){ document.getElementById("loginError").innerText=err.message; } });
+document.getElementById("logoutBtn").addEventListener("click",()=>{ logout(); showToast("Déconnecté","success"); });
+window.onclick=function(e){ if(e.target===document.getElementById("loginModal")) document.getElementById("loginModal").style.display="none"; if(e.target===document.getElementById("userMgmtModal")) document.getElementById("userMgmtModal").style.display="none"; };
+document.getElementById("createUserBtn").addEventListener("click",createNewUser);
+document.getElementById("floorSelectBox").addEventListener("change",(e)=>changeFloor(e.target.value));
+document.getElementById("search").addEventListener("input",async(e)=>{ const val=e.target.value.toLowerCase().trim(); if(!val) return; const {data:all}=await supabaseClient.from('rooms').select('*'); const found=all.find(r=> (r.name&&r.name.toLowerCase().includes(val))||(r.matricule&&r.matricule.toLowerCase().includes(val))||(r.categorie&&r.categorie.toLowerCase().includes(val))); if(!found){ showToast("Aucune salle","error"); return; } if(found.floor===currentFloor){ map.setView([found.y,found.x],2); const marker=currentMarkers.find(m=>Math.abs(m.getLatLng().lat-found.y)<1&&Math.abs(m.getLatLng().lng-found.x)<1); if(marker) marker.openPopup(); showToast(`Trouvé: ${found.name}`,"success"); }else{ showToast(`La salle est au ${found.floor==='1'?'1er étage':'RDC'}`, "error"); } });
+(async function init(){ const saved=localStorage.getItem('selectedFloor'); if(saved==='1'||saved==='rdc') currentFloor=saved; else currentFloor='1'; document.getElementById("floorSelectBox").value=currentFloor; await loadCurrentSession(); supabaseClient.channel('rooms').on('postgres_changes',{event:'*',schema:'public',table:'rooms'},()=>drawRooms()).subscribe(); supabaseClient.channel('images').on('postgres_changes',{event:'*',schema:'public',table:'room_images'},()=>drawRooms()).subscribe(); await initSampleData(); initMap(); setupImageInput(); await drawRooms(); showToast("Système prêt","success"); const lb=document.getElementById('lightbox'); lb.querySelector('.close-lightbox').addEventListener('click',closeLightbox); lb.querySelector('.prev').addEventListener('click',prevImage); lb.querySelector('.next').addEventListener('click',nextImage); lb.addEventListener('click',(e)=> { if(e.target===lb) closeLightbox(); }); document.addEventListener('keydown',(e)=>{ if(!lb.classList.contains('active')) return; if(e.key==='ArrowLeft') prevImage(); if(e.key==='ArrowRight') nextImage(); if(e.key==='Escape') closeLightbox(); }); })();
 </script>
 </body>
 </html>
