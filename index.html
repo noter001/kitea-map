@@ -4,7 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
 <title>Indoor Map - Gestion des salles</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<!-- تحميل Leaflet CSS بشكل صحيح -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
 * {
@@ -23,11 +24,7 @@ body {
   cursor: default;
 }
 
-/* ===== تحسينات أساسية للهواتف ===== */
-:root {
-  --touch-min: 44px;
-  --radius-card: 20px;
-}
+/* ===== تحسينات للهواتف ===== */
 @media (max-width: 768px) {
   .top-toolbar {
     top: 10px;
@@ -36,7 +33,6 @@ body {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
-    background: transparent;
   }
   .left-area {
     justify-content: space-between;
@@ -115,23 +111,6 @@ body {
     height: 48px;
     border-radius: 0 20px 20px 0;
     font-size: 20px;
-  }
-  .category-name {
-    font-size: 14px;
-  }
-  .room-item {
-    padding: 12px;
-    margin: 8px;
-  }
-  .modal-box {
-    width: 92%;
-    padding: 20px;
-    max-height: 85vh;
-    overflow-y: auto;
-  }
-  .modal-box input, .modal-box select {
-    font-size: 16px;
-    padding: 12px;
   }
   .custom-extent-control, .leaflet-control-zoom a {
     width: 38px !important;
@@ -230,7 +209,7 @@ body {
   margin-left: 5px;
 }
 .stats-row {
-  display: none; /* يظهر فقط في الموبايل */
+  display: none;
 }
 .action-group-right {
   position: absolute;
@@ -575,7 +554,6 @@ body {
   </div>
 </div>
 
-<!-- شريط إحصائيات للهواتف -->
 <div class="stats-row" id="mobileStats" style="position:absolute; top:75px; left:10px; right:10px; z-index:1000; display:none;">
   <div class="stats-item"><i class="fas fa-door-open"></i> <span id="mobileRoomCount">0</span></div>
   <div class="stats-item"><i class="fas fa-tags"></i> <span id="mobileCategoryCount">0</span></div>
@@ -610,12 +588,13 @@ body {
 <div id="userMgmtModal" class="modal-user-management"><div class="modal-box"><h3>Gestion utilisateurs</h3><div id="userList" class="user-list"></div><input id="newUsername" placeholder="Nouveau nom"><input id="newPassword" type="password" placeholder="Mot de passe"><select id="newUserRole"><option value="user">Utilisateur</option><option value="admin">Admin</option></select><button id="createUserBtn">Créer</button><button onclick="closeUserManagement()" style="background:#666;">Fermer</button><div id="userMgmtError" class="error-msg"></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 // ==================== CONFIGURATION SUPABASE ====================
+// استخدام اسم متغير مختلف لتجنب التعارض مع supabase العمومي
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentSession = null, map = null, picking = false, pickedX = null, pickedY = null, selectedRoom = null;
 let currentMarkers = [], currentImageFiles = [], existingImages = [], imagesToDelete = [];
@@ -635,17 +614,17 @@ const CATEGORIES = [
 
 // Auth functions
 async function login(username, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email: username+'@app.local', password });
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email: username+'@app.local', password });
   if (error) throw error;
-  const { data: profile } = await supabase.from('profiles').select('username,role').eq('id', data.user.id).single();
+  const { data: profile } = await supabaseClient.from('profiles').select('username,role').eq('id', data.user.id).single();
   if (!profile) throw new Error('Profil introuvable');
   return { user: data.user, username: profile.username, role: profile.role };
 }
-async function logout() { await supabase.auth.signOut(); currentSession = null; updateUI(); drawRooms(); }
+async function logout() { await supabaseClient.auth.signOut(); currentSession = null; updateUI(); drawRooms(); }
 async function loadSession() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await supabaseClient.auth.getSession();
   if (!session) { currentSession = null; updateUI(); return; }
-  const { data: profile } = await supabase.from('profiles').select('username,role').eq('id', session.user.id).single();
+  const { data: profile } = await supabaseClient.from('profiles').select('username,role').eq('id', session.user.id).single();
   currentSession = profile ? { user: session.user, username: profile.username, role: profile.role } : null;
   updateUI();
 }
@@ -666,14 +645,14 @@ function updateUI() {
 async function openUserManagement() { if (currentSession?.role === 'admin') { document.getElementById('userMgmtModal').style.display = 'flex'; await refreshUserList(); } }
 function closeUserManagement() { document.getElementById('userMgmtModal').style.display = 'none'; }
 async function refreshUserList() {
-  const { data } = await supabase.from('profiles').select('id,username,role');
+  const { data } = await supabaseClient.from('profiles').select('id,username,role');
   const container = document.getElementById('userList'); container.innerHTML = '';
   for (const u of data) {
     const div = document.createElement('div');
     div.innerHTML = `<strong>${escapeHtml(u.username)}</strong> (${u.role})`;
     if (u.username !== currentSession?.username) {
       const btn = document.createElement('button'); btn.textContent = 'Supprimer';
-      btn.onclick = async () => { await supabase.rpc('delete_user_by_username', { username_to_delete: u.username }); await refreshUserList(); showToast('Supprimé','success'); };
+      btn.onclick = async () => { await supabaseClient.rpc('delete_user_by_username', { username_to_delete: u.username }); await refreshUserList(); showToast('Supprimé','success'); };
       div.appendChild(btn);
     }
     container.appendChild(div);
@@ -685,9 +664,9 @@ async function createNewUser() {
   const role = document.getElementById('newUserRole').value;
   if (!username || !pwd) { document.getElementById('userMgmtError').innerText = 'Champs requis'; return; }
   try {
-    const { data, error } = await supabase.auth.signUp({ email: username+'@app.local', password: pwd, options: { data: { username } } });
+    const { data, error } = await supabaseClient.auth.signUp({ email: username+'@app.local', password: pwd, options: { data: { username } } });
     if (error) throw error;
-    await supabase.from('profiles').insert({ id: data.user.id, username, role });
+    await supabaseClient.from('profiles').insert({ id: data.user.id, username, role });
     showToast('Utilisateur créé','success');
     document.getElementById('newUsername').value = ''; document.getElementById('newPassword').value = '';
     await refreshUserList();
@@ -696,34 +675,113 @@ async function createNewUser() {
 // Map & floors
 function initMap() {
   map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false });
-  updateMapFloor(currentFloor);
+  const bounds = [[0, 0], [3000, 2669]];
+  
+  // شبكة إرشادية افتراضية تظهر دائماً
+  const gridLayer = L.layerGroup();
+  for (let i = 0; i <= 3000; i += 500) {
+    L.polyline([[i, 0], [i, 2669]], { color: '#aaa', weight: 0.5, opacity: 0.5 }).addTo(gridLayer);
+    L.polyline([[0, i], [3000, i]], { color: '#aaa', weight: 0.5, opacity: 0.5 }).addTo(gridLayer);
+  }
+  gridLayer.addTo(map);
+  
+  // وظيفة تحميل صورة الطابق
+  function loadFloorImage(floor) {
+    const imageUrl = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg';
+    const img = new Image();
+    img.onload = () => {
+      if (map.overlay) map.removeLayer(map.overlay);
+      const overlay = L.imageOverlay(imageUrl, bounds).addTo(map);
+      map.overlay = overlay;
+      if (gridLayer) map.removeLayer(gridLayer);
+      map.fitBounds(bounds);
+      showToast(`خريطة ${floor === '1' ? 'الطابق الأول' : 'الطابق الأرضي'}`, 'success');
+    };
+    img.onerror = () => {
+      console.warn(`Image ${imageUrl} non trouvée, utilisation de la grille`);
+      if (!map.hasLayer(gridLayer)) gridLayer.addTo(map);
+      map.fitBounds(bounds);
+    };
+    img.src = imageUrl;
+  }
+  
+  loadFloorImage(currentFloor);
+  
+  // عناصر التحكم
   L.control.zoom({ position: 'bottomright' }).addTo(map);
-  const ExtentCtrl = L.Control.extend({ options: { position: 'bottomright' }, onAdd: () => { const div = L.DomUtil.create('div','custom-extent-control'); div.innerHTML = '<i class="fas fa-expand-alt"></i>'; div.onclick = () => map.fitBounds([[0,0],[3000,2669]]); return div; } });
+  const ExtentCtrl = L.Control.extend({
+    options: { position: 'bottomright' },
+    onAdd: () => {
+      const div = L.DomUtil.create('div', 'custom-extent-control');
+      div.innerHTML = '<i class="fas fa-expand-alt"></i>';
+      div.style.cssText = "background:white; width:34px; height:34px; line-height:34px; text-align:center; border-radius:4px; margin-bottom:8px; cursor:pointer; box-shadow:0 1px 5px rgba(0,0,0,0.4);";
+      div.onclick = () => map.fitBounds(bounds);
+      return div;
+    }
+  });
   map.addControl(new ExtentCtrl());
-  map.on('click', e => { if(picking) { pickedX = Math.round(e.latlng.lng); pickedY = Math.round(e.latlng.lat); document.getElementById('coord').value = pickedX+','+pickedY; deactivatePickMode(); document.getElementById('modal').style.display='flex'; } });
+  
+  map.on('click', e => {
+    if (picking) {
+      pickedX = Math.round(e.latlng.lng);
+      pickedY = Math.round(e.latlng.lat);
+      document.getElementById('coord').value = pickedX + ',' + pickedY;
+      deactivatePickMode();
+      document.getElementById('modal').style.display = 'flex';
+    }
+  });
+  
+  showToast('خريطة جاهزة - انقر على أيقونة + لإضافة غرفة', 'success');
 }
+
 function updateMapFloor(floor) {
   if (!map) return;
-  if (map.overlay) map.removeLayer(map.overlay);
-  const url = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg';
-  const overlay = L.imageOverlay(url, [[0,0],[3000,2669]]).addTo(map);
-  map.overlay = overlay;
-  map.fitBounds([[0,0],[3000,2669]]);
+  const bounds = [[0, 0], [3000, 2669]];
+  const imageUrl = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg';
+  const gridLayer = map._gridLayer;
+  const img = new Image();
+  img.onload = () => {
+    if (map.overlay) map.removeLayer(map.overlay);
+    const overlay = L.imageOverlay(imageUrl, bounds).addTo(map);
+    map.overlay = overlay;
+    if (map._gridLayer && map.hasLayer(map._gridLayer)) map.removeLayer(map._gridLayer);
+    map.fitBounds(bounds);
+  };
+  img.onerror = () => {
+    if (!map._gridLayer) {
+      const grid = L.layerGroup();
+      for (let i = 0; i <= 3000; i += 500) {
+        L.polyline([[i, 0], [i, 2669]], { color: '#aaa', weight: 0.5 }).addTo(grid);
+        L.polyline([[0, i], [3000, i]], { color: '#aaa', weight: 0.5 }).addTo(grid);
+      }
+      map._gridLayer = grid;
+      grid.addTo(map);
+    } else if (!map.hasLayer(map._gridLayer)) {
+      map._gridLayer.addTo(map);
+    }
+    if (map.overlay) map.removeLayer(map.overlay);
+    map.fitBounds(bounds);
+    showToast(`الصورة غير متوفرة، استخدم الشبكة`, 'error');
+  };
+  img.src = imageUrl;
 }
-async function changeFloor(floor) { currentFloor = floor; localStorage.setItem('selectedFloor',floor); updateMapFloor(floor); await drawRooms(); document.getElementById('floorSelectBox').value = floor; showToast(`Étage changé`,`success`); }
-// Rooms CRUD
-async function getAllRooms(floor=currentFloor) { const { data } = await supabase.from('rooms').select('*').eq('floor',floor); return data || []; }
-async function addRoom(room) { const { data } = await supabase.from('rooms').insert([room]).select(); return data[0].id; }
-async function updateRoomInDB(room) { await supabase.from('rooms').update(room).eq('id',room.id); }
-async function deleteRoomById(id) { await deleteAllRoomImages(id); await supabase.from('rooms').delete().eq('id',id); }
-async function isMatriculeUnique(mat, floor, exclude=null) { let q = supabase.from('rooms').select('id').eq('matricule',mat).eq('floor',floor); if(exclude) q = q.neq('id',exclude); const { data } = await q; return data.length === 0; }
-async function uploadImage(file, roomId) { const ext = file.name.split('.').pop(); const name = `${roomId}_${Date.now()}_${Math.random()}.${ext}`; await supabase.storage.from('room-images').upload(name, file); const { data } = supabase.storage.from('room-images').getPublicUrl(name); return data.publicUrl; }
-async function addRoomImage(roomId, url) { await supabase.from('room_images').insert({ room_id: roomId, image_url: url }); }
-async function getRoomImages(roomId) { const { data } = await supabase.from('room_images').select('*').eq('room_id',roomId); return data || []; }
-async function deleteRoomImage(id, url) { await supabase.from('room_images').delete().eq('id',id); const fileName = url.split('/').pop(); if(fileName) await supabase.storage.from('room-images').remove([fileName]); }
+
+async function changeFloor(floor) { currentFloor = floor; localStorage.setItem('selectedFloor',floor); updateMapFloor(floor); await drawRooms(); document.getElementById('floorSelectBox').value = floor; showToast(`Étage: ${floor === '1' ? '1er' : 'RDC'}`, 'success'); }
+
+// Rooms CRUD (نفس الدوال السابقة مع استخدام supabaseClient)
+async function getAllRooms(floor=currentFloor) { const { data } = await supabaseClient.from('rooms').select('*').eq('floor',floor); return data || []; }
+async function addRoom(room) { const { data } = await supabaseClient.from('rooms').insert([room]).select(); return data[0].id; }
+async function updateRoomInDB(room) { await supabaseClient.from('rooms').update(room).eq('id',room.id); }
+async function deleteRoomById(id) { await deleteAllRoomImages(id); await supabaseClient.from('rooms').delete().eq('id',id); }
+async function isMatriculeUnique(mat, floor, exclude=null) { let q = supabaseClient.from('rooms').select('id').eq('matricule',mat).eq('floor',floor); if(exclude) q = q.neq('id',exclude); const { data } = await q; return data.length === 0; }
+async function uploadImage(file, roomId) { const ext = file.name.split('.').pop(); const name = `${roomId}_${Date.now()}_${Math.random()}.${ext}`; await supabaseClient.storage.from('room-images').upload(name, file); const { data } = supabaseClient.storage.from('room-images').getPublicUrl(name); return data.publicUrl; }
+async function addRoomImage(roomId, url) { await supabaseClient.from('room_images').insert({ room_id: roomId, image_url: url }); }
+async function getRoomImages(roomId) { const { data } = await supabaseClient.from('room_images').select('*').eq('room_id',roomId); return data || []; }
+async function deleteRoomImage(id, url) { await supabaseClient.from('room_images').delete().eq('id',id); const fileName = url.split('/').pop(); if(fileName) await supabaseClient.storage.from('room-images').remove([fileName]); }
 async function deleteAllRoomImages(roomId) { const imgs = await getRoomImages(roomId); for(const img of imgs) await deleteRoomImage(img.id, img.image_url); }
-async function initSampleData() { const { count } = await supabase.from('rooms').select('*',{count:'exact',head:true}); if(count===0){ await supabase.from('rooms').insert([ {categorie:'salon et séjour',name:'Salon Principal',matricule:'SAL-001',x:1334,y:1500,last_activity:new Date().toLocaleString(),floor:'1'}, {categorie:'chambre adulte',name:'Chambre Master',matricule:'CHM-001',x:2000,y:800,last_activity:new Date().toLocaleString(),floor:'1'}, {categorie:'bureautique',name:'Bureau',matricule:'BUR-001',x:500,y:2000,last_activity:new Date().toLocaleString(),floor:'1'}, {categorie:'salle à manger',name:'Salle à Manger',matricule:'SAM-001',x:1000,y:1000,last_activity:new Date().toLocaleString(),floor:'1'} ]); showToast('Données démo ajoutées','success'); } }
-// Drawing
+async function initSampleData() { const { count } = await supabaseClient.from('rooms').select('*',{count:'exact',head:true}); if(count===0){ await supabaseClient.from('rooms').insert([ {categorie:'salon et séjour',name:'Salon Principal',matricule:'SAL-001',x:1334,y:1500,last_activity:new Date().toLocaleString(),floor:'1'}, {categorie:'chambre adulte',name:'Chambre Master',matricule:'CHM-001',x:2000,y:800,last_activity:new Date().toLocaleString(),floor:'1'}, {categorie:'bureautique',name:'Bureau',matricule:'BUR-001',x:500,y:2000,last_activity:new Date().toLocaleString(),floor:'1'}, {categorie:'salle à manger',name:'Salle à Manger',matricule:'SAM-001',x:1000,y:1000,last_activity:new Date().toLocaleString(),floor:'1'} ]); showToast('Données démo ajoutées','success'); } }
+
+// Drawing (الدوال الأساسية للرسم)
 async function drawRooms() {
   if(!map) return;
   currentMarkers.forEach(m=>map.removeLayer(m)); currentMarkers=[];
@@ -731,17 +789,26 @@ async function drawRooms() {
   for(const room of rooms){
     const cat = CATEGORIES.find(c=>c.value===room.categorie)||{icon:'📍',color:'#ff4d4d'};
     const images = await getRoomImages(room.id);
-    const marker = L.circle([room.y,room.x], { radius:12, color:cat.color, fillColor:cat.color, fillOpacity:0.8 }).addTo(map);
-    marker.bindPopup(createPopup(room,cat,images));
-    marker.on('popupopen', e => { const el = e.popup.getElement(); el.querySelectorAll('.popup-gallery-img, .popup-gallery-more').forEach(img=>{ img.onclick = (ev)=>{ ev.stopPropagation(); const urls=JSON.parse(img.getAttribute('data-urls')); const idx=parseInt(img.getAttribute('data-idx')); openLightbox(urls,idx); }; }); if(currentSession){ el.querySelector('.edit-btn')?.addEventListener('click',()=>editRoomById(room.id)); el.querySelector('.delete-popup-btn')?.addEventListener('click',()=>deleteFromPopup(room.id)); } });
+    const marker = L.circle([room.y,room.x], { radius:12, color:cat.color, fillColor:cat.color, fillOpacity:0.8, weight:3 }).addTo(map);
+    marker.bindPopup(createPopupContent(room,cat,images), { maxWidth:260 });
+    marker.on('popupopen', e => {
+      const el = e.popup.getElement();
+      el.querySelectorAll('.popup-gallery-img, .popup-gallery-more').forEach(img=>{
+        img.onclick = (ev)=>{ ev.stopPropagation(); const urls=JSON.parse(img.getAttribute('data-urls')); const idx=parseInt(img.getAttribute('data-idx')); openLightbox(urls,idx); };
+      });
+      if(currentSession){
+        el.querySelector('.edit-btn')?.addEventListener('click',()=>editRoomById(room.id));
+        el.querySelector('.delete-popup-btn')?.addEventListener('click',()=>deleteFromPopup(room.id));
+      }
+    });
     currentMarkers.push(marker);
   }
   updateStats(rooms);
   updateCategoriesList(rooms);
 }
-function createPopup(room, cat, images){
+function createPopupContent(room, cat, images){
   let imgsHtml = '';
-  if(images.length){
+  if(images && images.length){
     const urls = images.map(i=>i.image_url);
     const first = images.slice(0,3);
     imgsHtml = `<div style="display:flex;gap:5px;margin-bottom:8px;">`;
@@ -805,6 +872,7 @@ function attachRoomItemEvents(){
 async function deleteFromPopup(id){ if(!currentSession) return; if(confirm('Supprimer ?')){ await deleteRoomById(id); showToast('Supprimée','success'); map.closePopup(); await drawRooms(); } }
 function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>]/g,function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 function showToast(msg,type='success'){ const old=document.querySelector('.toast'); if(old) old.remove(); const t=document.createElement('div'); t.className=`toast ${type}`; t.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>t.remove(),3000); }
+
 // Image handling in modal
 function setupImageInput(){ document.getElementById('imageInput').onchange=e=>{ const files=Array.from(e.target.files); if(files.length){ currentImageFiles.push(...files); updateImagePreview(); } e.target.value=''; }; }
 function updateImagePreview(){
@@ -813,6 +881,7 @@ function updateImagePreview(){
   existingImages.forEach(img=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${img.image_url}"><button class="delete-existing-img-btn" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; div.querySelector('.delete-existing-img-btn').onclick=()=>{ imagesToDelete.push({id:img.id,url:img.image_url}); existingImages=existingImages.filter(i=>i.id!==img.id); updateImagePreview(); }; container.appendChild(div); });
 }
 function clearImages(){ currentImageFiles=[]; existingImages=[]; imagesToDelete=[]; document.getElementById('imageInput').value=''; document.getElementById('imagePreviewContainer').innerHTML=''; }
+
 // Modal logic
 function openModal(type){
   if(!currentSession){ showToast('Connectez-vous','error'); return; }
@@ -842,7 +911,7 @@ async function saveRoom(){
   for(const f of currentImageFiles){ const url=await uploadImage(f,roomId); await addRoomImage(roomId,url); }
   showToast('Ajoutée','success'); closeModal(); await drawRooms(); clearForm(); pickedX=pickedY=null; clearImages();
 }
-async function editRoomById(id){ if(!currentSession) return; const {data:room}=await supabase.from('rooms').select('*').eq('id',id).single(); if(room){ selectedRoom=room; openEditModal(); } }
+async function editRoomById(id){ if(!currentSession) return; const {data:room}=await supabaseClient.from('rooms').select('*').eq('id',id).single(); if(room){ selectedRoom=room; openEditModal(); } }
 async function openEditModal(){
   deactivatePickMode(); if(!selectedRoom) return;
   fillForm(selectedRoom);
@@ -880,21 +949,23 @@ function openLightbox(urls,idx){ currentGalleryImages=urls; currentGalleryIndex=
 function nextImage(){ if(currentGalleryImages.length){ currentGalleryIndex=(currentGalleryIndex+1)%currentGalleryImages.length; document.getElementById('lightbox-img').src=currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText=`${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
 function prevImage(){ if(currentGalleryImages.length){ currentGalleryIndex=(currentGalleryIndex-1+currentGalleryImages.length)%currentGalleryImages.length; document.getElementById('lightbox-img').src=currentGalleryImages[currentGalleryIndex]; document.getElementById('lightbox-counter').innerText=`${currentGalleryIndex+1}/${currentGalleryImages.length}`; } }
 function closeLightbox(){ document.getElementById('lightbox').classList.remove('active'); currentGalleryImages=[]; }
+
 // Event listeners
 document.getElementById('loginBtn').onclick=()=>document.getElementById('loginModal').style.display='flex';
 document.getElementById('doLoginBtn').onclick=async()=>{ try{ const u=document.getElementById('loginUsername').value.trim(); const p=document.getElementById('loginPassword').value.trim(); const s=await login(u,p); currentSession=s; updateUI(); document.getElementById('loginModal').style.display='none'; showToast(`Bonjour ${s.username}`,'success'); }catch(e){ document.getElementById('loginError').innerText=e.message; } };
 document.getElementById('logoutBtn').onclick=()=>{ logout(); showToast('Déconnecté','success'); };
 document.getElementById('createUserBtn').onclick=createNewUser;
 document.getElementById('floorSelectBox').onchange=e=>changeFloor(e.target.value);
-document.getElementById('search').oninput=async(e)=>{ const val=e.target.value.toLowerCase().trim(); if(!val) return; const {data:all}=await supabase.from('rooms').select('*'); const found=all.find(r=>(r.name&&r.name.toLowerCase().includes(val))||(r.matricule&&r.matricule.toLowerCase().includes(val))); if(!found){ showToast('Non trouvé','error'); return; } if(found.floor===currentFloor){ map.setView([found.y,found.x],2); const m=currentMarkers.find(mk=>Math.abs(mk.getLatLng().lat-found.y)<1&&Math.abs(mk.getLatLng().lng-found.x)<1); if(m) m.openPopup(); showToast(found.name,'success'); }else{ showToast(`Salle au ${found.floor==='1'?'1er':'RDC'}`,'error'); } };
+document.getElementById('search').oninput=async(e)=>{ const val=e.target.value.toLowerCase().trim(); if(!val) return; const {data:all}=await supabaseClient.from('rooms').select('*'); const found=all.find(r=>(r.name&&r.name.toLowerCase().includes(val))||(r.matricule&&r.matricule.toLowerCase().includes(val))); if(!found){ showToast('Non trouvé','error'); return; } if(found.floor===currentFloor){ map.setView([found.y,found.x],2); const m=currentMarkers.find(mk=>Math.abs(mk.getLatLng().lat-found.y)<1&&Math.abs(mk.getLatLng().lng-found.x)<1); if(m) m.openPopup(); showToast(found.name,'success'); }else{ showToast(`Salle au ${found.floor==='1'?'1er':'RDC'}`,'error'); } };
 window.onclick=e=>{ if(e.target===document.getElementById('loginModal')) document.getElementById('loginModal').style.display='none'; if(e.target===document.getElementById('userMgmtModal')) document.getElementById('userMgmtModal').style.display='none'; };
-// Init
-(async()=>{
-  const saved=localStorage.getItem('selectedFloor'); if(saved==='1'||saved==='rdc') currentFloor=saved;
-  document.getElementById('floorSelectBox').value=currentFloor;
+
+// Initialisation
+window.addEventListener('load', async () => {
+  const saved = localStorage.getItem('selectedFloor'); if(saved==='1'||saved==='rdc') currentFloor=saved;
+  document.getElementById('floorSelectBox').value = currentFloor;
   await loadSession();
-  supabase.channel('rooms').on('postgres_changes',{event:'*',schema:'public',table:'rooms'},()=>drawRooms()).subscribe();
-  supabase.channel('images').on('postgres_changes',{event:'*',schema:'public',table:'room_images'},()=>drawRooms()).subscribe();
+  supabaseClient.channel('rooms').on('postgres_changes',{event:'*',schema:'public',table:'rooms'},()=>drawRooms()).subscribe();
+  supabaseClient.channel('images').on('postgres_changes',{event:'*',schema:'public',table:'room_images'},()=>drawRooms()).subscribe();
   await initSampleData();
   initMap();
   setupImageInput();
@@ -905,8 +976,7 @@ window.onclick=e=>{ if(e.target===document.getElementById('loginModal')) documen
   lb.querySelector('.next').onclick=nextImage;
   lb.onclick=e=>{ if(e.target===lb) closeLightbox(); };
   document.onkeydown=e=>{ if(lb.classList.contains('active')){ if(e.key==='ArrowLeft') prevImage(); if(e.key==='ArrowRight') nextImage(); if(e.key==='Escape') closeLightbox(); } };
-  showToast('Application prête','success');
-})();
+});
 </script>
 </body>
 </html>
