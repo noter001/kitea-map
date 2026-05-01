@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
 <title>Indoor Map - Gestion des salles (Supabase Auth)</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -32,23 +32,23 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: linear-gradient(135deg,#b30000,#800000);
   border: none;
   color: white;
-  padding: 8px 18px;
+  padding: 10px 20px;
   border-radius: 40px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 .user-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: #f1f3f4;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 40px;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
 }
 .user-info i { color: #cc0000; }
@@ -56,39 +56,39 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: #333;
   border: none;
   color: white;
-  padding: 4px 12px;
+  padding: 6px 14px;
   border-radius: 30px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 14px;
 }
 .stats-area {
   display: flex;
   gap: 20px;
   background: #f1f3f4;
-  padding: 6px 18px;
+  padding: 8px 20px;
   border-radius: 40px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
 }
 .stats-area span { color: #cc0000; font-weight: bold; margin-left: 4px; }
 
 /* شريط البحث */
 .search-wrapper {
-  padding: 8px 16px;
+  padding: 10px 16px;
   background: white;
   border-bottom: 1px solid #eef2f6;
 }
 .search-box {
   background: #f8f9fa;
-  border-radius: 44px;
-  padding: 10px 18px;
+  border-radius: 50px;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   gap: 12px;
   border: 1px solid #e9ecef;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
-.search-box i { color: #cc0000; font-size: 16px; }
+.search-box i { color: #cc0000; font-size: 18px; }
 .search-box input {
   border: none;
   outline: none;
@@ -101,7 +101,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .middle-row {
   display: flex;
   gap: 12px;
-  padding: 8px 16px;
+  padding: 10px 16px;
   flex: 0 0 auto;
   background: #fff;
   border-bottom: 1px solid #eef2f6;
@@ -110,7 +110,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .categories-panel {
   flex: 2;
   background: white;
-  border-radius: 24px;
+  border-radius: 28px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   overflow: hidden;
   border: 1px solid #edeff2;
@@ -119,24 +119,25 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
+  padding: 12px 16px;
   background: #fff;
   border-bottom: 1px solid #eee;
   font-weight: bold;
   color: #cc0000;
+  font-size: 16px;
   cursor: pointer;
 }
 .categories-header button {
   background: none;
   border: none;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
   color: #555;
 }
 .categories-list {
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
-  padding: 8px 4px;
+  padding: 10px 6px;
   transition: max-height 0.2s;
 }
 .categories-list.collapsed {
@@ -144,39 +145,39 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   padding: 0;
   overflow: hidden;
 }
-/* أنماط الفئات والغرف (من الأصل) */
+/* أنماط الفئات والغرف (من الأصل مع تكبير) */
 .category-group {
-  margin-bottom: 12px;
-  border-radius: 16px;
+  margin-bottom: 14px;
+  border-radius: 18px;
   background: #fefefe;
   border: 1px solid #f0f0f0;
 }
 .category-header {
-  padding: 10px 12px;
+  padding: 12px 14px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #fafcff;
-  border-left: 4px solid #cc0000;
+  border-left: 5px solid #cc0000;
 }
 .category-name {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: 10px;
+  font-size: 16px;
   font-weight: 600;
 }
 .category-count {
   background: #cc0000;
   color: white;
-  padding: 2px 8px;
+  padding: 2px 10px;
   border-radius: 30px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .toggle-icon {
   transition: transform 0.2s;
-  font-size: 12px;
+  font-size: 14px;
 }
 .toggle-icon.rotated { transform: rotate(90deg); }
 .category-rooms {
@@ -184,29 +185,29 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   overflow: hidden;
   transition: max-height 0.3s ease;
 }
-.category-rooms.expanded { max-height: 300px; overflow-y: auto; }
+.category-rooms.expanded { max-height: 320px; overflow-y: auto; }
 .room-item {
-  padding: 10px 14px;
-  margin: 6px 8px;
+  padding: 12px 16px;
+  margin: 8px 10px;
   background: white;
-  border-radius: 14px;
+  border-radius: 16px;
   border-left: 3px solid #cc0000;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   cursor: pointer;
 }
-.room-name { font-weight: bold; font-size: 14px; }
-.room-mat { font-size: 12px; color: #5a6a7e; margin-top: 4px; }
+.room-name { font-weight: bold; font-size: 16px; }
+.room-mat { font-size: 14px; color: #5a6a7e; margin-top: 5px; }
 
 /* الأزرار اليمنى */
 .right-buttons {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 .action-card {
   background: white;
-  border-radius: 28px;
+  border-radius: 40px;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
@@ -214,23 +215,23 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  padding: 10px 0;
+  padding: 12px 0;
   border: none;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   background: white;
 }
-.add-btn { background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border-radius: 28px; }
-.manage-btn { background: #2c3e50; color: white; border-radius: 28px; }
+.add-btn { background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border-radius: 40px; }
+.manage-btn { background: #2c3e50; color: white; border-radius: 40px; }
 .zoom-group {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   background: white;
-  border-radius: 44px;
-  padding: 6px;
+  border-radius: 50px;
+  padding: 8px;
   justify-content: space-evenly;
   border: 1px solid #edeff2;
 }
@@ -238,10 +239,10 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: #f1f3f4;
   border: none;
   border-radius: 40px;
-  padding: 8px 0;
+  padding: 10px 0;
   flex: 1;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
 }
 
@@ -260,8 +261,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: #cddde9;
 }
 
-/* باقي الأنماط (مودالات, توست, لايت بوكس) كما هي من الأصل */
-/* ... (سيتم إدراجها كاملة لضمان العمل) ... */
+/* باقي الأنماط (مودالات, توست, لايت بوكس) كما هي من الأصل مع تكبير طفيف */
 .lightbox {
   display: none;
   position: fixed;
@@ -318,10 +318,10 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   font-size: 14px;
 }
 @media (max-width: 768px) {
-  .lightbox .nav-btn { width: 40px; height: 40px; font-size: 24px; }
-  .right-buttons { gap: 6px; }
-  .action-btn { padding: 8px 0; font-size: 12px; }
-  .categories-list { max-height: 160px; }
+  .lightbox .nav-btn { width: 50px; height: 50px; font-size: 28px; }
+  .right-buttons { gap: 10px; }
+  .action-btn { padding: 10px 0; font-size: 15px; }
+  .categories-list { max-height: 180px; }
 }
 .modal-login, .modal-user-management {
   display: none;
@@ -343,25 +343,25 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   max-width: 90%;
   text-align: center;
 }
-.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 20px; }
-.modal-login input, .modal-user-management input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 16px; }
-.modal-login button, .modal-user-management button { width: 100%; padding: 12px; background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-.error-msg { color: red; font-size: 12px; margin-top: 8px; }
+.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 20px; font-size: 20px; }
+.modal-login input, .modal-user-management input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 16px; font-size: 16px; }
+.modal-login button, .modal-user-management button { width: 100%; padding: 14px; background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
+.error-msg { color: red; font-size: 14px; margin-top: 8px; }
 .user-list { max-height: 200px; overflow-y: auto; margin: 15px 0; text-align: left; }
-.user-list div { padding: 8px; border-bottom: 1px solid #eee; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
-.user-list button { background: #eb3349; color: white; border: none; border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; }
+.user-list div { padding: 10px; border-bottom: 1px solid #eee; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+.user-list button { background: #eb3349; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 14px; }
 #modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}
 .modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}
 @keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px}
-.modal-box input,.modal-box select{padding:12px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:14px}
+.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px;font-size:20px}
+.modal-box input,.modal-box select{padding:14px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:16px}
 .coord-row{display:flex;gap:10px;align-items:center}
-.coord-row button{width:48px;background:#f1f5f9;border:none;border-radius:14px;cursor:pointer;padding:10px}
+.coord-row button{width:52px;background:#f1f5f9;border:none;border-radius:16px;cursor:pointer;padding:12px;font-size:18px}
 .image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
 .image-item{position:relative;display:inline-block}
 .image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}
-.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px}
+.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:24px;height:24px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:14px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px;font-size:15px}
 .toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}
 .toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}
 @keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}
@@ -371,9 +371,10 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: rgba(255,255,255,0.9);
   border: 1px solid #cc0000;
   border-radius: 20px;
-  padding: 4px 12px;
+  padding: 6px 14px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 15px;
   margin-left: 8px;
 }
 </style>
@@ -392,7 +393,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   <div class="stats-area">
     <i class="fas fa-building"></i> Salles: <span id="roomCount">0</span>
     <i class="fas fa-tags"></i> Catégories: <span id="categoryCount">0</span>
-    <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:20px; padding:4px 12px; font-weight:bold;">
+    <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:20px; padding:6px 12px; font-weight:bold;">
       <option value="1">1er étage</option>
       <option value="rdc">Rez-de-chaussée</option>
     </select>
@@ -429,6 +430,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
     <div class="zoom-group">
       <button class="zoom-btn" id="zoomInBtn"><i class="fas fa-plus"></i></button>
       <button class="zoom-btn" id="zoomOutBtn"><i class="fas fa-minus"></i></button>
+      <button class="zoom-btn" id="zoomFullBtn"><i class="fas fa-expand"></i></button>
     </div>
   </div>
 </div>
@@ -560,8 +562,9 @@ async function createNewUser(){ const username=document.getElementById("newUsern
 // ========== إعدادات إضافية للواجهة الجديدة ==========
 document.getElementById("addRoomBtn").onclick = () => openModal('add');
 document.getElementById("manageUsersBtn").onclick = openUserManagement;
-document.getElementById("zoomInBtn").onclick = () => map.zoomIn();
-document.getElementById("zoomOutBtn").onclick = () => map.zoomOut();
+document.getElementById("zoomInBtn").onclick = () => { if(map) map.zoomIn(); };
+document.getElementById("zoomOutBtn").onclick = () => { if(map) map.zoomOut(); };
+document.getElementById("zoomFullBtn").onclick = () => { if(map) map.fitBounds([[0,0],[3000,2669]]); };
 document.getElementById("loginBtn").onclick = () => document.getElementById("loginModal").style.display = "flex";
 document.getElementById("doLoginBtn").onclick = async () => { const u=document.getElementById("loginUsername").value, p=document.getElementById("loginPassword").value; try{ currentSession = await login(u,p); updateUIForUser(); document.getElementById("loginModal").style.display="none"; showToast(`Bienvenue ${u}`); drawRooms(); }catch(e){ document.getElementById("loginError").innerText=e.message; } };
 document.getElementById("logoutBtn").onclick = () => { logout(); showToast("Déconnecté"); };
