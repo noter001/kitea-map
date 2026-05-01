@@ -16,7 +16,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  padding: 12px 16px;
   background: white;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   z-index: 1100;
@@ -32,10 +32,10 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: linear-gradient(135deg,#b30000,#800000);
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: 40px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -44,56 +44,66 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   background: #f1f3f4;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 40px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
 }
-.user-info i { color: #cc0000; }
+.user-info i { color: #cc0000; font-size: 18px; }
 .btn-logout {
   background: #333;
   border: none;
   color: white;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: 30px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
 }
 .stats-area {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   background: #f1f3f4;
   padding: 8px 20px;
   border-radius: 40px;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 500;
 }
-.stats-area span { color: #cc0000; font-weight: bold; margin-left: 4px; }
+.stats-area span { color: #cc0000; font-weight: bold; margin-left: 4px; font-size: 18px; }
+#floorSelectBox {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #cc0000;
+  border-radius: 30px;
+  padding: 8px 16px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 17px;
+  margin-left: 12px;
+}
 
 /* شريط البحث */
 .search-wrapper {
-  padding: 10px 16px;
+  padding: 12px 16px;
   background: white;
   border-bottom: 1px solid #eef2f6;
 }
 .search-box {
   background: #f8f9fa;
   border-radius: 50px;
-  padding: 12px 20px;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
   gap: 12px;
   border: 1px solid #e9ecef;
   box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
-.search-box i { color: #cc0000; font-size: 18px; }
+.search-box i { color: #cc0000; font-size: 20px; }
 .search-box input {
   border: none;
   outline: none;
   flex: 1;
-  font-size: 16px;
+  font-size: 18px;
   background: transparent;
 }
 
@@ -119,18 +129,18 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 16px;
+  padding: 14px 18px;
   background: #fff;
   border-bottom: 1px solid #eee;
   font-weight: bold;
   color: #cc0000;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
 }
 .categories-header button {
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   color: #555;
 }
@@ -145,15 +155,15 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   padding: 0;
   overflow: hidden;
 }
-/* أنماط الفئات والغرف (من الأصل مع تكبير) */
+/* أنماط الفئات والغرف (مع تكبير كبير) */
 .category-group {
-  margin-bottom: 14px;
-  border-radius: 18px;
+  margin-bottom: 16px;
+  border-radius: 20px;
   background: #fefefe;
   border: 1px solid #f0f0f0;
 }
 .category-header {
-  padding: 12px 14px;
+  padding: 14px 16px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
@@ -164,20 +174,20 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .category-name {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 16px;
+  gap: 12px;
+  font-size: 18px;
   font-weight: 600;
 }
 .category-count {
   background: #cc0000;
   color: white;
-  padding: 2px 10px;
+  padding: 3px 12px;
   border-radius: 30px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .toggle-icon {
   transition: transform 0.2s;
-  font-size: 14px;
+  font-size: 16px;
 }
 .toggle-icon.rotated { transform: rotate(90deg); }
 .category-rooms {
@@ -185,29 +195,29 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   overflow: hidden;
   transition: max-height 0.3s ease;
 }
-.category-rooms.expanded { max-height: 320px; overflow-y: auto; }
+.category-rooms.expanded { max-height: 360px; overflow-y: auto; }
 .room-item {
-  padding: 12px 16px;
-  margin: 8px 10px;
+  padding: 14px 18px;
+  margin: 8px 12px;
   background: white;
-  border-radius: 16px;
-  border-left: 3px solid #cc0000;
+  border-radius: 20px;
+  border-left: 4px solid #cc0000;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   cursor: pointer;
 }
-.room-name { font-weight: bold; font-size: 16px; }
-.room-mat { font-size: 14px; color: #5a6a7e; margin-top: 5px; }
+.room-name { font-weight: bold; font-size: 18px; }
+.room-mat { font-size: 16px; color: #5a6a7e; margin-top: 6px; }
 
 /* الأزرار اليمنى */
 .right-buttons {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 .action-card {
   background: white;
-  border-radius: 40px;
+  border-radius: 50px;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
@@ -215,22 +225,22 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
-  padding: 12px 0;
+  padding: 14px 0;
   border: none;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
   background: white;
 }
-.add-btn { background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border-radius: 40px; }
-.manage-btn { background: #2c3e50; color: white; border-radius: 40px; }
+.add-btn { background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border-radius: 50px; }
+.manage-btn { background: #2c3e50; color: white; border-radius: 50px; }
 .zoom-group {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   background: white;
-  border-radius: 50px;
+  border-radius: 60px;
   padding: 8px;
   justify-content: space-evenly;
   border: 1px solid #edeff2;
@@ -238,11 +248,11 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .zoom-btn {
   background: #f1f3f4;
   border: none;
-  border-radius: 40px;
-  padding: 10px 0;
+  border-radius: 50px;
+  padding: 12px 0;
   flex: 1;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
 }
 
@@ -261,7 +271,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: #cddde9;
 }
 
-/* باقي الأنماط (مودالات, توست, لايت بوكس) كما هي من الأصل مع تكبير طفيف */
+/* باقي الأنماط (مودالات, توست, لايت بوكس) مع تكبير النصوص */
 .lightbox {
   display: none;
   position: fixed;
@@ -315,13 +325,10 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: rgba(0,0,0,0.6);
   padding: 8px 16px;
   border-radius: 30px;
-  font-size: 14px;
+  font-size: 16px;
 }
 @media (max-width: 768px) {
   .lightbox .nav-btn { width: 50px; height: 50px; font-size: 28px; }
-  .right-buttons { gap: 10px; }
-  .action-btn { padding: 10px 0; font-size: 15px; }
-  .categories-list { max-height: 180px; }
 }
 .modal-login, .modal-user-management {
   display: none;
@@ -337,46 +344,36 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 .modal-login .modal-box, .modal-user-management .modal-box {
   background: white;
-  padding: 28px;
-  border-radius: 28px;
-  width: 380px;
-  max-width: 90%;
+  padding: 32px;
+  border-radius: 32px;
+  width: 420px;
+  max-width: 92%;
   text-align: center;
 }
-.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 20px; font-size: 20px; }
-.modal-login input, .modal-user-management input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #e2e8f0; border-radius: 16px; font-size: 16px; }
-.modal-login button, .modal-user-management button { width: 100%; padding: 14px; background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
-.error-msg { color: red; font-size: 14px; margin-top: 8px; }
-.user-list { max-height: 200px; overflow-y: auto; margin: 15px 0; text-align: left; }
-.user-list div { padding: 10px; border-bottom: 1px solid #eee; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
-.user-list button { background: #eb3349; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-size: 14px; }
+.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 24px; font-size: 24px; }
+.modal-login input, .modal-user-management input { width: 100%; padding: 16px; margin: 12px 0; border: 2px solid #e2e8f0; border-radius: 20px; font-size: 18px; }
+.modal-login button, .modal-user-management button { width: 100%; padding: 16px; background: linear-gradient(135deg,#ff4d4d,#cc0000); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 12px; font-size: 18px; }
+.error-msg { color: red; font-size: 15px; margin-top: 8px; }
+.user-list { max-height: 220px; overflow-y: auto; margin: 15px 0; text-align: left; }
+.user-list div { padding: 12px; border-bottom: 1px solid #eee; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+.user-list button { background: #eb3349; color: white; border: none; border-radius: 30px; padding: 8px 16px; cursor: pointer; font-size: 15px; }
 #modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(8px)}
-.modal-box{background:white;padding:28px;border-radius:28px;width:540px;max-width:92%;display:flex;flex-direction:column;gap:18px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}
+.modal-box{background:white;padding:32px;border-radius:32px;width:560px;max-width:94%;display:flex;flex-direction:column;gap:20px;box-shadow:0 30px 50px rgba(0,0,0,0.4);animation:slideIn 0.25s ease}
 @keyframes slideIn{from{transform:translateY(-30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:15px;font-size:20px}
-.modal-box input,.modal-box select{padding:14px 15px;border:2px solid #e2e8f0;border-radius:16px;font-size:16px}
-.coord-row{display:flex;gap:10px;align-items:center}
-.coord-row button{width:52px;background:#f1f5f9;border:none;border-radius:16px;cursor:pointer;padding:12px;font-size:18px}
+.modal-box h3{color:#1e293b;border-left:5px solid #ff4d4d;padding-left:18px;font-size:24px}
+.modal-box input,.modal-box select{padding:16px;border:2px solid #e2e8f0;border-radius:20px;font-size:18px}
+.coord-row{display:flex;gap:12px;align-items:center}
+.coord-row button{width:56px;background:#f1f5f9;border:none;border-radius:20px;cursor:pointer;padding:14px;font-size:20px}
 .image-preview-list{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
 .image-item{position:relative;display:inline-block}
-.image-item img{width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid #ddd;cursor:pointer}
-.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:24px;height:24px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:14px 28px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:10px;font-size:15px}
+.image-item img{width:90px;height:90px;object-fit:cover;border-radius:12px;border:1px solid #ddd;cursor:pointer}
+.image-item .delete-img-btn{position:absolute;top:-8px;right:-8px;background:#eb3349;color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:14px 30px;border-radius:60px;z-index:10001;animation:fadeInOut 3s ease;display:flex;align-items:center;gap:12px;font-size:17px}
 .toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}
 .toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}
 @keyframes fadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(20px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}85%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-20px)}}
 .picking-mode{cursor:crosshair!important}
 .leaflet-container.picking-mode{cursor:crosshair!important}
-#floorSelectBox {
-  background: rgba(255,255,255,0.9);
-  border: 1px solid #cc0000;
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 15px;
-  margin-left: 8px;
-}
 </style>
 </head>
 <body>
@@ -393,7 +390,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   <div class="stats-area">
     <i class="fas fa-building"></i> Salles: <span id="roomCount">0</span>
     <i class="fas fa-tags"></i> Catégories: <span id="categoryCount">0</span>
-    <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:20px; padding:6px 12px; font-weight:bold;">
+    <select id="floorSelectBox" style="background:transparent; border:1px solid #ccc; border-radius:30px; padding:8px 12px; font-weight:bold;">
       <option value="1">1er étage</option>
       <option value="rdc">Rez-de-chaussée</option>
     </select>
@@ -512,13 +509,13 @@ async function initSampleData() { const { count } = await supabaseClient.from(TA
 function initMap() { map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false }); updateMapFloor(currentFloor); map.on("click", e => { if(picking){ pickedX = Math.round(e.latlng.lng); pickedY = Math.round(e.latlng.lat); document.getElementById("coord").value = pickedX+","+pickedY; deactivatePickMode(); openModal('add'); } }); }
 function updateMapFloor(floor) { if(!map) return; if(map.overlay) map.removeLayer(map.overlay); let url = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg'; let bounds = [[0,0],[3000,2669]]; map.overlay = L.imageOverlay(url, bounds).addTo(map); map.fitBounds(bounds); }
 async function changeFloor(floor) { currentFloor=floor; localStorage.setItem('selectedFloor',floor); updateMapFloor(floor); await drawRooms(); document.getElementById("floorSelectBox").value=floor; showToast(`Étage ${floor==='1'?'1er':'RDC'}`,'success'); }
-async function drawRooms() { if(!map) return; currentMarkers.forEach(m=>map.removeLayer(m)); currentMarkers=[]; const rooms = await getAllRooms(currentFloor); for(let room of rooms) { if(room.x && room.y) { const catInfo = CATEGORIES.find(c=>c.value===room.categorie)||{icon:'📍',color:'#ff4d4d'}; const images = await getRoomImages(room.id); const marker = L.circle([room.y,room.x],{radius:12,color:catInfo.color,fillColor:catInfo.color,fillOpacity:0.8}).addTo(map); marker.bindPopup(createPopupContent(room,catInfo,images)); currentMarkers.push(marker); } } updateStats(rooms); updateCategoriesList(rooms); }
-function createPopupContent(room,catInfo,images) { let imgHtml=''; if(images.length){ const urls=images.map(i=>i.image_url); imgHtml=`<div style="display:flex;gap:5px;">${images.slice(0,3).map((img,i)=>`<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(urls)}' data-index="${i}" style="width:55px;height:55px;border-radius:8px;cursor:pointer;">`).join('')}${images.length>3?`<div class="popup-more" data-urls='${JSON.stringify(urls)}' data-index="3" style="background:#eee;display:flex;align-items:center;justify-content:center;width:55px;border-radius:8px;">+${images.length-3}</div>`:''}</div>`; } let btns = currentSession ? `<hr><button class="edit-btn" data-id="${room.id}">✏️ Modifier</button><button class="delete-popup-btn" data-id="${room.id}">🗑️ Supprimer</button>` : ''; return `<div>${imgHtml}<div style="border-left:3px solid ${catInfo.color};padding-left:8px;"><strong>${escapeHtml(room.name)}</strong><br>${room.matricule}<br>${room.last_activity||''}</div>${btns}</div>`; }
+async function drawRooms() { if(!map) return; currentMarkers.forEach(m=>map.removeLayer(m)); currentMarkers=[]; const rooms = await getAllRooms(currentFloor); for(let room of rooms) { if(room.x && room.y) { const catInfo = CATEGORIES.find(c=>c.value===room.categorie)||{icon:'📍',color:'#ff4d4d'}; const images = await getRoomImages(room.id); const marker = L.circle([room.y,room.x],{radius:14,color:catInfo.color,fillColor:catInfo.color,fillOpacity:0.8,weight:3}).addTo(map); marker.bindPopup(createPopupContent(room,catInfo,images)); currentMarkers.push(marker); } } updateStats(rooms); updateCategoriesList(rooms); }
+function createPopupContent(room,catInfo,images) { let imgHtml=''; if(images.length){ const urls=images.map(i=>i.image_url); imgHtml=`<div style="display:flex;gap:8px;">${images.slice(0,3).map((img,i)=>`<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(urls)}' data-index="${i}" style="width:65px;height:65px;border-radius:10px;cursor:pointer;">`).join('')}${images.length>3?`<div class="popup-more" data-urls='${JSON.stringify(urls)}' data-index="3" style="background:#eee;display:flex;align-items:center;justify-content:center;width:65px;border-radius:10px;font-size:16px;">+${images.length-3}</div>`:''}</div>`; } let btns = currentSession ? `<hr><button class="edit-btn" data-id="${room.id}" style="font-size:16px;padding:10px;">✏️ Modifier</button><button class="delete-popup-btn" data-id="${room.id}" style="font-size:16px;padding:10px;">🗑️ Supprimer</button>` : ''; return `<div style="min-width:220px;">${imgHtml}<div style="border-left:3px solid ${catInfo.color};padding-left:10px;margin-top:8px;"><strong style="font-size:18px;">${escapeHtml(room.name)}</strong><br><span style="font-size:15px;">${room.matricule}</span><br><span style="font-size:14px;">${room.last_activity||''}</span></div>${btns}</div>`; }
 async function updateStats(rooms) { document.getElementById('roomCount').innerText = rooms.length; document.getElementById('categoryCount').innerText = new Set(rooms.map(r=>r.categorie)).size; }
 let expandedCategories = new Set();
 function updateCategoriesList(rooms) {
   const container = document.getElementById('categoriesList');
-  if(!rooms.length){ container.innerHTML='<div style="padding:12px">Aucune salle</div>'; return; }
+  if(!rooms.length){ container.innerHTML='<div style="padding:12px;font-size:18px;">Aucune salle</div>'; return; }
   const byCat = new Map(); rooms.forEach(r=>{ let c=r.categorie||'sans-cat'; if(!byCat.has(c)) byCat.set(c,[]); byCat.get(c).push(r); });
   let html='';
   for(let [cat,list] of byCat.entries()) {
@@ -539,7 +536,7 @@ function attachCategoryEvents() {
 function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 function showToast(msg,type="success"){ let t=document.createElement("div"); t.className=`toast ${type}`; t.innerHTML=`<i class="fas ${type==='success'?'fa-check':'fa-exclamation'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
 function setupImageInput(){ document.getElementById('imageInput').onchange=e=>{ currentImageFiles.push(...Array.from(e.target.files)); updateImagePreview(); e.target.value=''; }; }
-function updateImagePreview(){ /* مختصر لكن وظيفي */ const container=document.getElementById('imagePreviewContainer'); container.innerHTML=''; currentImageFiles.forEach((f,i)=>{ const reader=new FileReader(); reader.onload=ev=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${ev.target.result}" width="70"><button class="delete-img-btn" data-index="${i}">🗑️</button>`; div.querySelector('button').onclick=()=>{ currentImageFiles.splice(i,1); updateImagePreview(); }; container.appendChild(div); }; reader.readAsDataURL(f); }); existingImages.forEach(img=>{ const div=document.createElement('div'); div.innerHTML=`<img src="${img.image_url}" width="70"><button class="delete-existing" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; div.querySelector('button').onclick=()=>{ imagesToDelete.push({id:img.id,url:img.image_url}); existingImages=existingImages.filter(i=>i.id!==img.id); updateImagePreview(); }; container.appendChild(div); }); }
+function updateImagePreview(){ const container=document.getElementById('imagePreviewContainer'); container.innerHTML=''; currentImageFiles.forEach((f,i)=>{ const reader=new FileReader(); reader.onload=ev=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${ev.target.result}" width="80"><button class="delete-img-btn" data-index="${i}">🗑️</button>`; div.querySelector('button').onclick=()=>{ currentImageFiles.splice(i,1); updateImagePreview(); }; container.appendChild(div); }; reader.readAsDataURL(f); }); existingImages.forEach(img=>{ const div=document.createElement('div'); div.innerHTML=`<img src="${img.image_url}" width="80"><button class="delete-existing" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; div.querySelector('button').onclick=()=>{ imagesToDelete.push({id:img.id,url:img.image_url}); existingImages=existingImages.filter(i=>i.id!==img.id); updateImagePreview(); }; container.appendChild(div); }); }
 function clearImages(){ currentImageFiles=[]; existingImages=[]; imagesToDelete=[]; document.getElementById('imageInput').value=''; updateImagePreview(); }
 function openModal(type){ if(!currentSession){ showToast("Connectez-vous","error"); return; } deactivatePickMode(); document.getElementById("modal").style.display="flex"; const actions=document.getElementById("actions"), title=document.getElementById("title"); if(type==="add"){ title.innerHTML='Ajouter'; actions.innerHTML=`<button onclick="saveRoom()">Enregistrer</button><button onclick="closeModal()">Annuler</button>`; document.getElementById("last_activity").value=new Date().toLocaleString(); selectedRoom=null; pickedX=null; pickedY=null; clearForm(); clearImages(); if(document.getElementById("floorSelect")) document.getElementById("floorSelect").value=currentFloor; } else { actions.innerHTML=`<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`; } }
 function validateFormFields(){ if(!document.getElementById("categorie").value){ showToast("Catégorie"); return false; } if(!document.getElementById("name").value.trim()){ showToast("Nom"); return false; } if(!document.getElementById("mat").value.trim()){ showToast("Matricule"); return false; } if(!document.getElementById("coord").value){ showToast("Position"); return false; } return true; }
