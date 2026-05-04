@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* -------------------- أنماس أساسية محسنة للهواتف -------------------- */
+/* -------------------- أنماط أساسية محسنة للهواتف مع تكبير كبير -------------------- */
 *{margin:0;padding:0;box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:#f0f2f5; height:100vh; display:flex; flex-direction:column; overflow:hidden}
 
@@ -32,67 +32,67 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: linear-gradient(135deg,#b30000,#800000);
   border: none;
   color: white;
-  padding: 12px 24px;
+  padding: 14px 28px;
   border-radius: 50px;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   background: #f1f3f4;
-  padding: 8px 16px;
+  padding: 10px 20px;
   border-radius: 50px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
 }
-.user-info i { color: #cc0000; font-size: 20px; }
+.user-info i { color: #cc0000; font-size: 24px; }
 .btn-logout {
   background: #333;
   border: none;
   color: white;
-  padding: 8px 16px;
-  border-radius: 30px;
+  padding: 10px 20px;
+  border-radius: 40px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 18px;
 }
 .stats-area {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   background: #f1f3f4;
-  padding: 8px 20px;
+  padding: 10px 24px;
   border-radius: 50px;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 500;
 }
-.stats-area span { color: #cc0000; font-weight: bold; margin-left: 4px; font-size: 18px; }
+.stats-area span { color: #cc0000; font-weight: bold; margin-left: 6px; font-size: 22px; }
 
 /* شريط البحث */
 .search-wrapper {
-  padding: 12px 16px;
+  padding: 14px 16px;
   background: white;
   border-bottom: 1px solid #eef2f6;
 }
 .search-box {
   background: #f8f9fa;
   border-radius: 60px;
-  padding: 14px 20px;
+  padding: 16px 24px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   border: 1px solid #e9ecef;
 }
-.search-box i { color: #cc0000; font-size: 22px; }
+.search-box i { color: #cc0000; font-size: 26px; }
 .search-box input {
   border: none;
   outline: none;
   flex: 1;
-  font-size: 18px;
+  font-size: 22px;
   background: transparent;
 }
 
@@ -109,7 +109,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .categories-panel {
   flex: 2;
   background: white;
-  border-radius: 28px;
+  border-radius: 32px;
   overflow: hidden;
   border: 1px solid #edeff2;
 }
@@ -117,25 +117,25 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 18px;
+  padding: 16px 20px;
   background: #fff;
   border-bottom: 1px solid #eee;
   font-weight: bold;
   color: #cc0000;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
 }
 .categories-header button {
   background: none;
   border: none;
-  font-size: 22px;
+  font-size: 26px;
   cursor: pointer;
   color: #555;
 }
 .categories-list {
-  max-height: 220px;
+  max-height: 260px;
   overflow-y: auto;
-  padding: 10px 6px;
+  padding: 12px 8px;
   transition: max-height 0.2s;
 }
 .categories-list.collapsed {
@@ -144,37 +144,37 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   overflow: hidden;
 }
 .category-group {
-  margin-bottom: 16px;
-  border-radius: 20px;
+  margin-bottom: 20px;
+  border-radius: 24px;
   background: #fefefe;
   border: 1px solid #f0f0f0;
 }
 .category-header {
-  padding: 14px 16px;
+  padding: 16px 20px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #fafcff;
-  border-left: 5px solid #cc0000;
+  border-left: 6px solid #cc0000;
 }
 .category-name {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 20px;
+  gap: 14px;
+  font-size: 24px;
   font-weight: 600;
 }
 .category-count {
   background: #cc0000;
   color: white;
-  padding: 4px 12px;
+  padding: 5px 14px;
   border-radius: 40px;
-  font-size: 15px;
+  font-size: 18px;
 }
 .toggle-icon {
   transition: transform 0.2s;
-  font-size: 18px;
+  font-size: 22px;
 }
 .rotated { transform: rotate(90deg); }
 .category-rooms {
@@ -182,42 +182,42 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   overflow: hidden;
   transition: max-height 0.3s ease;
 }
-.category-rooms.expanded { max-height: 360px; overflow-y: auto; }
+.category-rooms.expanded { max-height: 400px; overflow-y: auto; }
 .room-item {
-  padding: 14px 18px;
-  margin: 8px 12px;
+  padding: 16px 20px;
+  margin: 10px 14px;
   background: white;
-  border-radius: 20px;
-  border-left: 4px solid #cc0000;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  border-radius: 24px;
+  border-left: 5px solid #cc0000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
   cursor: pointer;
 }
-.room-name { font-weight: bold; font-size: 20px; }
-.room-mat { font-size: 17px; color: #5a6a7e; margin-top: 6px; }
+.room-name { font-weight: bold; font-size: 24px; }
+.room-mat { font-size: 20px; color: #5a6a7e; margin-top: 8px; }
 
-/* الأزرار اليمنى (بها الآن زر الطابق) */
+/* الأزرار اليمنى */
 .right-buttons {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 .action-card {
   background: white;
   border-radius: 60px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 .action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 14px;
   width: 100%;
-  padding: 14px 0;
+  padding: 16px 0;
   border: none;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
   background: white;
 }
@@ -227,28 +227,28 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: white;
   border-radius: 60px;
   border: 1px solid #cc0000;
-  padding: 8px 12px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: bold;
-  font-size: 18px;
+  font-size: 22px;
 }
 .floor-selector-card select {
   background: white;
   border: 1px solid #ccc;
   border-radius: 40px;
-  padding: 8px 16px;
-  font-size: 18px;
+  padding: 10px 18px;
+  font-size: 22px;
   font-weight: bold;
   color: #cc0000;
 }
 .zoom-group {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   background: white;
   border-radius: 80px;
-  padding: 8px;
+  padding: 10px;
   justify-content: space-evenly;
   border: 1px solid #edeff2;
 }
@@ -256,10 +256,10 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: #f1f3f4;
   border: none;
   border-radius: 60px;
-  padding: 12px 0;
+  padding: 14px 0;
   flex: 1;
   font-weight: bold;
-  font-size: 28px;
+  font-size: 32px;
   cursor: pointer;
 }
 
@@ -267,7 +267,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .map-container {
   flex: 1;
   margin: 8px 16px 16px 16px;
-  border-radius: 28px;
+  border-radius: 32px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
@@ -288,26 +288,26 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 .modal-login .modal-box, .modal-user-management .modal-box {
   background: white;
-  padding: 32px;
-  border-radius: 40px;
+  padding: 36px;
+  border-radius: 48px;
   width: 90%;
-  max-width: 460px;
+  max-width: 500px;
   text-align: center;
 }
-.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 24px; font-size: 28px; }
+.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 28px; font-size: 32px; }
 .modal-login input, .modal-user-management input {
-  width: 100%; padding: 16px; margin: 12px 0;
-  border: 2px solid #e2e8f0; border-radius: 24px;
-  font-size: 18px;
+  width: 100%; padding: 18px; margin: 14px 0;
+  border: 2px solid #e2e8f0; border-radius: 28px;
+  font-size: 22px;
 }
 .modal-login button, .modal-user-management button {
-  width: 100%; padding: 16px;
+  width: 100%; padding: 18px;
   background: linear-gradient(135deg,#ff4d4d,#cc0000);
-  color: white; border: none; border-radius: 50px;
+  color: white; border: none; border-radius: 60px;
   font-weight: bold; cursor: pointer;
-  font-size: 20px; margin-top: 12px;
+  font-size: 24px; margin-top: 14px;
 }
-.error-msg { color: red; font-size: 16px; margin-top: 8px; }
+.error-msg { color: red; font-size: 18px; margin-top: 10px; }
 
 /* مودال إضافة/تعديل الغرفة */
 #modal{
@@ -325,13 +325,13 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 .modal-box{
   background:white;
-  padding:32px;
-  border-radius:40px;
-  width:94%;
-  max-width:560px;
+  padding: 36px;
+  border-radius: 48px;
+  width: 94%;
+  max-width: 620px;
   display:flex;
   flex-direction:column;
-  gap:22px;
+  gap: 28px;
   box-shadow:0 30px 50px rgba(0,0,0,0.4);
   animation:slideIn 0.25s ease;
 }
@@ -342,58 +342,58 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 .modal-box h3{
   color:#1e293b;
   border-left:6px solid #ff4d4d;
-  padding-left:18px;
-  font-size:28px;
+  padding-left:20px;
+  font-size: 32px;
 }
 .modal-box input,.modal-box select{
-  padding:16px;
+  padding: 18px;
   border:2px solid #e2e8f0;
-  border-radius:24px;
-  font-size:18px;
+  border-radius: 28px;
+  font-size: 22px;
 }
 .coord-row{
   display:flex;
-  gap:12px;
+  gap:14px;
   align-items:center;
 }
 .coord-row button{
-  width:60px;
+  width: 68px;
   background:#f1f5f9;
   border:none;
-  border-radius:24px;
+  border-radius: 28px;
   cursor:pointer;
-  padding:14px;
-  font-size:22px;
+  padding: 16px;
+  font-size: 26px;
 }
 .image-preview-list{
   display:flex;
-  gap:12px;
+  gap:14px;
   flex-wrap:wrap;
-  margin-top:8px;
+  margin-top:12px;
 }
 .image-item{
   position:relative;
   display:inline-block;
 }
 .image-item img{
-  width:100px;
-  height:100px;
+  width: 110px;
+  height: 110px;
   object-fit:cover;
-  border-radius:16px;
+  border-radius: 20px;
   border:1px solid #ddd;
   cursor:pointer;
 }
 .image-item .delete-img-btn{
   position:absolute;
-  top:-10px;
-  right:-10px;
+  top:-12px;
+  right:-12px;
   background:#eb3349;
   color:white;
   border:none;
   border-radius:50%;
-  width:30px;
-  height:30px;
-  font-size:16px;
+  width: 34px;
+  height: 34px;
+  font-size: 18px;
   cursor:pointer;
   display:flex;
   align-items:center;
@@ -401,16 +401,16 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 #actions{
   display:flex;
-  gap:12px;
-  margin-top:8px;
+  gap:16px;
+  margin-top:12px;
   flex-wrap:wrap;
 }
 #actions button{
   flex:1;
-  padding:16px;
-  border-radius:60px;
+  padding: 18px;
+  border-radius: 80px;
   font-weight:bold;
-  font-size:18px;
+  font-size: 24px;
   cursor:pointer;
   border:none;
 }
@@ -418,23 +418,27 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background:linear-gradient(135deg,#ff4d4d,#cc0000);
   color:white;
 }
+#actions button:last-child{
+  background:#ccc;
+  color:#333;
+}
 
 /* توست */
 .toast{
   position:fixed;
-  bottom:30px;
+  bottom:40px;
   left:50%;
   transform:translateX(-50%);
   background:#1e293b;
   color:white;
-  padding:16px 32px;
-  border-radius:80px;
+  padding: 18px 36px;
+  border-radius: 80px;
   z-index:10001;
   animation:fadeInOut 3s ease;
   display:flex;
   align-items:center;
-  gap:12px;
-  font-size:18px;
+  gap:14px;
+  font-size: 22px;
 }
 .toast.success{background:linear-gradient(135deg,#11998e,#38ef7d)}
 .toast.error{background:linear-gradient(135deg,#eb3349,#f45c43)}
@@ -460,7 +464,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   cursor: pointer;
 }
 .lightbox.active { display: flex; }
-.lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 12px; }
+.lightbox img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 16px; }
 .lightbox .nav-btn {
   position: absolute;
   top: 50%;
@@ -468,11 +472,11 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   background: rgba(0,0,0,0.6);
   color: white;
   border: none;
-  font-size: 40px;
-  padding: 15px;
+  font-size: 48px;
+  padding: 18px;
   border-radius: 50%;
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -483,7 +487,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   position: absolute;
   top: 20px;
   right: 30px;
-  font-size: 44px;
+  font-size: 50px;
   color: white;
   background: none;
   border: none;
@@ -495,12 +499,12 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   text-align: center;
   color: white;
   background: rgba(0,0,0,0.6);
-  padding: 8px 16px;
-  border-radius: 30px;
-  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 40px;
+  font-size: 22px;
 }
 @media (max-width: 768px) {
-  .lightbox .nav-btn { width: 50px; height: 50px; font-size: 28px; }
+  .lightbox .nav-btn { width: 60px; height: 60px; font-size: 32px; }
 }
 </style>
 </head>
@@ -540,11 +544,9 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   </div>
 
   <div class="right-buttons">
-    <!-- Ajouter -->
     <div class="action-card">
       <button class="action-btn add-btn" id="addRoomBtn"><i class="fas fa-plus-circle"></i> Ajouter</button>
     </div>
-    <!-- Sélecteur d'étage (ici, juste en dessous d'Ajouter) -->
     <div class="floor-selector-card">
       <span><i class="fas fa-layer-group"></i> Étage :</span>
       <select id="floorSelectBox">
@@ -552,11 +554,9 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
         <option value="rdc">Rez-de-chaussée</option>
       </select>
     </div>
-    <!-- Gérer (admin) -->
     <div class="action-card" id="manageUsersContainer" style="display:none;">
       <button class="action-btn manage-btn" id="manageUsersBtn"><i class="fas fa-users-cog"></i> Gérer</button>
     </div>
-    <!-- Zoom +/-, Full -->
     <div class="zoom-group">
       <button class="zoom-btn" id="zoomInBtn"><i class="fas fa-plus"></i></button>
       <button class="zoom-btn" id="zoomOutBtn"><i class="fas fa-minus"></i></button>
@@ -642,13 +642,13 @@ async function initSampleData() { const { count } = await supabaseClient.from(TA
 function initMap() { map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false }); updateMapFloor(currentFloor); map.on("click", e => { if(picking){ pickedX = Math.round(e.latlng.lng); pickedY = Math.round(e.latlng.lat); document.getElementById("coord").value = pickedX+","+pickedY; deactivatePickMode(); openModal('add'); } }); }
 function updateMapFloor(floor) { if(!map) return; if(map.overlay) map.removeLayer(map.overlay); let url = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg'; let bounds = [[0,0],[3000,2669]]; map.overlay = L.imageOverlay(url, bounds).addTo(map); map.fitBounds(bounds); }
 async function changeFloor(floor) { currentFloor=floor; localStorage.setItem('selectedFloor',floor); updateMapFloor(floor); await drawRooms(); document.getElementById("floorSelectBox").value=floor; showToast(`Étage ${floor==='1'?'1er':'RDC'}`,'success'); }
-async function drawRooms() { if(!map) return; currentMarkers.forEach(m=>map.removeLayer(m)); currentMarkers=[]; const rooms = await getAllRooms(currentFloor); for(let room of rooms) { if(room.x && room.y) { const catInfo = CATEGORIES.find(c=>c.value===room.categorie)||{icon:'📍',color:'#ff4d4d'}; const images = await getRoomImages(room.id); const marker = L.circle([room.y,room.x],{radius:14,color:catInfo.color,fillColor:catInfo.color,fillOpacity:0.8,weight:3}).addTo(map); marker.bindPopup(createPopupContent(room,catInfo,images)); currentMarkers.push(marker); } } updateStats(rooms); updateCategoriesList(rooms); }
-function createPopupContent(room,catInfo,images) { let imgHtml=''; if(images.length){ const urls=images.map(i=>i.image_url); imgHtml=`<div style="display:flex;gap:8px;">${images.slice(0,3).map((img,i)=>`<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(urls)}' data-index="${i}" style="width:65px;height:65px;border-radius:10px;cursor:pointer;">`).join('')}${images.length>3?`<div class="popup-more" data-urls='${JSON.stringify(urls)}' data-index="3" style="background:#eee;display:flex;align-items:center;justify-content:center;width:65px;border-radius:10px;font-size:16px;">+${images.length-3}</div>`:''}</div>`; } let btns = currentSession ? `<hr><button class="edit-btn" data-id="${room.id}" style="font-size:16px;padding:10px;">✏️ Modifier</button><button class="delete-popup-btn" data-id="${room.id}" style="font-size:16px;padding:10px;">🗑️ Supprimer</button>` : ''; return `<div style="min-width:220px;">${imgHtml}<div style="border-left:3px solid ${catInfo.color};padding-left:10px;margin-top:8px;"><strong style="font-size:18px;">${escapeHtml(room.name)}</strong><br><span style="font-size:15px;">${room.matricule}</span><br><span style="font-size:14px;">${room.last_activity||''}</span></div>${btns}</div>`; }
+async function drawRooms() { if(!map) return; currentMarkers.forEach(m=>map.removeLayer(m)); currentMarkers=[]; const rooms = await getAllRooms(currentFloor); for(let room of rooms) { if(room.x && room.y) { const catInfo = CATEGORIES.find(c=>c.value===room.categorie)||{icon:'📍',color:'#ff4d4d'}; const images = await getRoomImages(room.id); const marker = L.circle([room.y,room.x],{radius:22,color:catInfo.color,fillColor:catInfo.color,fillOpacity:0.8,weight:4}).addTo(map); marker.bindPopup(createPopupContent(room,catInfo,images)); currentMarkers.push(marker); } } updateStats(rooms); updateCategoriesList(rooms); }
+function createPopupContent(room,catInfo,images) { let imgHtml=''; if(images.length){ const urls=images.map(i=>i.image_url); imgHtml=`<div style="display:flex;gap:10px;">${images.slice(0,3).map((img,i)=>`<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(urls)}' data-index="${i}" style="width:80px;height:80px;border-radius:14px;cursor:pointer;">`).join('')}${images.length>3?`<div class="popup-more" data-urls='${JSON.stringify(urls)}' data-index="3" style="background:#eee;display:flex;align-items:center;justify-content:center;width:80px;border-radius:14px;font-size:18px;">+${images.length-3}</div>`:''}</div>`; } let btns = currentSession ? `<hr><button class="edit-btn" data-id="${room.id}" style="font-size:20px;padding:12px;margin-top:8px;width:100%;background:linear-gradient(135deg,#ff4d4d,#cc0000);color:white;border:none;border-radius:60px;">✏️ Modifier</button><button class="delete-popup-btn" data-id="${room.id}" style="font-size:20px;padding:12px;margin-top:8px;width:100%;background:#eb3349;color:white;border:none;border-radius:60px;">🗑️ Supprimer</button>` : ''; return `<div style="min-width:260px;">${imgHtml}<div style="border-left:4px solid ${catInfo.color};padding-left:12px;margin-top:10px;"><strong style="font-size:24px;">${escapeHtml(room.name)}</strong><br><span style="font-size:18px;">${room.matricule}</span><br><span style="font-size:16px;">${room.last_activity||''}</span></div>${btns}</div>`; }
 async function updateStats(rooms) { document.getElementById('roomCount').innerText = rooms.length; document.getElementById('categoryCount').innerText = new Set(rooms.map(r=>r.categorie)).size; }
 let expandedCategories = new Set();
 function updateCategoriesList(rooms) {
   const container = document.getElementById('categoriesList');
-  if(!rooms.length){ container.innerHTML='<div style="padding:12px;font-size:18px;">Aucune salle</div>'; return; }
+  if(!rooms.length){ container.innerHTML='<div style="padding:16px;font-size:22px;">Aucune salle</div>'; return; }
   const byCat = new Map(); rooms.forEach(r=>{ let c=r.categorie||'sans-cat'; if(!byCat.has(c)) byCat.set(c,[]); byCat.get(c).push(r); });
   let html='';
   for(let [cat,list] of byCat.entries()) {
@@ -669,7 +669,7 @@ function attachCategoryEvents() {
 function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'})[m]); }
 function showToast(msg,type="success"){ let t=document.createElement("div"); t.className=`toast ${type}`; t.innerHTML=`<i class="fas ${type==='success'?'fa-check':'fa-exclamation'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
 function setupImageInput(){ document.getElementById('imageInput').onchange=e=>{ currentImageFiles.push(...Array.from(e.target.files)); updateImagePreview(); e.target.value=''; }; }
-function updateImagePreview(){ const container=document.getElementById('imagePreviewContainer'); container.innerHTML=''; currentImageFiles.forEach((f,i)=>{ const reader=new FileReader(); reader.onload=ev=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${ev.target.result}" width="80"><button class="delete-img-btn" data-index="${i}">🗑️</button>`; div.querySelector('button').onclick=()=>{ currentImageFiles.splice(i,1); updateImagePreview(); }; container.appendChild(div); }; reader.readAsDataURL(f); }); existingImages.forEach(img=>{ const div=document.createElement('div'); div.innerHTML=`<img src="${img.image_url}" width="80"><button class="delete-existing" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; div.querySelector('button').onclick=()=>{ imagesToDelete.push({id:img.id,url:img.image_url}); existingImages=existingImages.filter(i=>i.id!==img.id); updateImagePreview(); }; container.appendChild(div); }); }
+function updateImagePreview(){ const container=document.getElementById('imagePreviewContainer'); container.innerHTML=''; currentImageFiles.forEach((f,i)=>{ const reader=new FileReader(); reader.onload=ev=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${ev.target.result}" width="90"><button class="delete-img-btn" data-index="${i}">🗑️</button>`; div.querySelector('button').onclick=()=>{ currentImageFiles.splice(i,1); updateImagePreview(); }; container.appendChild(div); }; reader.readAsDataURL(f); }); existingImages.forEach(img=>{ const div=document.createElement('div'); div.innerHTML=`<img src="${img.image_url}" width="90"><button class="delete-existing" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; div.querySelector('button').onclick=()=>{ imagesToDelete.push({id:img.id,url:img.image_url}); existingImages=existingImages.filter(i=>i.id!==img.id); updateImagePreview(); }; container.appendChild(div); }); }
 function clearImages(){ currentImageFiles=[]; existingImages=[]; imagesToDelete=[]; document.getElementById('imageInput').value=''; updateImagePreview(); }
 function openModal(type){ if(!currentSession){ showToast("Connectez-vous","error"); return; } deactivatePickMode(); document.getElementById("modal").style.display="flex"; const actions=document.getElementById("actions"), title=document.getElementById("title"); if(type==="add"){ title.innerHTML='Ajouter une salle'; actions.innerHTML=`<button onclick="saveRoom()">Enregistrer</button><button onclick="closeModal()">Annuler</button>`; document.getElementById("last_activity").value=new Date().toLocaleString(); selectedRoom=null; pickedX=null; pickedY=null; clearForm(); clearImages(); if(document.getElementById("floorSelect")) document.getElementById("floorSelect").value=currentFloor; } else { title.innerHTML='Modifier la salle'; actions.innerHTML=`<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`; } }
 function validateFormFields(){ if(!document.getElementById("categorie").value){ showToast("Catégorie"); return false; } if(!document.getElementById("name").value.trim()){ showToast("Nom"); return false; } if(!document.getElementById("mat").value.trim()){ showToast("Matricule"); return false; } if(!document.getElementById("coord").value){ showToast("Position"); return false; } return true; }
@@ -689,7 +689,7 @@ async function refreshUserList(){ const {data}=await supabaseClient.from('profil
 async function deleteUser(username){ await supabaseClient.rpc('delete_user_by_username',{username_to_delete:username}); showToast("Utilisateur supprimé"); refreshUserList(); }
 async function createNewUser(){ const username=document.getElementById("newUsername").value.trim(), pwd=document.getElementById("newPassword").value.trim(), role=document.getElementById("newUserRole").value; if(!username||!pwd) return; const email=username+"@app.local"; const {data:signUp}=await supabaseClient.auth.signUp({email,password:pwd,options:{data:{username}}}); if(signUp.user){ await supabaseClient.from('profiles').insert({id:signUp.user.id,username,role}); showToast("Créé"); closeUserManagement(); } }
 
-// ========== ربط أحداث الواجهة الجديدة ==========
+// ========== ربط أحداث الواجهة ==========
 document.getElementById("addRoomBtn").onclick = () => openModal('add');
 document.getElementById("manageUsersBtn").onclick = openUserManagement;
 document.getElementById("zoomInBtn").onclick = () => { if(map) map.zoomIn(); };
