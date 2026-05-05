@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* -------------------- الأنماط الأساسية (محسنة للهواتف) -------------------- */
+/* -------------------- الأنماط الأساسية -------------------- */
 *{margin:0;padding:0;box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; background:#f0f2f5; height:100vh; display:flex; flex-direction:column; overflow:hidden}
 
@@ -272,41 +272,39 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 #map { width: 100%; height: 100%; background: #cddde9; }
 
-/* -------------------- تكبير نافذة popup (المعلومات) وأزرارها -------------------- */
+/* -------------------- تكبير نافذة popup (المعلومات) -------------------- */
 .leaflet-popup-content-wrapper {
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 0;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.2);
 }
 .leaflet-popup-content {
-  margin: 18px 22px;
+  margin: 20px 24px;
   font-size: 20px;
   line-height: 1.5;
-  min-width: 280px;
+  min-width: 320px;
 }
-.leaflet-popup-tip {
-  background: white;
-}
-/* تكبير زر الإغلاق (X) */
+/* تكبير زر الإغلاق (X) بشكل كبير */
 .leaflet-popup-close-button {
-  top: 12px;
-  right: 12px;
-  font-size: 28px !important;
-  width: 32px;
-  height: 32px;
-  line-height: 32px;
+  top: 12px !important;
+  right: 12px !important;
+  font-size: 36px !important;
+  width: 44px !important;
+  height: 44px !important;
+  line-height: 44px !important;
   text-align: center;
   font-weight: bold;
   color: #333 !important;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.9);
   border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 .leaflet-popup-close-button:hover {
   background: #ff4d4d;
   color: white !important;
 }
 
-/* -------------------- مودالات كبيرة -------------------- */
+/* -------------------- مودالات كبيرة جدًا -------------------- */
 .modal-login, .modal-user-management {
   display: none;
   position: fixed;
@@ -314,33 +312,33 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
   z-index: 30000;
   justify-content: center;
   align-items: center;
 }
 .modal-login .modal-box, .modal-user-management .modal-box {
   background: white;
-  padding: 36px;
-  border-radius: 48px;
-  width: 90%;
-  max-width: 500px;
+  padding: 40px 32px;
+  border-radius: 56px;
+  width: 92%;
+  max-width: 560px;
   text-align: center;
 }
-.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 28px; font-size: 32px; }
+.modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 32px; font-size: 36px; }
 .modal-login input, .modal-user-management input {
-  width: 100%; padding: 18px; margin: 14px 0;
-  border: 2px solid #e2e8f0; border-radius: 28px;
-  font-size: 22px;
+  width: 100%; padding: 20px; margin: 16px 0;
+  border: 2px solid #e2e8f0; border-radius: 32px;
+  font-size: 24px;
 }
 .modal-login button, .modal-user-management button {
-  width: 100%; padding: 18px;
+  width: 100%; padding: 20px;
   background: linear-gradient(135deg,#ff4d4d,#cc0000);
   color: white; border: none; border-radius: 60px;
   font-weight: bold; cursor: pointer;
-  font-size: 24px; margin-top: 14px;
+  font-size: 28px; margin-top: 16px;
 }
-.error-msg { color: red; font-size: 18px; margin-top: 10px; }
+.error-msg { color: red; font-size: 20px; margin-top: 12px; }
 
 #modal{
   display:none;
@@ -357,14 +355,14 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 .modal-box{
   background:white;
-  padding: 36px;
-  border-radius: 48px;
+  padding: 40px 32px;
+  border-radius: 56px;
   width: 94%;
-  max-width: 620px;
+  max-width: 680px;
   display:flex;
   flex-direction:column;
-  gap: 28px;
-  box-shadow:0 30px 50px rgba(0,0,0,0.4);
+  gap: 32px;
+  box-shadow:0 40px 60px rgba(0,0,0,0.4);
   animation:slideIn 0.25s ease;
 }
 @keyframes slideIn{
@@ -373,33 +371,33 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 .modal-box h3{
   color:#1e293b;
-  border-left:6px solid #ff4d4d;
-  padding-left:20px;
-  font-size: 32px;
+  border-left:8px solid #ff4d4d;
+  padding-left:24px;
+  font-size: 36px;
 }
 .modal-box input,.modal-box select{
-  padding: 18px;
+  padding: 20px;
   border:2px solid #e2e8f0;
-  border-radius: 28px;
-  font-size: 22px;
+  border-radius: 32px;
+  font-size: 24px;
 }
 .coord-row{
   display:flex;
-  gap:14px;
+  gap:16px;
   align-items:center;
 }
 .coord-row button{
-  width: 68px;
+  width: 80px;
   background:#f1f5f9;
   border:none;
-  border-radius: 28px;
+  border-radius: 32px;
   cursor:pointer;
-  padding: 16px;
-  font-size: 26px;
+  padding: 20px;
+  font-size: 32px;
 }
 .image-preview-list{
   display:flex;
-  gap:14px;
+  gap:16px;
   flex-wrap:wrap;
   margin-top:12px;
 }
@@ -408,24 +406,24 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   display:inline-block;
 }
 .image-item img{
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   object-fit:cover;
-  border-radius: 20px;
+  border-radius: 24px;
   border:1px solid #ddd;
   cursor:pointer;
 }
 .image-item .delete-img-btn{
   position:absolute;
-  top:-12px;
-  right:-12px;
+  top:-14px;
+  right:-14px;
   background:#eb3349;
   color:white;
   border:none;
   border-radius:50%;
-  width: 34px;
-  height: 34px;
-  font-size: 18px;
+  width: 38px;
+  height: 38px;
+  font-size: 20px;
   cursor:pointer;
   display:flex;
   align-items:center;
@@ -433,16 +431,16 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 #actions{
   display:flex;
-  gap:16px;
-  margin-top:12px;
+  gap:20px;
+  margin-top:16px;
   flex-wrap:wrap;
 }
 #actions button{
   flex:1;
-  padding: 18px;
+  padding: 20px;
   border-radius: 80px;
   font-weight:bold;
-  font-size: 24px;
+  font-size: 28px;
   cursor:pointer;
   border:none;
 }
@@ -610,7 +608,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ========== جميع الكود الأصلي للوظائف (مع إصلاح popup) ==========
+// ========== جميع الكود الأصلي للوظائف مع ضمان عمل زر الإحداثيات ==========
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -671,7 +669,19 @@ async function getRoomImages(roomId) { const { data } = await supabaseClient.fro
 async function deleteRoomImage(id, url) { await supabaseClient.from(IMAGES_TABLE).delete().eq('id', id); await supabaseClient.storage.from(STORAGE_BUCKET).remove([url.split('/').pop()]); }
 async function deleteAllRoomImages(roomId) { const imgs = await getRoomImages(roomId); for(let img of imgs) await deleteRoomImage(img.id, img.image_url); }
 async function initSampleData() { const { count } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', head: true }); if(count===0){ await supabaseClient.from(TABLE_NAME).insert([{categorie:'salon et séjour',name:'Salon Principal',matricule:'SAL-001',x:1334,y:1500,last_activity:new Date().toLocaleString(),floor:'1'},{categorie:'chambre adulte',name:'Chambre Master',matricule:'CHM-001',x:2000,y:800,last_activity:new Date().toLocaleString(),floor:'1'},{categorie:'bureautique',name:'Bureau',matricule:'BUR-001',x:500,y:2000,last_activity:new Date().toLocaleString(),floor:'1'}]); showToast("Exemples ajoutés","success"); } }
-function initMap() { map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false }); updateMapFloor(currentFloor); map.on("click", e => { if(picking){ pickedX = Math.round(e.latlng.lng); pickedY = Math.round(e.latlng.lat); document.getElementById("coord").value = pickedX+","+pickedY; deactivatePickMode(); openModal('add'); } }); }
+function initMap() { 
+  map = L.map('map', { crs: L.CRS.Simple, minZoom: -1, zoomControl: false }); 
+  updateMapFloor(currentFloor); 
+  map.on("click", function(e) {
+    if (picking === true) {
+      pickedX = Math.round(e.latlng.lng);
+      pickedY = Math.round(e.latlng.lat);
+      document.getElementById("coord").value = pickedX + "," + pickedY;
+      deactivatePickMode();
+      document.getElementById("modal").style.display = "flex";
+    }
+  });
+}
 function updateMapFloor(floor) { if(!map) return; if(map.overlay) map.removeLayer(map.overlay); let url = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg'; let bounds = [[0,0],[3000,2669]]; map.overlay = L.imageOverlay(url, bounds).addTo(map); map.fitBounds(bounds); }
 async function changeFloor(floor) { currentFloor=floor; localStorage.setItem('selectedFloor',floor); updateMapFloor(floor); await drawRooms(); document.getElementById("floorSelectBox").value=floor; showToast(`Étage ${floor==='1'?'1er':'RDC'}`,'success'); }
 
@@ -682,32 +692,31 @@ function createPopupContent(room, catInfo, images) {
     const urls = images.map(img => img.image_url);
     imgHtml = `<div style="display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap;">`;
     images.slice(0, 4).forEach((img, idx) => {
-      imgHtml += `<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(urls)}' data-index="${idx}" style="width:90px; height:90px; object-fit:cover; border-radius:16px; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.1);">`;
+      imgHtml += `<img src="${img.image_url}" class="popup-gallery-img" data-urls='${JSON.stringify(urls)}' data-index="${idx}" style="width:100px; height:100px; object-fit:cover; border-radius:20px; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.1);">`;
     });
     if (images.length > 4) {
-      imgHtml += `<div class="popup-more" data-urls='${JSON.stringify(urls)}' data-index="4" style="width:90px; height:90px; background:#eee; display:flex; align-items:center; justify-content:center; border-radius:16px; cursor:pointer; font-size:22px; font-weight:bold;">+${images.length-4}</div>`;
+      imgHtml += `<div class="popup-more" data-urls='${JSON.stringify(urls)}' data-index="4" style="width:100px; height:100px; background:#eee; display:flex; align-items:center; justify-content:center; border-radius:20px; cursor:pointer; font-size:24px; font-weight:bold;">+${images.length-4}</div>`;
     }
     imgHtml += `</div>`;
   }
-  // بناء الأزرار مع ربط مباشر باستخدام onclick (لمنع مشاكل الأحداث)
   let buttonsHtml = '';
   if (currentSession) {
     buttonsHtml = `
       <hr style="margin:16px 0;">
       <div style="display:flex; gap:12px; flex-direction:column;">
-        <button class="edit-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000); color:white; border:none; border-radius:60px; padding:14px; font-size:22px; font-weight:bold; cursor:pointer; width:100%;">✏️ Modifier</button>
-        <button class="delete-popup-btn" data-id="${room.id}" style="background:#eb3349; color:white; border:none; border-radius:60px; padding:14px; font-size:22px; font-weight:bold; cursor:pointer; width:100%;">🗑️ Supprimer</button>
+        <button class="edit-popup-btn" data-id="${room.id}" style="background:linear-gradient(135deg,#ff4d4d,#cc0000); color:white; border:none; border-radius:60px; padding:16px; font-size:24px; font-weight:bold; cursor:pointer; width:100%;">✏️ Modifier</button>
+        <button class="delete-popup-btn" data-id="${room.id}" style="background:#eb3349; color:white; border:none; border-radius:60px; padding:16px; font-size:24px; font-weight:bold; cursor:pointer; width:100%;">🗑️ Supprimer</button>
       </div>
     `;
   }
   return `
-    <div style="min-width:280px;">
+    <div style="min-width:320px;">
       ${imgHtml}
       <div style="border-left:5px solid ${catInfo.color}; padding-left:16px; margin-top:12px;">
-        <div style="font-size:26px; font-weight:bold; margin-bottom:8px;">🏷️ ${escapeHtml(catInfo.label)}</div>
-        <div style="font-size:22px; margin-bottom:6px;"><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div>
-        <div style="font-size:22px; margin-bottom:6px;"><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div>
-        <div style="font-size:20px; color:#555;"><i class="fas fa-clock"></i> <strong>Dernière activité:</strong> ${escapeHtml(room.last_activity || '')}</div>
+        <div style="font-size:28px; font-weight:bold; margin-bottom:10px;">🏷️ ${escapeHtml(catInfo.label)}</div>
+        <div style="font-size:24px; margin-bottom:8px;"><i class="fas fa-door-open"></i> <strong>Nom:</strong> ${escapeHtml(room.name)}</div>
+        <div style="font-size:24px; margin-bottom:8px;"><i class="fas fa-id-card"></i> <strong>Matricule:</strong> ${escapeHtml(room.matricule)}</div>
+        <div style="font-size:22px; color:#555;"><i class="fas fa-clock"></i> <strong>Dernière activité:</strong> ${escapeHtml(room.last_activity || '')}</div>
       </div>
       ${buttonsHtml}
     </div>
@@ -724,17 +733,16 @@ async function drawRooms() {
       const catInfo = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#ff4d4d', label: room.categorie || 'Sans catégorie' };
       const images = await getRoomImages(room.id);
       const marker = L.circle([room.y, room.x], {
-        radius: 24,
+        radius: 28,
         color: catInfo.color,
         fillColor: catInfo.color,
         fillOpacity: 0.8,
-        weight: 4
+        weight: 5
       }).addTo(map);
       const popupContent = createPopupContent(room, catInfo, images);
-      marker.bindPopup(popupContent, { maxWidth: 380, minWidth: 300 });
+      marker.bindPopup(popupContent, { maxWidth: 420, minWidth: 340 });
       marker.on("popupopen", (e) => {
         const popupElement = e.popup.getElement();
-        // ربط أحداث معرض الصور
         const galleryImgs = popupElement.querySelectorAll('.popup-gallery-img, .popup-more');
         galleryImgs.forEach(el => {
           el.addEventListener('click', (event) => {
@@ -744,7 +752,6 @@ async function drawRooms() {
             openLightbox(imageUrls, index);
           });
         });
-        // ربط أزرار التعديل والحذف
         const editBtn = popupElement.querySelector('.edit-popup-btn');
         if (editBtn) {
           editBtn.addEventListener('click', () => {
@@ -788,7 +795,7 @@ async function updateStats(rooms) {
 let expandedCategories = new Set();
 function updateCategoriesList(rooms) {
   const container = document.getElementById('categoriesList');
-  if (!rooms.length) { container.innerHTML = '<div style="padding:16px;font-size:22px;">Aucune salle</div>'; return; }
+  if (!rooms.length) { container.innerHTML = '<div style="padding:16px;font-size:24px;">Aucune salle</div>'; return; }
   const byCat = new Map();
   rooms.forEach(room => {
     const cat = room.categorie || 'sans-categorie';
@@ -847,29 +854,233 @@ function attachCategoryEvents() {
   });
 }
 function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
-function showToast(msg, type = "success") { let t = document.createElement("div"); t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check' : 'fa-exclamation'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(() => t.remove(), 2500); }
+function showToast(msg, type = "success") { let t = document.createElement("div"); t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check' : 'fa-exclamation'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); }
 
-// باقي دوال إدارة الصور والمودالات (نفس السابق، لم تتغير)
-function setupImageInput(){ document.getElementById('imageInput').onchange=e=>{ currentImageFiles.push(...Array.from(e.target.files)); updateImagePreview(); e.target.value=''; }; }
-function updateImagePreview(){ const container=document.getElementById('imagePreviewContainer'); container.innerHTML=''; currentImageFiles.forEach((f,i)=>{ const reader=new FileReader(); reader.onload=ev=>{ const div=document.createElement('div'); div.className='image-item'; div.innerHTML=`<img src="${ev.target.result}" width="90"><button class="delete-img-btn" data-index="${i}">🗑️</button>`; div.querySelector('button').onclick=()=>{ currentImageFiles.splice(i,1); updateImagePreview(); }; container.appendChild(div); }; reader.readAsDataURL(f); }); existingImages.forEach(img=>{ const div=document.createElement('div'); div.innerHTML=`<img src="${img.image_url}" width="90"><button class="delete-existing" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; div.querySelector('button').onclick=()=>{ imagesToDelete.push({id:img.id,url:img.image_url}); existingImages=existingImages.filter(i=>i.id!==img.id); updateImagePreview(); }; container.appendChild(div); }); }
-function clearImages(){ currentImageFiles=[]; existingImages=[]; imagesToDelete=[]; document.getElementById('imageInput').value=''; updateImagePreview(); }
-function openModal(type){ if(!currentSession){ showToast("Connectez-vous","error"); return; } deactivatePickMode(); document.getElementById("modal").style.display="flex"; const actions=document.getElementById("actions"), title=document.getElementById("title"); if(type==="add"){ title.innerHTML='Ajouter une salle'; actions.innerHTML=`<button onclick="saveRoom()">Enregistrer</button><button onclick="closeModal()">Annuler</button>`; document.getElementById("last_activity").value=new Date().toLocaleString(); selectedRoom=null; pickedX=null; pickedY=null; clearForm(); clearImages(); if(document.getElementById("floorSelect")) document.getElementById("floorSelect").value=currentFloor; } else { title.innerHTML='Modifier la salle'; actions.innerHTML=`<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`; } }
-function validateFormFields(){ if(!document.getElementById("categorie").value){ showToast("Catégorie","error"); return false; } if(!document.getElementById("name").value.trim()){ showToast("Nom requis","error"); return false; } if(!document.getElementById("mat").value.trim()){ showToast("Matricule requis","error"); return false; } if(!document.getElementById("coord").value){ showToast("Position requise","error"); return false; } return true; }
-async function saveRoom(){ if(!validateFormFields()) return; if(pickedX===null){ showToast("Cliquez sur la carte","error"); return; } const floor = currentFloor; const newMat = document.getElementById("mat").value.trim(); if(!await isMatriculeUnique(newMat,floor)){ showToast("Matricule existe déjà","error"); return; } const newRoom = { categorie:document.getElementById("categorie").value, name:document.getElementById("name").value.trim(), matricule:newMat, x:pickedX, y:pickedY, last_activity:new Date().toLocaleString(), floor }; const id = await addRoom(newRoom); for(const f of currentImageFiles){ const url = await uploadImage(f,id); await addRoomImage(id,url); } showToast("Salle ajoutée","success"); closeModal(); drawRooms(); }
-async function editRoomById(id){ if (!currentSession) { showToast("Connectez-vous","error"); return; } const { data:room } = await supabaseClient.from('rooms').select('*').eq('id',id).single(); if(room){ selectedRoom=room; fillForm(room); existingImages=await getRoomImages(room.id); currentImageFiles=[]; imagesToDelete=[]; updateImagePreview(); openModal('edit'); pickedX=room.x; pickedY=room.y; } }
-async function updateRoom(){ if(!selectedRoom||!validateFormFields()) return; const newMat = document.getElementById("mat").value.trim(); if((selectedRoom.matricule!==newMat)&&!await isMatriculeUnique(newMat,currentFloor,selectedRoom.id)){ showToast("Matricule déjà utilisé","error"); return; } selectedRoom.name=document.getElementById("name").value.trim(); selectedRoom.matricule=newMat; selectedRoom.categorie=document.getElementById("categorie").value; if(pickedX!==null){ selectedRoom.x=pickedX; selectedRoom.y=pickedY; } selectedRoom.last_activity=new Date().toLocaleString(); await updateRoomInDB(selectedRoom); for(let img of imagesToDelete) await deleteRoomImage(img.id,img.url); for(let f of currentImageFiles){ const url=await uploadImage(f,selectedRoom.id); await addRoomImage(selectedRoom.id,url); } showToast("Mise à jour réussie","success"); closeModal(); drawRooms(); }
-function fillForm(room){ document.getElementById("categorie").value=room.categorie||""; document.getElementById("name").value=room.name||""; document.getElementById("mat").value=room.matricule||""; document.getElementById("coord").value=(room.x&&room.y)?room.x+","+room.y:""; document.getElementById("last_activity").value=room.last_activity||""; pickedX=room.x; pickedY=room.y; }
-function clearForm(){ document.getElementById("categorie").value=""; document.getElementById("name").value=""; document.getElementById("mat").value=""; document.getElementById("coord").value=""; }
-function closeModal(){ document.getElementById("modal").style.display="none"; deactivatePickMode(); pickedX=null; pickedY=null; clearImages(); }
-function startPick(){ closeModal(); picking=true; document.getElementById('map').style.cursor='crosshair'; showToast("Cliquez sur la carte"); }
-function deactivatePickMode(){ picking=false; document.getElementById('map').style.cursor=''; }
-function openLightbox(urls,idx){ if(!urls||!urls.length) return; currentGalleryImages=urls; currentGalleryIndex=idx; document.getElementById('lightbox-img').src=urls[idx]; document.getElementById('lightbox').classList.add('active'); }
+// ========== دوال إدارة الصور والمودالات (مع ضمان عمل زر الإحداثيات) ==========
+function setupImageInput(){ 
+  document.getElementById('imageInput').onchange = e => { 
+    currentImageFiles.push(...Array.from(e.target.files)); 
+    updateImagePreview(); 
+    e.target.value = ''; 
+  }; 
+}
+function updateImagePreview(){ 
+  const container = document.getElementById('imagePreviewContainer'); 
+  container.innerHTML = ''; 
+  currentImageFiles.forEach((f,i) => { 
+    const reader = new FileReader(); 
+    reader.onload = ev => { 
+      const div = document.createElement('div'); 
+      div.className = 'image-item'; 
+      div.innerHTML = `<img src="${ev.target.result}" width="100"><button class="delete-img-btn" data-index="${i}">🗑️</button>`; 
+      div.querySelector('button').onclick = () => { 
+        currentImageFiles.splice(i,1); 
+        updateImagePreview(); 
+      }; 
+      container.appendChild(div); 
+    }; 
+    reader.readAsDataURL(f); 
+  }); 
+  existingImages.forEach(img => { 
+    const div = document.createElement('div'); 
+    div.innerHTML = `<img src="${img.image_url}" width="100"><button class="delete-existing" data-id="${img.id}" data-url="${img.image_url}">🗑️</button>`; 
+    div.querySelector('button').onclick = () => { 
+      imagesToDelete.push({id:img.id, url:img.image_url}); 
+      existingImages = existingImages.filter(i => i.id !== img.id); 
+      updateImagePreview(); 
+    }; 
+    container.appendChild(div); 
+  }); 
+}
+function clearImages(){ currentImageFiles = []; existingImages = []; imagesToDelete = []; document.getElementById('imageInput').value = ''; updateImagePreview(); }
+function openModal(type){ 
+  if(!currentSession){ showToast("Connectez-vous","error"); return; } 
+  deactivatePickMode(); 
+  document.getElementById("modal").style.display = "flex"; 
+  const actions = document.getElementById("actions"); 
+  const title = document.getElementById("title"); 
+  if(type === "add"){ 
+    title.innerHTML = 'Ajouter une salle'; 
+    actions.innerHTML = `<button onclick="saveRoom()">Enregistrer</button><button onclick="closeModal()">Annuler</button>`; 
+    document.getElementById("last_activity").value = new Date().toLocaleString(); 
+    selectedRoom = null; 
+    pickedX = null; pickedY = null; 
+    clearForm(); 
+    clearImages(); 
+    if(document.getElementById("floorSelect")) document.getElementById("floorSelect").value = currentFloor; 
+  } else { 
+    title.innerHTML = 'Modifier la salle'; 
+    actions.innerHTML = `<button onclick="updateRoom()">Mettre à jour</button><button onclick="closeModal()">Annuler</button>`; 
+  } 
+}
+function validateFormFields(){ 
+  if(!document.getElementById("categorie").value){ showToast("Catégorie","error"); return false; } 
+  if(!document.getElementById("name").value.trim()){ showToast("Nom requis","error"); return false; } 
+  if(!document.getElementById("mat").value.trim()){ showToast("Matricule requis","error"); return false; } 
+  if(!document.getElementById("coord").value){ showToast("Position requise","error"); return false; } 
+  return true; 
+}
+async function saveRoom(){ 
+  if(!validateFormFields()) return; 
+  if(pickedX === null || pickedY === null){ showToast("Cliquez sur la carte ou utilisez le bouton 🎯","error"); return; } 
+  const floor = currentFloor; 
+  const newMat = document.getElementById("mat").value.trim(); 
+  if(!await isMatriculeUnique(newMat,floor)){ showToast("Matricule existe déjà","error"); return; } 
+  const newRoom = { 
+    categorie: document.getElementById("categorie").value, 
+    name: document.getElementById("name").value.trim(), 
+    matricule: newMat, 
+    x: pickedX, 
+    y: pickedY, 
+    last_activity: new Date().toLocaleString(), 
+    floor: floor 
+  }; 
+  try {
+    const roomId = await addRoom(newRoom); 
+    for(const f of currentImageFiles){ 
+      const url = await uploadImage(f, roomId); 
+      await addRoomImage(roomId, url); 
+    } 
+    showToast("Salle ajoutée","success"); 
+    closeModal(); 
+    await drawRooms(); 
+    clearForm(); 
+    pickedX = null; pickedY = null; 
+    clearImages(); 
+  } catch(e) { showToast("Erreur: "+e.message,"error"); }
+}
+async function editRoomById(id){ 
+  if (!currentSession) { showToast("Connectez-vous","error"); return; } 
+  const { data:room } = await supabaseClient.from('rooms').select('*').eq('id',id).single(); 
+  if(room){ 
+    selectedRoom = room; 
+    fillForm(room); 
+    existingImages = await getRoomImages(room.id); 
+    currentImageFiles = []; 
+    imagesToDelete = []; 
+    updateImagePreview(); 
+    openModal('edit'); 
+    pickedX = room.x; 
+    pickedY = room.y; 
+  } 
+}
+async function updateRoom(){ 
+  if(!selectedRoom || !validateFormFields()) return; 
+  const newMat = document.getElementById("mat").value.trim(); 
+  if((selectedRoom.matricule !== newMat) && !await isMatriculeUnique(newMat, currentFloor, selectedRoom.id)){ 
+    showToast("Matricule déjà utilisé","error"); 
+    return; 
+  } 
+  selectedRoom.name = document.getElementById("name").value.trim(); 
+  selectedRoom.matricule = newMat; 
+  selectedRoom.categorie = document.getElementById("categorie").value; 
+  if(pickedX !== null && pickedY !== null){ 
+    selectedRoom.x = pickedX; 
+    selectedRoom.y = pickedY; 
+  } 
+  selectedRoom.last_activity = new Date().toLocaleString(); 
+  try {
+    await updateRoomInDB(selectedRoom); 
+    for(let img of imagesToDelete) await deleteRoomImage(img.id, img.url); 
+    for(let f of currentImageFiles){ 
+      const url = await uploadImage(f, selectedRoom.id); 
+      await addRoomImage(selectedRoom.id, url); 
+    } 
+    showToast("Mise à jour réussie","success"); 
+    closeModal(); 
+    selectedRoom = null; 
+    await drawRooms(); 
+  } catch(e) { showToast("Erreur: "+e.message,"error"); }
+}
+function fillForm(room){ 
+  document.getElementById("categorie").value = room.categorie || ""; 
+  document.getElementById("name").value = room.name || ""; 
+  document.getElementById("mat").value = room.matricule || ""; 
+  document.getElementById("coord").value = (room.x && room.y) ? room.x+","+room.y : ""; 
+  document.getElementById("last_activity").value = room.last_activity || ""; 
+  pickedX = room.x; 
+  pickedY = room.y; 
+}
+function clearForm(){ 
+  document.getElementById("categorie").value = ""; 
+  document.getElementById("name").value = ""; 
+  document.getElementById("mat").value = ""; 
+  document.getElementById("coord").value = ""; 
+}
+function closeModal(){ 
+  document.getElementById("modal").style.display = "none"; 
+  deactivatePickMode(); 
+  pickedX = null; 
+  pickedY = null; 
+  clearImages(); 
+}
+function startPick(){ 
+  closeModal(); 
+  activatePickMode(); 
+  showToast("Cliquez sur la carte pour choisir l'emplacement", "success"); 
+}
+function activatePickMode(){ 
+  picking = true; 
+  document.getElementById('map').classList.add('picking-mode'); 
+  const lc = document.querySelector('.leaflet-container'); 
+  if(lc) lc.style.cursor = 'crosshair'; 
+}
+function deactivatePickMode(){ 
+  picking = false; 
+  document.getElementById('map').classList.remove('picking-mode'); 
+  const lc = document.querySelector('.leaflet-container'); 
+  if(lc) lc.style.cursor = ''; 
+}
+function openLightbox(urls,idx){ 
+  if(!urls || !urls.length) return; 
+  currentGalleryImages = urls; 
+  currentGalleryIndex = idx; 
+  document.getElementById('lightbox-img').src = urls[idx]; 
+  document.getElementById('lightbox').classList.add('active'); 
+}
 function closeLightbox(){ document.getElementById('lightbox').classList.remove('active'); }
-async function openUserManagement(){ if(!currentSession||currentSession.role!=='admin') return; document.getElementById("userMgmtModal").style.display="flex"; await refreshUserList(); }
-function closeUserManagement(){ document.getElementById("userMgmtModal").style.display="none"; }
-async function refreshUserList(){ const {data}=await supabaseClient.from('profiles').select('id,username,role'); const container=document.getElementById("userList"); container.innerHTML=""; for(let u of data){ const div=document.createElement("div"); div.innerHTML=`<strong>${escapeHtml(u.username)}</strong> (${u.role})`; if(u.username !== currentSession.username){ const btn=document.createElement("button"); btn.textContent="Supprimer"; btn.onclick=async()=>{ if(confirm(`Supprimer ${u.username}?`)) await deleteUser(u.username); }; div.appendChild(btn); } container.appendChild(div); } }
-async function deleteUser(username){ await supabaseClient.rpc('delete_user_by_username',{username_to_delete:username}); showToast("Utilisateur supprimé"); refreshUserList(); }
-async function createNewUser(){ const username=document.getElementById("newUsername").value.trim(), pwd=document.getElementById("newPassword").value.trim(), role=document.getElementById("newUserRole").value; if(!username||!pwd) return; const email=username+"@app.local"; const {data:signUp}=await supabaseClient.auth.signUp({email,password:pwd,options:{data:{username}}}); if(signUp.user){ await supabaseClient.from('profiles').insert({id:signUp.user.id,username,role}); showToast("Créé"); closeUserManagement(); } }
+async function openUserManagement(){ 
+  if(!currentSession || currentSession.role !== 'admin') return; 
+  document.getElementById("userMgmtModal").style.display = "flex"; 
+  await refreshUserList(); 
+}
+function closeUserManagement(){ document.getElementById("userMgmtModal").style.display = "none"; }
+async function refreshUserList(){ 
+  const {data} = await supabaseClient.from('profiles').select('id,username,role'); 
+  const container = document.getElementById("userList"); 
+  container.innerHTML = ""; 
+  for(let u of data){ 
+    const div = document.createElement("div"); 
+    div.innerHTML = `<strong>${escapeHtml(u.username)}</strong> (${u.role})`; 
+    if(u.username !== currentSession.username){ 
+      const btn = document.createElement("button"); 
+      btn.textContent = "Supprimer"; 
+      btn.onclick = async () => { 
+        if(confirm(`Supprimer ${u.username}?`)) await deleteUser(u.username); 
+      }; 
+      div.appendChild(btn); 
+    } 
+    container.appendChild(div); 
+  } 
+}
+async function deleteUser(username){ 
+  await supabaseClient.rpc('delete_user_by_username',{username_to_delete:username}); 
+  showToast("Utilisateur supprimé"); 
+  refreshUserList(); 
+}
+async function createNewUser(){ 
+  const username = document.getElementById("newUsername").value.trim(); 
+  const pwd = document.getElementById("newPassword").value.trim(); 
+  const role = document.getElementById("newUserRole").value; 
+  if(!username || !pwd) return; 
+  const email = username+"@app.local"; 
+  const {data:signUp} = await supabaseClient.auth.signUp({email, password:pwd, options:{data:{username}}}); 
+  if(signUp.user){ 
+    await supabaseClient.from('profiles').insert({id:signUp.user.id, username, role}); 
+    showToast("Créé"); 
+    closeUserManagement(); 
+  } 
+}
 
 // ========== ربط أحداث الواجهة ==========
 document.getElementById("addRoomBtn").onclick = () => openModal('add');
@@ -878,11 +1089,39 @@ document.getElementById("zoomInBtn").onclick = () => { if(map) map.zoomIn(); };
 document.getElementById("zoomOutBtn").onclick = () => { if(map) map.zoomOut(); };
 document.getElementById("zoomFullBtn").onclick = () => { if(map) map.fitBounds([[0,0],[3000,2669]]); };
 document.getElementById("loginBtn").onclick = () => document.getElementById("loginModal").style.display = "flex";
-document.getElementById("doLoginBtn").onclick = async () => { const u=document.getElementById("loginUsername").value, p=document.getElementById("loginPassword").value; try{ currentSession = await login(u,p); updateUIForUser(); document.getElementById("loginModal").style.display="none"; showToast(`Bienvenue ${u}`); drawRooms(); }catch(e){ document.getElementById("loginError").innerText=e.message; } };
+document.getElementById("doLoginBtn").onclick = async () => { 
+  const u = document.getElementById("loginUsername").value; 
+  const p = document.getElementById("loginPassword").value; 
+  try{ 
+    currentSession = await login(u,p); 
+    updateUIForUser(); 
+    document.getElementById("loginModal").style.display = "none"; 
+    showToast(`Bienvenue ${u}`); 
+    drawRooms(); 
+  }catch(e){ 
+    document.getElementById("loginError").innerText = e.message; 
+  } 
+};
 document.getElementById("logoutBtn").onclick = () => { logout(); showToast("Déconnecté"); };
 document.getElementById("createUserBtn").onclick = createNewUser;
 document.getElementById("floorSelectBox").addEventListener("change", (e) => changeFloor(e.target.value));
-document.getElementById("search").addEventListener("input", async (e) => { const val = e.target.value.toLowerCase().trim(); if(!val) return; const { data: all } = await supabaseClient.from('rooms').select('*'); const found = all.find(r => r.name.toLowerCase().includes(val) || r.matricule.toLowerCase().includes(val)); if(found) { if(found.floor !== currentFloor) showToast(`Salle au ${found.floor==='1'?'1er':'RDC'}`,"error"); else { map.flyTo([found.y,found.x],2); const m = currentMarkers.find(mk=>Math.abs(mk.getLatLng().lat-found.y)<1); if(m) m.openPopup(); showToast(found.name); } } else showToast("Aucune","error"); });
+document.getElementById("search").addEventListener("input", async (e) => { 
+  const val = e.target.value.toLowerCase().trim(); 
+  if(!val) return; 
+  const { data: all } = await supabaseClient.from('rooms').select('*'); 
+  const found = all.find(r => r.name.toLowerCase().includes(val) || r.matricule.toLowerCase().includes(val)); 
+  if(found) { 
+    if(found.floor !== currentFloor) showToast(`Salle au ${found.floor==='1'?'1er':'RDC'}`,"error"); 
+    else { 
+      map.flyTo([found.y,found.x],2); 
+      setTimeout(() => { 
+        const m = currentMarkers.find(mk => Math.abs(mk.getLatLng().lat - found.y) < 1); 
+        if(m) m.openPopup(); 
+      }, 500); 
+      showToast(found.name); 
+    } 
+  } else showToast("Aucune","error"); 
+});
 
 // إخفاء/إظهار قائمة الفئات
 const catListDiv = document.getElementById('categoriesList');
