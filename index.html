@@ -637,6 +637,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 let currentSession = null, map = null, picking = false, pickedX = null, pickedY = null, selectedRoom = null;
 let currentMarkers = [], currentImageFiles = [], existingImages = [], imagesToDelete = [];
 let currentGalleryImages = [], currentGalleryIndex = 0, currentFloor = '1';
+let drawRoomsTimer = null, searchTimer = null, allRoomsCache = [];
 const CATEGORIES = [
   { value: 'salon et séjour', label: 'salon et séjour', icon: '🏠', color: '#ff4d4d' },
   { value: 'salle à manger', label: 'salle à manger', icon: '🍽️', color: '#4caf50' },
@@ -690,6 +691,17 @@ async function isMatriculeUnique(mat, fl, ex=null) { let q = supabaseClient.from
 async function uploadImage(file, roomId) { const ext = file.name.split('.').pop(); const fileName = `${roomId}_${Date.now()}.${ext}`; await supabaseClient.storage.from(STORAGE_BUCKET).upload(fileName, file); const { data: { publicUrl } } = supabaseClient.storage.from(STORAGE_BUCKET).getPublicUrl(fileName); return publicUrl; }
 async function addRoomImage(roomId, url) { await supabaseClient.from(IMAGES_TABLE).insert({ room_id: roomId, image_url: url }); }
 async function getRoomImages(roomId) { const { data } = await supabaseClient.from(IMAGES_TABLE).select('*').eq('room_id', roomId); return data || []; }
+async function getImagesForRooms(roomIds) {
+  if (!roomIds.length) return new Map();
+  const { data, error } = await supabaseClient.from(IMAGES_TABLE).select('*').in('room_id', roomIds);
+  if (error) throw error;
+  const grouped = new Map();
+  (data || []).forEach(img => {
+    if (!grouped.has(img.room_id)) grouped.set(img.room_id, []);
+    grouped.get(img.room_id).push(img);
+  });
+  return grouped;
+}
 async function deleteRoomImage(id, url) { await supabaseClient.from(IMAGES_TABLE).delete().eq('id', id); await supabaseClient.storage.from(STORAGE_BUCKET).remove([url.split('/').pop()]); }
 async function deleteAllRoomImages(roomId) { const imgs = await getRoomImages(roomId); for(let img of imgs) await deleteRoomImage(img.id, img.image_url); }
 async function initSampleData() { const { count } = await supabaseClient.from(TABLE_NAME).select('*', { count: 'exact', head: true }); if(count===0){ await supabaseClient.from(TABLE_NAME).insert([{categorie:'salon et séjour',name:'Salon Principal',matricule:'SAL-001',x:1334,y:1500,last_activity:new Date().toLocaleString(),floor:'1'},{categorie:'chambre adulte',name:'Chambre Master',matricule:'CHM-001',x:2000,y:800,last_activity:new Date().toLocaleString(),floor:'1'},{categorie:'bureautique',name:'Bureau',matricule:'BUR-001',x:500,y:2000,last_activity:new Date().toLocaleString(),floor:'1'}]); showToast("Exemples ajoutés","success"); } }
@@ -756,10 +768,12 @@ async function drawRooms() {
   currentMarkers.forEach(m => map.removeLayer(m));
   currentMarkers = [];
   const rooms = await getAllRooms(currentFloor);
+  allRoomsCache = rooms;
+  const imagesByRoom = await getImagesForRooms(rooms.map(r => r.id));
   for (const room of rooms) {
     if (room.x && room.y) {
       const catInfo = CATEGORIES.find(c => c.value === room.categorie) || { icon: '📍', color: '#ff4d4d', label: room.categorie || 'Sans catégorie' };
-      const images = await getRoomImages(room.id);
+      const images = imagesByRoom.get(room.id) || [];
       const marker = L.circle([room.y, room.x], {
         radius: 28,
         color: catInfo.color,
@@ -892,6 +906,10 @@ function attachCategoryEvents() {
 }
 function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
 function showToast(msg, type = "success") { let t = document.createElement("div"); t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check' : 'fa-exclamation'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); }
+function scheduleDrawRooms() {
+  clearTimeout(drawRoomsTimer);
+  drawRoomsTimer = setTimeout(() => drawRooms(), 200);
+}
 
 // ============ GESTION DES IMAGES DANS MODAL ============
 function setupImageInput(){ 
@@ -1171,22 +1189,25 @@ document.getElementById("doLoginBtn").onclick = async () => {
 document.getElementById("logoutBtn").onclick = () => { logout(); showToast("Déconnecté"); };
 document.getElementById("createUserBtn").onclick = createNewUser;
 document.getElementById("floorSelectBox").addEventListener("change", (e) => changeFloor(e.target.value));
-document.getElementById("search").addEventListener("input", async (e) => { 
-  const val = e.target.value.toLowerCase().trim(); 
-  if(!val) return; 
-  const { data: all } = await supabaseClient.from('rooms').select('*'); 
-  const found = all.find(r => r.name.toLowerCase().includes(val) || r.matricule.toLowerCase().includes(val)); 
-  if(found) { 
-    if(found.floor !== currentFloor) showToast(`Salle au ${found.floor==='1'?'1er':'RDC'}`,"error"); 
-    else { 
+document.getElementById("search").addEventListener("input", (e) => { 
+  clearTimeout(searchTimer); 
+  searchTimer = setTimeout(() => { 
+    const val = e.target.value.toLowerCase().trim(); 
+    if(!val) return; 
+    const found = allRoomsCache.find(r => 
+      (r.name || '').toLowerCase().includes(val) || 
+      (r.matricule || '').toLowerCase().includes(val) || 
+      (r.categorie || '').toLowerCase().includes(val)
+    ); 
+    if(found) { 
       map.flyTo([found.y,found.x],2); 
       setTimeout(() => { 
-        const m = currentMarkers.find(mk => Math.abs(mk.getLatLng().lat - found.y) < 1); 
+        const m = currentMarkers.find(mk => Math.abs(mk.getLatLng().lat - found.y) < 1 && Math.abs(mk.getLatLng().lng - found.x) < 1); 
         if(m) m.openPopup(); 
-      }, 500); 
+      }, 350); 
       showToast(found.name); 
-    } 
-  } else showToast("Aucune","error"); 
+    } else showToast("Aucune dans cet étage","error"); 
+  }, 180); 
 });
 
 // Cache / affichage des catégories
@@ -1213,8 +1234,8 @@ document.addEventListener('click', (e) => { if(e.target.classList?.contains('pop
   if(saved === '1' || saved === 'rdc') currentFloor = saved;
   document.getElementById("floorSelectBox").value = currentFloor;
   await loadCurrentSession();
-  supabaseClient.channel('rooms').on('postgres_changes',{event:'*',schema:'public',table:'rooms'},()=>drawRooms()).subscribe();
-  supabaseClient.channel('images').on('postgres_changes',{event:'*',schema:'public',table:'room_images'},()=>drawRooms()).subscribe();
+  supabaseClient.channel('rooms').on('postgres_changes',{event:'*',schema:'public',table:'rooms'},()=>scheduleDrawRooms()).subscribe();
+  supabaseClient.channel('images').on('postgres_changes',{event:'*',schema:'public',table:'room_images'},()=>scheduleDrawRooms()).subscribe();
   try {
     await initSampleData();
     initMap();
@@ -1226,3 +1247,4 @@ document.addEventListener('click', (e) => { if(e.target.classList?.contains('pop
 </script>
 </body>
 </html>
+
