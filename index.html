@@ -272,7 +272,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 }
 #map { width: 100%; height: 100%; background: #cddde9; }
 
-/* -------------------- تكبير نافذة popup (المعلومات) -------------------- */
+/* -------------------- تكبير نافذة popup -------------------- */
 .leaflet-popup-content-wrapper {
   border-radius: 28px;
   padding: 0;
@@ -282,9 +282,8 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   margin: 20px 24px;
   font-size: 20px;
   line-height: 1.5;
-  min-width: 320px;
+  min-width: 340px;
 }
-/* تكبير زر الإغلاق (X) بشكل كبير */
 .leaflet-popup-close-button {
   top: 12px !important;
   right: 12px !important;
@@ -304,7 +303,7 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   color: white !important;
 }
 
-/* -------------------- مودالات كبيرة جدًا -------------------- */
+/* -------------------- مودالات كبيرة -------------------- */
 .modal-login, .modal-user-management {
   display: none;
   position: fixed;
@@ -324,6 +323,28 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   width: 92%;
   max-width: 560px;
   text-align: center;
+  position: relative;
+}
+/* زر إغلاق المودال */
+.close-modal-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 40px;
+  cursor: pointer;
+  color: #999;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.close-modal-btn:hover {
+  background: #f0f0f0;
+  color: #cc0000;
 }
 .modal-login h3, .modal-user-management h3 { color: #cc0000; margin-bottom: 32px; font-size: 36px; }
 .modal-login input, .modal-user-management input {
@@ -339,6 +360,10 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
   font-size: 28px; margin-top: 16px;
 }
 .error-msg { color: red; font-size: 20px; margin-top: 12px; }
+.secondary-btn {
+  background: #6c757d !important;
+  margin-top: 12px;
+}
 
 #modal{
   display:none;
@@ -602,13 +627,13 @@ body{margin:0;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; backgroun
 <!-- مودالات -->
 <div id="modal"><div class="modal-box"><h3 id="title">Action</h3><select id="categorie"><option value="">-- Sélectionnez catégorie --</option><option value="salon et séjour">🏠 salon et séjour</option><option value="salle à manger">🍽️ salle à manger</option><option value="chambre adulte">🛏️ chambre adulte</option><option value="chambre enfant">🧸 chambre enfant</option><option value="rangement">📦 rangement</option><option value="bureautique">💼 Bureautique</option><option value="jardin">🌳 jardin</option><option value="accessoire">🔧 accessoire</option></select><input id="name" placeholder="Nom de la salle *"><input id="mat" placeholder="Matricule *"><div class="coord-row"><input id="coord" placeholder="Coordonnée (X,Y)" readonly><button onclick="startPick()"><i class="fas fa-crosshairs"></i></button></div><div><label><i class="fas fa-images"></i> Images</label><input type="file" id="imageInput" accept="image/*" multiple><div id="imagePreviewContainer"></div></div><input id="last_activity" readonly><div id="actions"></div></div></div>
 <div id="lightbox" class="lightbox"><button class="close-lightbox"><i class="fas fa-times"></i></button><button class="nav-btn prev"><i class="fas fa-chevron-left"></i></button><img id="lightbox-img"><button class="nav-btn next"><i class="fas fa-chevron-right"></i></button><div class="counter"></div></div>
-<div id="loginModal" class="modal-login"><div class="modal-box"><h3>Connexion</h3><input type="text" id="loginUsername" placeholder="Nom d'utilisateur"><input type="password" id="loginPassword" placeholder="Mot de passe"><button id="doLoginBtn">Se connecter</button><div id="loginError" class="error-msg"></div></div></div>
-<div id="userMgmtModal" class="modal-user-management"><div class="modal-box"><h3>Gestion utilisateurs</h3><div id="userList"></div><input type="text" id="newUsername" placeholder="Nouveau nom"><input type="password" id="newPassword" placeholder="Mot de passe"><select id="newUserRole"><option value="user">Utilisateur</option><option value="admin">Admin</option></select><button id="createUserBtn">Créer</button><button onclick="closeUserManagement()">Fermer</button><div id="userMgmtError"></div></div></div>
+<div id="loginModal" class="modal-login"><div class="modal-box"><button class="close-modal-btn" id="closeLoginModalBtn"><i class="fas fa-times"></i></button><h3>Connexion</h3><input type="text" id="loginUsername" placeholder="Nom d'utilisateur"><input type="password" id="loginPassword" placeholder="Mot de passe"><button id="doLoginBtn">Se connecter</button><button id="cancelLoginBtn" class="secondary-btn">Annuler</button><div id="loginError" class="error-msg"></div></div></div>
+<div id="userMgmtModal" class="modal-user-management"><div class="modal-box"><button class="close-modal-btn" id="closeUserMgmtModalBtn"><i class="fas fa-times"></i></button><h3>Gestion utilisateurs</h3><div id="userList"></div><input type="text" id="newUsername" placeholder="Nouveau nom"><input type="password" id="newPassword" placeholder="Mot de passe"><select id="newUserRole"><option value="user">Utilisateur</option><option value="admin">Admin</option></select><button id="createUserBtn">Créer</button><button onclick="closeUserManagement()" class="secondary-btn">Fermer</button><div id="userMgmtError"></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script>
-// ========== جميع الكود الأصلي للوظائف مع ضمان عمل زر الإحداثيات ==========
+// ========== جميع الكود الأصلي للوظائف ==========
 const SUPABASE_URL = 'https://mtzebyldjggbgbupkudh.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im10emVieWxkamdnYmdidXBrdWRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjUxNjIsImV4cCI6MjA5MDc0MTE2Mn0.9Gk2GuHtSKOff5PuIlTd_ZlUjLUPvO3R3g0vHjh6RKg';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -678,14 +703,16 @@ function initMap() {
       pickedY = Math.round(e.latlng.lat);
       document.getElementById("coord").value = pickedX + "," + pickedY;
       deactivatePickMode();
+      // إعادة فتح المودال بعد اختيار الإحداثيات
       document.getElementById("modal").style.display = "flex";
+      showToast("Position enregistrée: ("+pickedX+","+pickedY+")", "success");
     }
   });
 }
 function updateMapFloor(floor) { if(!map) return; if(map.overlay) map.removeLayer(map.overlay); let url = floor === '1' ? 'floor1.jpg' : 'floor_rdc.jpg'; let bounds = [[0,0],[3000,2669]]; map.overlay = L.imageOverlay(url, bounds).addTo(map); map.fitBounds(bounds); }
 async function changeFloor(floor) { currentFloor=floor; localStorage.setItem('selectedFloor',floor); updateMapFloor(floor); await drawRooms(); document.getElementById("floorSelectBox").value=floor; showToast(`Étage ${floor==='1'?'1er':'RDC'}`,'success'); }
 
-// ========== إنشاء محتوى popup بشكل واضح مع أزرار تعمل ==========
+// ========== إنشاء محتوى popup ==========
 function createPopupContent(room, catInfo, images) {
   let imgHtml = '';
   if (images && images.length > 0) {
@@ -743,6 +770,7 @@ async function drawRooms() {
       marker.bindPopup(popupContent, { maxWidth: 420, minWidth: 340 });
       marker.on("popupopen", (e) => {
         const popupElement = e.popup.getElement();
+        // أحداث الصور
         const galleryImgs = popupElement.querySelectorAll('.popup-gallery-img, .popup-more');
         galleryImgs.forEach(el => {
           el.addEventListener('click', (event) => {
@@ -752,17 +780,26 @@ async function drawRooms() {
             openLightbox(imageUrls, index);
           });
         });
+        // زر التعديل
         const editBtn = popupElement.querySelector('.edit-popup-btn');
         if (editBtn) {
-          editBtn.addEventListener('click', () => {
-            const id = parseInt(editBtn.getAttribute('data-id'));
+          // إزالة المستمع القديم لتجنب التكرار
+          const newEditBtn = editBtn.cloneNode(true);
+          editBtn.parentNode.replaceChild(newEditBtn, editBtn);
+          newEditBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = parseInt(newEditBtn.getAttribute('data-id'));
             editRoomById(id);
           });
         }
+        // زر الحذف
         const deleteBtn = popupElement.querySelector('.delete-popup-btn');
         if (deleteBtn) {
-          deleteBtn.addEventListener('click', () => {
-            const id = parseInt(deleteBtn.getAttribute('data-id'));
+          const newDeleteBtn = deleteBtn.cloneNode(true);
+          deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+          newDeleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = parseInt(newDeleteBtn.getAttribute('data-id'));
             deleteFromPopup(id);
           });
         }
@@ -856,7 +893,7 @@ function attachCategoryEvents() {
 function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m]); }
 function showToast(msg, type = "success") { let t = document.createElement("div"); t.className = `toast ${type}`; t.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check' : 'fa-exclamation'}"></i> ${msg}`; document.body.appendChild(t); setTimeout(() => t.remove(), 3000); }
 
-// ========== دوال إدارة الصور والمودالات (مع ضمان عمل زر الإحداثيات) ==========
+// ========== دوال إدارة الصور والمودالات ==========
 function setupImageInput(){ 
   document.getElementById('imageInput').onchange = e => { 
     currentImageFiles.push(...Array.from(e.target.files)); 
@@ -1000,6 +1037,8 @@ function fillForm(room){
   document.getElementById("last_activity").value = room.last_activity || ""; 
   pickedX = room.x; 
   pickedY = room.y; 
+  // التأكد من تحديث الحقل المخفي للطابق إن وجد
+  if(document.getElementById("floorSelect")) document.getElementById("floorSelect").value = room.floor || currentFloor;
 }
 function clearForm(){ 
   document.getElementById("categorie").value = ""; 
@@ -1024,6 +1063,7 @@ function activatePickMode(){
   document.getElementById('map').classList.add('picking-mode'); 
   const lc = document.querySelector('.leaflet-container'); 
   if(lc) lc.style.cursor = 'crosshair'; 
+  showToast("Mode sélection activé. Cliquez sur la carte.", "success");
 }
 function deactivatePickMode(){ 
   picking = false; 
@@ -1089,6 +1129,9 @@ document.getElementById("zoomInBtn").onclick = () => { if(map) map.zoomIn(); };
 document.getElementById("zoomOutBtn").onclick = () => { if(map) map.zoomOut(); };
 document.getElementById("zoomFullBtn").onclick = () => { if(map) map.fitBounds([[0,0],[3000,2669]]); };
 document.getElementById("loginBtn").onclick = () => document.getElementById("loginModal").style.display = "flex";
+document.getElementById("closeLoginModalBtn").onclick = () => document.getElementById("loginModal").style.display = "none";
+document.getElementById("cancelLoginBtn").onclick = () => document.getElementById("loginModal").style.display = "none";
+document.getElementById("closeUserMgmtModalBtn").onclick = () => document.getElementById("userMgmtModal").style.display = "none";
 document.getElementById("doLoginBtn").onclick = async () => { 
   const u = document.getElementById("loginUsername").value; 
   const p = document.getElementById("loginPassword").value; 
