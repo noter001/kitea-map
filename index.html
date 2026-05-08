@@ -784,12 +784,11 @@ async function drawRooms() {
         // Bouton Modifier
         const editBtn = popupElement.querySelector('.edit-popup-btn');
         if (editBtn) {
-          // Remplacer pour éviter les doublons d'événements
           const newEditBtn = editBtn.cloneNode(true);
           editBtn.parentNode.replaceChild(newEditBtn, editBtn);
           newEditBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const id = parseInt(newEditBtn.getAttribute('data-id'));
+            const id = newEditBtn.getAttribute('data-id'); // UUID string
             editRoomById(id);
           });
         }
@@ -800,7 +799,7 @@ async function drawRooms() {
           deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
           newDeleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            const id = parseInt(newDeleteBtn.getAttribute('data-id'));
+            const id = newDeleteBtn.getAttribute('data-id');
             deleteFromPopup(id);
           });
         }
@@ -990,16 +989,15 @@ async function saveRoom(){
   } catch(e) { showToast("Erreur: "+e.message,"error"); }
 }
 
-// *** FONCTION editRoomById CORRIGÉE ***
+// *** FONCTION editRoomById CORRIGÉE (UUID string) ***
 async function editRoomById(id){ 
   if (!currentSession) { showToast("Connectez-vous","error"); return; }
-  const idNum = parseInt(id); // Conversion explicite en nombre
-  if (isNaN(idNum)) { showToast("ID invalide","error"); return; }
+  // id est déjà une chaîne UUID, ne pas convertir en nombre
   try {
     const { data: room, error } = await supabaseClient
       .from('rooms')
       .select('*')
-      .eq('id', idNum)
+      .eq('id', id)
       .single();
     if (error) throw error;
     if (!room) { showToast("Salle non trouvée","error"); return; }
@@ -1009,6 +1007,14 @@ async function editRoomById(id){
     currentImageFiles = []; 
     imagesToDelete = []; 
     updateImagePreview(); 
+    // Ajouter le champ floor s'il n'existe pas dans le modal
+    if (!document.getElementById("floorSelect")) {
+      const coordRow = document.querySelector(".coord-row");
+      const div = document.createElement("div");
+      div.innerHTML = `<label style="font-weight:bold;">Étage :</label><select id="floorSelect" style="width:100%; padding:16px; border-radius:32px;"><option value="1">1er étage</option><option value="rdc">Rez-de-chaussée</option></select>`;
+      coordRow.parentNode.insertBefore(div, coordRow);
+    }
+    document.getElementById("floorSelect").value = room.floor || currentFloor;
     openModal('edit'); 
     pickedX = room.x; 
     pickedY = room.y; 
